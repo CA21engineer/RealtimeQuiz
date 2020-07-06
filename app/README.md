@@ -1,24 +1,19 @@
-# ScalaTemplate
+# app
 
-- docker-compose.yaml
-- ScalaTemplate
-    - build.sbt
-    - apiServer
-                
 
-## docker-compose sample
+## Install Websocket Curl
+`$ npm install -g wscat`
+
+## 動作確認
 ```bash
-$ sh build.sh
+$ curl -X POST localhost:18080/api/room/accountId/parent/name/bambootuna
+{"roomId":"cc9d2afa23b64bfa9275cc496f835dde"}
 
-# if success, it will return Dockerfile path
-apiServer/target/docker/stage
+$ curl -X GET localhost:18080/api/room
+{"rooms":["cc9d2afa23b64bfa9275cc496f835dde"]}
+
+$ wscat -c localhost:18080/ws/room/debugRoomId/accountId/admin/name/admin_name
+$ wscat -c localhost:18080/ws/room/debugRoomId/accountId/child1/name/child1_name
+$ wscat -c localhost:18080/ws/room/debugRoomId/accountId/child2/name/child2_name
+$ wscat -c localhost:18080/ws/room/debugRoomId/accountId/child3/name/child3_name
 ```
-```yaml
-version: "3.4"
-services:
-  api-server:
-    restart: always
-    build: apiServer/target/docker/stage
-    ports:
-      - 18080:18080
-```          
