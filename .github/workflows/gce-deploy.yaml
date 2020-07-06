@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ gce ]
+
+jobs:
+  deploy-gce:
+    name: deploy docker-compose to gce
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_GOOGLE_SERVICE_KEY: ${{ secrets.GOOGLE_SERVICE_KEY }}
+      TF_VAR_GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+      TF_VAR_GOOGLE_COMPUTE_REGION: ${{ secrets.GOOGLE_COMPUTE_REGION }} # "asia-northeast1"
+      TF_VAR_GOOGLE_COMPUTE_ZONE: ${{ secrets.GOOGLE_COMPUTE_ZONE }} # "asia-northeast1-a"
+      TF_VAR_GOOGLE_CREDENTIALS_JSON_PATH: ./account.json
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      SSH_KEY_PUB: ${{ secrets.SSH_KEY_PUB }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo ${SSH_KEY} | base64 -d > ~/.ssh/my-ssh-key
+          echo ${SSH_KEY_PUB} | base64 -d > ~/.ssh/my-ssh-key.pub
+          chmod 600 ~/.ssh/my-ssh-key
+      - name: Deploy api server
+        working-directory: ./deploy/gce
+        run: |
+          echo ${TF_VAR_GOOGLE_SERVICE_KEY} | base64 -d > ${TF_VAR_GOOGLE_CREDENTIALS_JSON_PATH}
+          echo 'github-actions@${TF_VAR_GOOGLE_PROJECT_ID}.iam.gserviceaccount.com' | gcloud auth activate-service-account --key-file ${TF_VAR_GOOGLE_CREDENTIALS_JSON_PATH}
+          gcloud --quiet config set project ${TF_VAR_GOOGLE_PROJECT_ID}
+          gcloud --quiet config set compute/region ${TF_VAR_GOOGLE_COMPUTE_REGION}
+          gcloud --quiet config set compute/zone ${TF_VAR_GOOGLE_COMPUTE_ZONE}
+          export SSH_HOST=$(gcloud compute addresses describe ${TF_VAR_GOOGLE_PROJECT_ID}-region-address --region=${TF_VAR_GOOGLE_COMPUTE_REGION} --format='get(address)')
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/my-ssh-key
+          ssh -o "StrictHostKeyChecking=no" -p ${SSH_PORT} ${SSH_USERNAME}@${SSH_HOST}  -i ~/.ssh/my-ssh-key 'bash -s' < deploy.sh https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
+

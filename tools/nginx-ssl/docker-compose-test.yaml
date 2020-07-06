@@ -1,0 +1,14 @@
+version: "3.4"
+services:
+  ssl-proxy-server:
+    restart: always
+    build: .
+    environment:
+      TZ: Asia/Tokyo
+      PROXY_SERVER_HOSTS: "https://www.google.com https://www.yahoo.co.jp" # SSL化したいサーバーの[ホスト:ポート] host.docker.internal
+      LETSENCRYPT_HOSTS: "localhost api.localhost" # 取得したドメイン
+      LETSENCRYPT_MAIL: example@localhost # あなたの連絡先メール
+      LETSENCRYPT_SUBJECT: "/C=JP/ST=Tokyo/L=Shinagawa/CN=default"
+    ports:
+      - 80:80
+      - 443:443

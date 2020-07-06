@@ -1,0 +1,14 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'codelab-monitor'
+
+rule_files:
+#   - "/var/app/prometheus/alert.rules"
+
+scrape_configs:
+  - job_name: 'apiServer-metrics'
+    static_configs:
+      - targets:
+        - 'api-server:2112'

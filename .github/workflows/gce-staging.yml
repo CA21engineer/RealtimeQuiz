@@ -1,0 +1,31 @@
+name: GCE Environment Use Terraform
+
+on:
+  push:
+    branches: [ gce-staging ]
+
+jobs:
+  apply-environment:
+    name: Terraform
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_GOOGLE_SERVICE_KEY: ${{ secrets.GOOGLE_SERVICE_KEY }}
+      TF_VAR_GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+      TF_VAR_GOOGLE_COMPUTE_REGION: ${{ secrets.GOOGLE_COMPUTE_REGION }} # "asia-northeast1"
+      TF_VAR_GOOGLE_COMPUTE_ZONE: ${{ secrets.GOOGLE_COMPUTE_ZONE }} # "asia-northeast1-a"
+      TF_VAR_GOOGLE_CREDENTIALS_JSON_PATH: ./account.json
+      TF_VAR_SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_KEY_PUB: ${{ secrets.SSH_KEY_PUB }}
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: apply
+        working-directory: ./terraform/gce
+        run: |
+          echo ${TF_VAR_GOOGLE_SERVICE_KEY} | base64 -d > ${TF_VAR_GOOGLE_CREDENTIALS_JSON_PATH}
+          export TF_VAR_SSH_PUB_KEY=${SSH_USERNAME}:`echo ${SSH_KEY_PUB} | base64 -d`
+          sed -e "s/<%SHH_PORT%>/${TF_VAR_SSH_PORT}/" cloud-config.tpl > cloud-config
+          terraform init
+          sh import.sh
+          sh apply.sh
