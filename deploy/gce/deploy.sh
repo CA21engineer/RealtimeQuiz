@@ -18,6 +18,8 @@ fi
 #docker/compose:1.22.0 \
 #down --rmi all --volumes
 
+sh ./app/build.sh
+
 if type "docker-compose" > /dev/null 2>&1; then
   docker-compose -f ./deploy/gce/docker-compose.yaml up --build -d
 else

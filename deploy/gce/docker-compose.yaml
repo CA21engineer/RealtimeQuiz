@@ -13,7 +13,7 @@ services:
 
   api-server:
     restart: always
-    build: ../../apiServer
+    build: ../../app/apiServer/target/docker/stage
     ports:
       - 18080:18080
     logging:
@@ -23,23 +23,3 @@ services:
       - MYSQL_PORT=3306
     depends_on:
       - mysql
-
-  prometheus:
-    image: prom/prometheus
-    volumes:
-      - ../../tools/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-
-  grafana:
-    image: grafana/grafana
-    volumes:
-      - ../../tools/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-      - ../../tools/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
-      - ../../tools/grafana/dashboards:/var/lib/grafana/dashboards
-    ports:
-      - 3000:3000
-    environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_NAME=View Org.
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
-    depends_on:
-      - prometheus
