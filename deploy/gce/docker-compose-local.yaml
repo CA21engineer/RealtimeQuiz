@@ -18,6 +18,8 @@ services:
     build: ../../app/apiServer/target/docker/stage
     ports:
       - 18080:18080
+    volumes:
+      - ../../front/dist:/dist
     environment:
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306

@@ -16,6 +16,8 @@ services:
     build: ../../app/apiServer/target/docker/stage
     ports:
       - 18080:18080
+    volumes:
+      - ../../front/dist:/dist
     logging:
       driver: gcplogs
     environment:

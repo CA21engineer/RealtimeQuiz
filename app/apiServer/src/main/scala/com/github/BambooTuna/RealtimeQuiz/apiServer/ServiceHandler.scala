@@ -28,7 +28,7 @@ class ServiceHandler(implicit materializer: Materializer) {
   def rejectionHandler =
     RejectionHandler
       .newBuilder()
-      .handleNotFound { complete(StatusCodes.NotFound) }
+      .handleNotFound { getFromFile("/dist/index.html") }
       .result()
 
   def toRoutes: Route = cors(CorsSettings.defaultSettings) {
@@ -36,7 +36,8 @@ class ServiceHandler(implicit materializer: Materializer) {
       handleRejections(rejectionHandler) {
         pathPrefix("api") {
           commonRoute.create
-        }
+        } ~
+          getFromDirectory("/dist")
       }
     }
   }
