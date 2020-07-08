@@ -1,23 +1,20 @@
 <template>
-  <div class="home">
-    <h1>部屋一覧</h1>
-    <div v-for="item in rooms" :key="item.id">
-      {{ item }} | <button @click="onJoin(item)">参加する</button>
-    </div>
+  <div class="room-view">
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import RestAPI, { Room } from '@/lib/restapi'
+import RealtimeAPI from '@/lib/realtimeapi'
 
 @Component({
   components: {}
 })
 
-export default class Home extends Vue {
+export default class RoomView extends Vue {
   restAPI!: RestAPI
-  rooms: Array<Room> = []
+  realtimeAPI!: RealtimeAPI
 
   async created () {
     let accountId = localStorage.getItem('accountId')
@@ -31,11 +28,10 @@ export default class Home extends Vue {
       localStorage.setItem('accountName', accountName)
     }
     this.restAPI = new RestAPI(accountId, accountName)
-    this.rooms = (await this.restAPI.getRooms()).rooms
-  }
+    this.realtimeAPI = new RealtimeAPI(accountId, accountName)
 
-  onJoin (roomId: string) {
-    this.$router.push({ name: 'RoomView', params: { roomId: roomId } })
+    const roomId = this.$route.params.roomId
+    this.realtimeAPI.connect(roomId)
   }
 
   private uuidv4 () {
