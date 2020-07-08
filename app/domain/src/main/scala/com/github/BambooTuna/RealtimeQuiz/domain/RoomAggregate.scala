@@ -1,8 +1,14 @@
 package com.github.BambooTuna.RealtimeQuiz.domain
 
+import akka.NotUsed
 import akka.actor.Actor
 import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.Flow
 import com.github.BambooTuna.RealtimeQuiz.domain.RoomAggregate.Protocol._
+import com.github.BambooTuna.RealtimeQuiz.domain.ws.{
+  WebSocketMessage,
+  WebSocketMessageWithSender
+}
 
 import scala.util.{Failure, Success, Try}
 
@@ -39,7 +45,8 @@ class RoomAggregate extends Actor {
     room.roomId
   }
 
-  def joinRoom(request: JoinRoomRequest): Try[RoomConnection] = {
+  def joinRoom(request: JoinRoomRequest)
+    : Try[Flow[WebSocketMessage, WebSocketMessageWithSender, NotUsed]] = {
     this.rooms.get(request.roomId) match {
       case Some(value) =>
         value
@@ -76,7 +83,8 @@ object RoomAggregate {
 
     case class JoinRoomRequest(roomId: String, account: Account)
     sealed trait JoinRoomResponse
-    case class JoinRoomSuccess(connection: RoomConnection)
+    case class JoinRoomSuccess(
+        connection: Flow[WebSocketMessage, WebSocketMessageWithSender, NotUsed])
         extends JoinRoomResponse
     case class JoinRoomFailure(message: String) extends JoinRoomResponse
 

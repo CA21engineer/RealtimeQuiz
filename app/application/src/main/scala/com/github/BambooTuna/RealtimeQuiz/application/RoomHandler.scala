@@ -1,18 +1,23 @@
 package com.github.BambooTuna.RealtimeQuiz.application
 
+import akka.NotUsed
 import akka.actor.ActorRef
-import akka.http.javadsl.model.ws.Message
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.model.ws.{Message, TextMessage}
+import akka.http.scaladsl.model.ws.{BinaryMessage, Message, TextMessage}
 import akka.pattern.ask
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directive
 import akka.http.scaladsl.server.Directives._
+import akka.stream.Materializer
 import akka.stream.scaladsl.{Flow, Sink}
 import akka.util.Timeout
 import com.github.BambooTuna.RealtimeQuiz.application.json.RoomJson
 import com.github.BambooTuna.RealtimeQuiz.domain.Account
 import com.github.BambooTuna.RealtimeQuiz.domain.RoomAggregate.Protocol._
+import com.github.BambooTuna.RealtimeQuiz.domain.ws.{
+  WebSocketMessage,
+  WebSocketMessageWithSender
+}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -20,7 +25,8 @@ import scala.util.{Failure, Success}
 import io.circe.generic.auto._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
-class RoomHandler(roomAggregate: ActorRef) {
+class RoomHandler(roomAggregate: ActorRef)(
+    implicit materializer: Materializer) {
   type QueryP[Q] = Directive[Q] => Route
 
   implicit val timeout = Timeout(5.seconds)
@@ -64,13 +70,24 @@ class RoomHandler(roomAggregate: ActorRef) {
         case Success(value) =>
           value match {
             case JoinRoomSuccess(connection) =>
-              handleWebSocketMessages(
-                Flow.fromSinkAndSource(connection.sink, connection.source))
+              handleWebSocketMessages(decodeFlow via connection via encodeFlow)
             case JoinRoomFailure(message) =>
               println(message)
               complete(StatusCodes.BadRequest, message)
           }
       }
+  }
+
+  def decodeFlow: Flow[Message, WebSocketMessage, NotUsed] = {
+    Flow[Message].map {
+      case TextMessage.Strict(message) =>
+        WebSocketMessage.parse(message)
+    }
+  }
+
+  def encodeFlow: Flow[WebSocketMessageWithSender, Message, NotUsed] = {
+    Flow[WebSocketMessageWithSender].map(a =>
+      TextMessage.Strict(a.toJsonString))
   }
 
 }
