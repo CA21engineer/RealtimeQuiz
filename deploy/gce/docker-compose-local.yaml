@@ -1,18 +1,5 @@
 version: "3.4"
 services:
-  mysql:
-    build: ../../tools/mysql
-    restart: always
-    ports:
-      - 3306:3306
-    volumes:
-      - ../../tools/mysql/2_restart.sql:/docker-entrypoint-initdb.d/2_restart.sql
-    environment:
-      - MYSQL_DATABASE=sample_database
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=pass
-
   api-server:
     restart: always
     build: ../../app/apiServer/target/docker/stage
@@ -20,8 +7,3 @@ services:
       - 18080:18080
     volumes:
       - ../../front/dist:/dist
-    environment:
-      - MYSQL_HOST=mysql
-      - MYSQL_PORT=3306
-    depends_on:
-      - mysql

@@ -1,6 +1,7 @@
 package com.github.BambooTuna.RealtimeQuiz.apiServer
 
-import akka.http.scaladsl.model.HttpMethods.GET
+import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{
@@ -13,10 +14,13 @@ import akka.stream.Materializer
 import org.slf4j.{Logger, LoggerFactory}
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
 import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
+import com.github.BambooTuna.RealtimeQuiz.application.RoomHandler
+import com.github.BambooTuna.RealtimeQuiz.domain.RoomAggregate
 
 import scala.util.control.NonFatal
 
-class ServiceHandler(implicit materializer: Materializer) {
+class ServiceHandler(implicit actorSystem: ActorSystem,
+                     materializer: Materializer) {
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
   def exceptionHandler(logger: Logger): ExceptionHandler = ExceptionHandler {
@@ -34,9 +38,8 @@ class ServiceHandler(implicit materializer: Materializer) {
   def toRoutes: Route = cors(CorsSettings.defaultSettings) {
     handleExceptions(exceptionHandler(logger)) {
       handleRejections(rejectionHandler) {
-        pathPrefix("api") {
-          commonRoute.create
-        } ~
+        restApiRoute ~
+          realtimeApiRoute ~
           getFromDirectory("/dist")
       }
     }
@@ -48,6 +51,31 @@ class ServiceHandler(implicit materializer: Materializer) {
         complete(StatusCodes.OK)
       }),
     )
+  }
+
+  val roomAggregate =
+    actorSystem.actorOf(Props[RoomAggregate], RoomAggregate.name)
+  val roomHandler = new RoomHandler(roomAggregate)
+
+  def restApiRoute(implicit materializer: Materializer): Route = {
+    pathPrefix("api") {
+      Router(
+        route(GET, "room", roomHandler.getRoomsRoute),
+        route(POST,
+              "room" / "accountId" / Segment / "name" / Segment,
+              roomHandler.createRoomRoute),
+      ).create
+    }
+  }
+
+  def realtimeApiRoute(implicit materializer: Materializer): Route = {
+    pathPrefix("ws") {
+      Router(
+        route(GET,
+              "room" / Segment / "accountId" / Segment / "name" / Segment,
+              roomHandler.joinRoomRoute),
+      ).create
+    }
   }
 
 }
