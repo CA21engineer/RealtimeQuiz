@@ -25,7 +25,8 @@ sealed trait WebSocketMessage {
 case class ParseError(message: String, org: String) extends WebSocketMessage
 case class ConnectionOpened(accountId: String, name: String)
     extends WebSocketMessage
-case class ConnectionClosed(accountId: String) extends WebSocketMessage
+case class ConnectionClosed(accountId: String, name: String)
+    extends WebSocketMessage
 
 case class Quiz(no: Int, content: String, points: Int) extends WebSocketMessage
 case class Answer(content: String) extends WebSocketMessage

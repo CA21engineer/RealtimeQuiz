@@ -37,7 +37,12 @@ class RoomHandler(roomAggregate: ActorRef)(
     onComplete(f) {
       case Failure(exception) =>
         complete(StatusCodes.InternalServerError, exception.getMessage)
-      case Success(value) => complete(StatusCodes.OK -> value)
+      case Success(value) =>
+        complete(
+          StatusCodes.OK ->
+            value.rooms.map { room =>
+              RoomJson(room.roomId, room.children.size)
+            })
     }
 
   }
@@ -52,7 +57,7 @@ class RoomHandler(roomAggregate: ActorRef)(
       case Success(value) =>
         value match {
           case CreateRoomSuccess(roomId) =>
-            complete(StatusCodes.OK -> RoomJson(roomId))
+            complete(StatusCodes.OK -> RoomJson(roomId, 0))
           case CreateRoomFailure(message) =>
             complete(StatusCodes.BadRequest, message)
         }
@@ -70,7 +75,13 @@ class RoomHandler(roomAggregate: ActorRef)(
         case Success(value) =>
           value match {
             case JoinRoomSuccess(connection) =>
-              handleWebSocketMessages(decodeFlow via connection via encodeFlow)
+              handleWebSocketMessages(
+                decodeFlow via connection.watchTermination()((_, f) => {
+                  f.onComplete { _ =>
+                    println(s"RemoveRoomRequest: $roomId")
+                    roomAggregate ! RemoveRoomRequest(roomId)
+                  }(materializer.executionContext)
+                }) via encodeFlow)
             case JoinRoomFailure(message) =>
               println(message)
               complete(StatusCodes.BadRequest, message)

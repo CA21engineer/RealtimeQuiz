@@ -4,12 +4,7 @@ import akka.NotUsed
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.stream.{KillSwitches, Materializer, SharedKillSwitch}
 import akka.stream.scaladsl.{Flow, Sink}
-import com.github.BambooTuna.RealtimeQuiz.domain.ws.{
-  ConnectionClosed,
-  ConnectionOpened,
-  WebSocketMessage,
-  WebSocketMessageWithSender
-}
+import com.github.BambooTuna.RealtimeQuiz.domain.ws._
 
 import scala.util.Try
 
@@ -17,6 +12,7 @@ case class Room(roomId: String,
                 parent: Account,
                 private val roomConnection: RoomConnection) {
   var children: Set[Account] = Set.empty
+  var quiz: Option[Quiz] = None
 
   def isParent(account: Account): Boolean = this.parent == account
   def isParent(accountId: String): Boolean =
@@ -59,39 +55,63 @@ case class Room(roomId: String,
     this.roomConnection.actorRef ! ConnectionOpened(account.accountId,
                                                     account.name)
       .addSender(account)
+    quiz.foreach(a => this.roomConnection.actorRef ! a.addSender(parent))
+    val killSwitch: SharedKillSwitch = KillSwitches.shared(roomId)
     Flow.fromSinkAndSource(
       Flow[WebSocketMessage].map(_.addSender(account)) to Sink.actorRef(
         this.roomConnection.actorRef,
-        ConnectionClosed(account.accountId).addSender(account)),
-      this.roomConnection.source via closeWatchFlow(KillSwitches.shared(roomId)) via Flow[
+        ConnectionClosed(account.accountId, account.name).addSender(account)),
+      this.roomConnection.source via closeWatchFlow(killSwitch) via Flow[
         WebSocketMessageWithSender]
-        .filter(a => isChild(a.from))
-    )
+        .filter(
+          a =>
+            isChild(a.from) &&
+              (
+                a.message.isInstanceOf[Answer] ||
+                  a.message.isInstanceOf[ConnectionOpened] ||
+                  a.message.isInstanceOf[ConnectionClosed]
+            )
+        )
+    ) via killSwitch.flow
   }
   private def childConnection(account: Account)
     : Flow[WebSocketMessage, WebSocketMessageWithSender, NotUsed] = {
     this.roomConnection.actorRef ! ConnectionOpened(account.accountId,
                                                     account.name)
       .addSender(account)
+    quiz.foreach(a => this.roomConnection.actorRef ! a.addSender(parent))
+
+    val killSwitch: SharedKillSwitch = KillSwitches.shared(roomId)
     Flow.fromSinkAndSource(
       Flow[WebSocketMessage].map(_.addSender(account)) to Sink.actorRef(
         this.roomConnection.actorRef,
-        ConnectionClosed(account.accountId).addSender(account)),
-      this.roomConnection.source via closeWatchFlow(KillSwitches.shared(roomId)) via Flow[
+        ConnectionClosed(account.accountId, account.name).addSender(account)),
+      this.roomConnection.source via closeWatchFlow(killSwitch) via Flow[
         WebSocketMessageWithSender]
-        .filter(a => isParent(a.from))
-    )
+        .filter(
+          a =>
+            isParent(a.from) &&
+              (
+                a.message.isInstanceOf[Quiz] ||
+                  a.message.isInstanceOf[CorrectAnswer] ||
+                  a.message.isInstanceOf[ConnectionOpened] ||
+                  a.message.isInstanceOf[ConnectionClosed]
+            )
+        )
+    ) via killSwitch.flow
   }
 
   private def closeWatchFlow(killSwitch: SharedKillSwitch)
     : Flow[WebSocketMessageWithSender, WebSocketMessageWithSender, NotUsed] = {
     Flow[WebSocketMessageWithSender].map {
-      case WebSocketMessageWithSender(ConnectionClosed(accountId), from) =>
+      case WebSocketMessageWithSender(ConnectionClosed(accountId, name),
+                                      from) =>
         if (isParent(accountId)) killSwitch.shutdown()
-        WebSocketMessageWithSender(ConnectionClosed(accountId), from)
+        WebSocketMessageWithSender(ConnectionClosed(accountId, name), from)
       case other => other
     }
   }
+
 }
 
 object Room {

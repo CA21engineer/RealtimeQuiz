@@ -40,11 +40,12 @@ export default class RestAPI {
 }
 
 
-export type Room = string
-
-export type GetRoomsSuccess = {
-  rooms: Array<Room>
+export type Room = {
+  roomId: string
+  participants: number
 }
+
+export type GetRoomsSuccess = Array<Room>
 
 export type CreateRoomSuccess = {
   roomId: string

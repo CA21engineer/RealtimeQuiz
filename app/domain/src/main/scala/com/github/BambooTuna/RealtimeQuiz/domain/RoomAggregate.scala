@@ -21,7 +21,7 @@ class RoomAggregate extends Actor {
 
   override def receive: Receive = {
     case GetRoomsRequest =>
-      sender() ! GetRoomsSuccess(rooms.values.map(_.roomId).toSeq)
+      sender() ! GetRoomsSuccess(rooms.values.toSeq)
     case r: CreateRoomRequest =>
       createNewRoom(r) match {
         case Failure(exception) =>
@@ -34,8 +34,9 @@ class RoomAggregate extends Actor {
           sender() ! JoinRoomFailure(exception.getMessage)
         case Success(value) => sender() ! JoinRoomSuccess(value)
       }
-    case r: LeaveRoomRequest => leaveRoom(r)
-    case other               => println(other.toString)
+    case r: LeaveRoomRequest  => leaveRoom(r)
+    case r: RemoveRoomRequest => removeRoom(r)
+    case other                => println(other.toString)
   }
 
   def createNewRoom(request: CreateRoomRequest): Try[String] = Try {
@@ -67,6 +68,10 @@ class RoomAggregate extends Actor {
       case None => Failure(new Exception("ルームが見つかりません"))
     }
   }
+
+  def removeRoom(request: RemoveRoomRequest): Unit = {
+    this.rooms.remove(request.roomId)
+  }
 }
 
 object RoomAggregate {
@@ -74,7 +79,7 @@ object RoomAggregate {
 
   object Protocol {
     case object GetRoomsRequest
-    case class GetRoomsSuccess(rooms: Seq[String])
+    case class GetRoomsSuccess(rooms: Seq[Room])
 
     case class CreateRoomRequest(account: Account)
     sealed trait CreateRoomResponse
@@ -89,6 +94,8 @@ object RoomAggregate {
     case class JoinRoomFailure(message: String) extends JoinRoomResponse
 
     case class LeaveRoomRequest(roomId: String, account: Account)
+
+    case class RemoveRoomRequest(roomId: String)
 
   }
 

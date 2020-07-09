@@ -7,8 +7,13 @@ export default class RealtimeAPI {
   accountId!: string
   accountName!: string
 
-
   socket?: WebSocket
+
+  quizHandler: (from: string, message: Quiz) => void = () => {}
+  answerHandler: (from: string, message: Answer) => void = () => {}
+  correctAnswerHandler: (from: string, message: CorrectAnswer) => void = () => {}
+  connectionOpenedHandler: (from: string, message: ConnectionOpened) => void = () => {}
+  connectionClosedHandler: (from: string, message: ConnectionClosed) => void = () => {}
 
   constructor(accountId: string, accountName: string) {
     this.logger = new Logger("RealtimeAPI")
@@ -34,14 +39,19 @@ export default class RealtimeAPI {
 
       if (json.ConnectionOpened) {
         const message = json.ConnectionOpened as ConnectionOpened
+        this.connectionOpenedHandler(from, message)
       } else if (json.ConnectionClosed) {
         const message = json.ConnectionClosed as ConnectionClosed
+        this.connectionClosedHandler(from, message)
       } else if (json.Quiz) {
         const message = json.Quiz as Quiz
+        this.quizHandler(from, message)
       } else if (json.Answer) {
         const message = json.Answer as Answer
+        this.answerHandler(from, message)
       } else if (json.CorrectAnswer) {
         const message = json.CorrectAnswer as CorrectAnswer
+        this.correctAnswerHandler(from, message)
       } else {
         const message: ParseError = { org: e.data }
       }
@@ -60,13 +70,18 @@ export default class RealtimeAPI {
   answer(message: Answer) {
     this.socket?.send(JSON.stringify(message))
   }
+  correctAnswer(message: CorrectAnswer) {
+    this.socket?.send(JSON.stringify(message))
+  }
 }
 
 export type ConnectionOpened = {
   accountId: string
+  name: string
 }
 export type ConnectionClosed = {
   accountId: string
+  name: string
 }
 
 export type Quiz = {

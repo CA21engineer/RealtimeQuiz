@@ -17,11 +17,10 @@ case class RoomConnection(actorRef: ActorRef,
 object RoomConnection {
   def create(roomId: String)(
       implicit materializer: Materializer): RoomConnection = {
-    val killSwitch: SharedKillSwitch = KillSwitches.shared(roomId)
     val (actorRef, source) =
       StreamSupport.actorSource[WebSocketMessageWithSender](
         setIgnoreSink = false)
-    RoomConnection(actorRef, source via killSwitch.flow)
+    RoomConnection(actorRef, source)
   }
 
 }

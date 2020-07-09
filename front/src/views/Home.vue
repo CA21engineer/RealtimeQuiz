@@ -1,9 +1,11 @@
 <template>
   <div class="home">
-    <h1>部屋一覧</h1>
-    <div v-for="item in rooms" :key="item.id">
-      {{ item }} | <button @click="onJoin(item)">参加する</button>
+    <h2>部屋一覧</h2>
+    <div v-for="item in rooms" :key="item.roomId">
+      {{ item.roomId }} ({{ item.participants}} 人参加中) | <button @click="onJoin(item.roomId)">参加する</button>
     </div>
+    <h2>ルーム作成</h2>
+    <button @click="createRoom">作成する</button>
   </div>
 </template>
 
@@ -31,11 +33,16 @@ export default class Home extends Vue {
       localStorage.setItem('accountName', accountName)
     }
     this.restAPI = new RestAPI(accountId, accountName)
-    this.rooms = (await this.restAPI.getRooms()).rooms
+    this.rooms = (await this.restAPI.getRooms())
   }
 
   onJoin (roomId: string) {
     this.$router.push({ name: 'RoomView', params: { roomId: roomId } })
+  }
+
+  async createRoom () {
+    this.rooms = (await this.restAPI.createRoom()
+      .then(_ => this.restAPI.getRooms()))
   }
 
   private uuidv4 () {
