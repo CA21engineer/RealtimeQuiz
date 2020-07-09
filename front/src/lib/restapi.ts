@@ -31,7 +31,7 @@ export default class RestAPI {
 
   createRoom(): Promise<CreateRoomSuccess> {
     return axios({
-      url: `${this.endpoint}/rooms/accountId/${this.accountId}/name/${this.accountName}`,
+      url: `${this.endpoint}/room/accountId/${this.accountId}/name/${this.accountName}`,
       method: 'post'
     })
       .then((res: AxiosResponse) => res.data)

@@ -9,11 +9,12 @@ export default class RealtimeAPI {
 
   socket?: WebSocket
 
-  quizHandler: (from: string, message: Quiz) => void = () => {}
-  answerHandler: (from: string, message: Answer) => void = () => {}
-  correctAnswerHandler: (from: string, message: CorrectAnswer) => void = () => {}
-  connectionOpenedHandler: (from: string, message: ConnectionOpened) => void = () => {}
-  connectionClosedHandler: (from: string, message: ConnectionClosed) => void = () => {}
+  quizHandler: (message: Quiz) => void = () => {}
+  answerHandler: (message: AnswerWithSender) => void = () => {}
+  correctAnswerHandler: (message: CorrectAnswer) => void = () => {}
+  temporaryDataHandler: (message: TemporaryData) => void = () => {}
+  connectionOpenedHandler: (message: ConnectionOpened) => void = () => {}
+  connectionClosedHandler: (message: ConnectionClosed) => void = () => {}
 
   constructor(accountId: string, accountName: string) {
     this.logger = new Logger("RealtimeAPI")
@@ -34,24 +35,26 @@ export default class RealtimeAPI {
     })
     this.socket.addEventListener('message', (e: MessageEvent) => {
       const json = JSON.parse(e.data)
-      const from = json.from
-      this.logger.log(`from: ${from}, message: ${json}`)
+      this.logger.log(`message: ${json}`)
 
       if (json.ConnectionOpened) {
         const message = json.ConnectionOpened as ConnectionOpened
-        this.connectionOpenedHandler(from, message)
+        this.connectionOpenedHandler(message)
       } else if (json.ConnectionClosed) {
         const message = json.ConnectionClosed as ConnectionClosed
-        this.connectionClosedHandler(from, message)
+        this.connectionClosedHandler(message)
+      } else if (json.TemporaryData) {
+        const message = json.TemporaryData as TemporaryData
+        this.temporaryDataHandler(message)
       } else if (json.Quiz) {
         const message = json.Quiz as Quiz
-        this.quizHandler(from, message)
-      } else if (json.Answer) {
-        const message = json.Answer as Answer
-        this.answerHandler(from, message)
+        this.quizHandler(message)
+      } else if (json.AnswerWithSender) {
+        const message = json.AnswerWithSender as AnswerWithSender
+        this.answerHandler(message)
       } else if (json.CorrectAnswer) {
         const message = json.CorrectAnswer as CorrectAnswer
-        this.correctAnswerHandler(from, message)
+        this.correctAnswerHandler(message)
       } else {
         const message: ParseError = { org: e.data }
       }
@@ -73,8 +76,12 @@ export default class RealtimeAPI {
   correctAnswer(message: CorrectAnswer) {
     this.socket?.send(JSON.stringify(message))
   }
+  rename(message: ReName) {
+    this.socket?.send(JSON.stringify(message))
+  }
 }
 
+// Receive
 export type ConnectionOpened = {
   accountId: string
   name: string
@@ -83,21 +90,40 @@ export type ConnectionClosed = {
   accountId: string
   name: string
 }
+export type ParseError = {
+  org: string
+}
+export type TemporaryData = {
+  answer: string
+  points: number
+}
 
+// Send & Receive
 export type Quiz = {
   no: number
   content: string
   points: number
 }
-
-export type Answer = {
+export type AnswerWithSender = {
+  accountId: string
   content: string
 }
-
 export type CorrectAnswer = {
   content: string
   points: number
 }
-export type ParseError = {
-  org: string
+
+// Send
+export type Answer = {
+  content: string
+}
+export type ReName = {
+  name: string
+}
+
+
+export type Account = {
+  accountId: string
+  accountName: string
+  answer: Answer
 }
