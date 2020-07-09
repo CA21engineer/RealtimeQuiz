@@ -1,115 +1,157 @@
 package com.github.BambooTuna.RealtimeQuiz.domain
 
 import akka.NotUsed
-import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.stream.{KillSwitches, Materializer, SharedKillSwitch}
 import akka.stream.scaladsl.{Flow, Sink}
 import com.github.BambooTuna.RealtimeQuiz.domain.ws._
 
+import scala.concurrent.Future
 import scala.util.Try
 
 case class Room(roomId: String,
-                parent: Account,
-                private val roomConnection: RoomConnection) {
-  var children: Set[Account] = Set.empty
-  var quiz: Option[Quiz] = None
+                var parent: Account,
+                private val roomConnection: RoomConnection)(
+    implicit materializer: Materializer)
+    extends QuizSupport {
 
-  def isParent(account: Account): Boolean = this.parent == account
-  def isParent(accountId: String): Boolean =
-    this.parent == Account(accountId, "_")
-  def isChild(account: Account): Boolean = this.children.contains(account)
-  def isChild(accountId: String): Boolean =
-    this.children.contains(Account(accountId, "_"))
-
-  def join(account: Account): Try[Room] = Try {
+  def join(accountId: String, accountName: String): Try[Unit] = Try {
     require(children.size < 10, "満員です >= 10")
-    if (isParent(account)) {
-      throw new Exception("あなたは親です")
-    } else if (isChild(account)) {
-      throw new Exception("既に参加済み")
+
+    if (isParent(accountId)) {
+      println("あなたは親です")
+    } else if (isChild(accountId)) {
+      println("既に参加済み")
     } else {
-      this.children = this.children + account
-      this
+      this.children = this.children + Account.create(accountId, accountName)
     }
   }
 
-  def getConnection(account: Account)
-    : Try[Flow[WebSocketMessage, WebSocketMessageWithSender, NotUsed]] = Try {
-    if (isParent(account)) parentConnection(account)
-    else if (isChild(account)) childConnection(account)
+  def getConnection(accountId: String)
+    : Try[Flow[WebSocketMessage, WebSocketMessage, NotUsed]] = Try {
+    if (isParent(accountId)) parentConnection(this.parent)
+    else if (isChild(accountId))
+      this.children.find(_.accountId == accountId).map(childConnection).get
     else throw new Exception("403")
   }
 
-  def leave(account: Account): Try[Room] = Try {
+  def leave(account: Account): Try[Unit] = Try {
     this.children = this.children + account
-    this
   }
 
-  def changeName(account: Account): Try[Room] = Try {
+  def changeName(account: Account): Try[Unit] = Try {
     this.children = this.children - account + account
-    this
   }
 
-  private def parentConnection(account: Account)
-    : Flow[WebSocketMessage, WebSocketMessageWithSender, NotUsed] = {
-    this.roomConnection.actorRef ! ConnectionOpened(account.accountId,
-                                                    account.name)
-      .addSender(account)
-    quiz.foreach(a => this.roomConnection.actorRef ! a.addSender(parent))
+  private def receiveMessageFlow(account: Account)
+    : Flow[WebSocketMessage, WebSocketMessageWithDestination, NotUsed] = {
+    Flow[WebSocketMessage].map {
+      case a: ParseError       => a.addDestination(None)
+      case a: ConnectionOpened => a.addDestination(None)
+      case a: ConnectionClosed => a.addDestination(None)
+      case a: Quiz =>
+        setQuiz(account.accountId, a)
+        a.addDestination(Children)
+      case a: Answer =>
+        println(s"Answer: ${a}")
+        writeAnswer(account.accountId, a)
+        a.addDestination(Parent)
+      case a: CorrectAnswer =>
+        // TODO
+        a.addDestination(None)
+      case a: ReName =>
+        ConnectionOpened(account.accountId, a.name).addDestination(All)
+    }
+  }
+
+  private def parentConnection(
+      account: Account): Flow[WebSocketMessage, WebSocketMessage, NotUsed] = {
+    firstConnect(account)
     val killSwitch: SharedKillSwitch = KillSwitches.shared(roomId)
     Flow.fromSinkAndSource(
-      Flow[WebSocketMessage].map(_.addSender(account)) to Sink.actorRef(
+      receiveMessageFlow(account) to Sink.actorRef(
         this.roomConnection.actorRef,
-        ConnectionClosed(account.accountId, account.name).addSender(account)),
+        ConnectionClosed(account.accountId, account.name).addDestination(All)),
       this.roomConnection.source via closeWatchFlow(killSwitch) via Flow[
-        WebSocketMessageWithSender]
+        WebSocketMessageWithDestination]
         .filter(
-          a =>
-            isChild(a.from) &&
-              (
-                a.message.isInstanceOf[Answer] ||
-                  a.message.isInstanceOf[ConnectionOpened] ||
-                  a.message.isInstanceOf[ConnectionClosed]
-            )
+          _.destination match {
+            case All               => true
+            case Parent            => true
+            case Children          => false
+            case Users(accountIds) => accountIds.contains(account.accountId)
+            case User(accountId)   => accountId == account.accountId
+            case None              => false
+          }
         )
+        .map(_.message)
     ) via killSwitch.flow
   }
-  private def childConnection(account: Account)
-    : Flow[WebSocketMessage, WebSocketMessageWithSender, NotUsed] = {
-    this.roomConnection.actorRef ! ConnectionOpened(account.accountId,
-                                                    account.name)
-      .addSender(account)
-    quiz.foreach(a => this.roomConnection.actorRef ! a.addSender(parent))
-
+  private def childConnection(
+      account: Account): Flow[WebSocketMessage, WebSocketMessage, NotUsed] = {
+    firstConnect(account)
     val killSwitch: SharedKillSwitch = KillSwitches.shared(roomId)
     Flow.fromSinkAndSource(
-      Flow[WebSocketMessage].map(_.addSender(account)) to Sink.actorRef(
+      receiveMessageFlow(account) to Sink.actorRef(
         this.roomConnection.actorRef,
-        ConnectionClosed(account.accountId, account.name).addSender(account)),
+        ConnectionClosed(account.accountId, account.name).addDestination(All)),
       this.roomConnection.source via closeWatchFlow(killSwitch) via Flow[
-        WebSocketMessageWithSender]
+        WebSocketMessageWithDestination]
         .filter(
-          a =>
-            isParent(a.from) &&
-              (
-                a.message.isInstanceOf[Quiz] ||
-                  a.message.isInstanceOf[CorrectAnswer] ||
-                  a.message.isInstanceOf[ConnectionOpened] ||
-                  a.message.isInstanceOf[ConnectionClosed]
-            )
+          _.destination match {
+            case All               => true
+            case Parent            => false
+            case Children          => true
+            case Users(accountIds) => accountIds.contains(account.accountId)
+            case User(accountId)   => accountId == account.accountId
+            case None              => false
+          }
         )
+        .map(_.message)
     ) via killSwitch.flow
   }
 
-  private def closeWatchFlow(killSwitch: SharedKillSwitch)
-    : Flow[WebSocketMessageWithSender, WebSocketMessageWithSender, NotUsed] = {
-    Flow[WebSocketMessageWithSender].map {
-      case WebSocketMessageWithSender(ConnectionClosed(accountId, name),
-                                      from) =>
+  private def closeWatchFlow(
+      killSwitch: SharedKillSwitch): Flow[WebSocketMessageWithDestination,
+                                          WebSocketMessageWithDestination,
+                                          NotUsed] = {
+    Flow[WebSocketMessageWithDestination].map {
+      case WebSocketMessageWithDestination(ConnectionClosed(accountId, name),
+                                           d) =>
         if (isParent(accountId)) killSwitch.shutdown()
-        WebSocketMessageWithSender(ConnectionClosed(accountId, name), from)
+        WebSocketMessageWithDestination(ConnectionClosed(accountId, name), d)
       case other => other
     }
+  }
+
+  def firstConnect(account: Account): Unit = {
+    Future {
+      Thread.sleep(1000)
+
+      this.roomConnection.actorRef ! ConnectionOpened(
+        account.accountId,
+        account.name).addDestination(All)
+      quiz.foreach(
+        a =>
+          this.roomConnection.actorRef ! a.addDestination(
+            User(account.accountId)))
+
+      if (isParent(account.accountId)) {
+        this.children.foreach(
+          a =>
+            this.roomConnection.actorRef ! ConnectionOpened(a.accountId, a.name)
+              .addDestination(User(account.accountId)))
+      } else if (isChild(account.accountId)) {
+        this.roomConnection.actorRef ! TemporaryData(
+          account.answer.content,
+          account.points).addDestination(User(account.accountId))
+        this.children
+          .filterNot(_.accountId == account.accountId)
+          .foreach(a =>
+            this.roomConnection.actorRef ! ConnectionOpened(a.accountId, a.name)
+              .addDestination(User(account.accountId)))
+      }
+
+    }(materializer.executionContext)
   }
 
 }

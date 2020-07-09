@@ -8,9 +8,13 @@
       <button @click="onClickQuiz">出題する</button>
     </div>
 
+    <h2>あなた</h2>
+    点数: {{ temporaryData.points }} | {{ name }}<br>
+    ニックネーム: <label><input v-model="name" placeholder="content"></label> | <button @click="onClickRename">変更</button>
+
     <h2>自分の回答</h2>
     <div>
-      回答: <label><input v-model="myAnswer.content" placeholder="content"></label><br>
+      回答: <label><input v-model="temporaryData.answer" placeholder="content"></label><br>
       <button @click="onClickAnswer">回答を提出する</button>
     </div>
 
@@ -24,7 +28,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import RestAPI, { Room } from '@/lib/restapi'
-import RealtimeAPI, { Answer, ConnectionClosed, ConnectionOpened, CorrectAnswer, Quiz } from '@/lib/realtimeapi'
+import RealtimeAPI, {
+  ConnectionClosed,
+  ConnectionOpened,
+  CorrectAnswer,
+  Quiz,
+  TemporaryData,
+  Account, AnswerWithSender
+} from '@/lib/realtimeapi'
 
 @Component({
   components: {}
@@ -32,15 +43,19 @@ import RealtimeAPI, { Answer, ConnectionClosed, ConnectionOpened, CorrectAnswer,
 export default class RoomView extends Vue {
   restAPI!: RestAPI
   realtimeAPI!: RealtimeAPI
+  accountId!: string
+  name!: string
+
   quiz!: Quiz
-  myAnswer!: Answer
-  answers!: Array<AnswerWithSender>
+
+  temporaryData!: TemporaryData
+  accounts!: Map<string, Account>
   correctAnswer!: CorrectAnswer
 
   init () {
     this.quiz = { no: 1, content: '', points: 1 }
-    this.myAnswer = { content: '' }
-    this.answers = []
+    this.temporaryData = { answer: '', points: 0 }
+    this.accounts = new Map<string, Account>()
     this.correctAnswer = { content: '', points: 1 }
   }
 
@@ -56,18 +71,49 @@ export default class RoomView extends Vue {
       accountName = 'DefaultName'
       localStorage.setItem('accountName', accountName)
     }
+    this.accountId = accountId
+    this.name = accountName
     this.restAPI = new RestAPI(accountId, accountName)
     this.realtimeAPI = new RealtimeAPI(accountId, accountName)
 
-    this.realtimeAPI.quizHandler = (from: string, message: Quiz) => {
+    this.realtimeAPI.quizHandler = (message: Quiz) => {
       alert('問題が出題されました！')
       this.init()
       this.quiz = message
     }
-    this.realtimeAPI.answerHandler = (from: string, message: Answer) => { console.log(message) }
-    this.realtimeAPI.correctAnswerHandler = (from: string, message: CorrectAnswer) => { console.log(message) }
-    this.realtimeAPI.connectionOpenedHandler = (from: string, message: ConnectionOpened) => { alert(`${message.name}が参加したよ！`) }
-    this.realtimeAPI.connectionClosedHandler = (from: string, message: ConnectionClosed) => { alert(`${message.name}が退室したよ！`) }
+    this.realtimeAPI.answerHandler = (message: AnswerWithSender) => {
+      let account = this.accounts.get(message.accountId)
+      if (account) {
+        account.answer.content = message.content
+      } else {
+        account = { accountId: message.accountId, accountName: '', answer: { content: message.content } }
+      }
+      this.accounts.set(message.accountId, account)
+    }
+    this.realtimeAPI.correctAnswerHandler = (message: CorrectAnswer) => { console.log(message) }
+    this.realtimeAPI.temporaryDataHandler = (message: TemporaryData) => {
+      this.temporaryData = message
+    }
+    this.realtimeAPI.connectionOpenedHandler = (message: ConnectionOpened) => {
+      this.name = 'aaaaaaaa'
+      if (message.accountId === this.accountId) {
+        this.name = message.name
+        return
+      }
+      alert(`${message.name}が参加したよ！`)
+      let account = this.accounts.get(message.accountId)
+      if (account) {
+        account.accountId = message.accountId
+        account.accountName = message.name
+      } else {
+        account = { accountId: message.accountId, accountName: message.name, answer: { content: '' } }
+      }
+      this.accounts.set(message.accountId, account)
+    }
+    this.realtimeAPI.connectionClosedHandler = (message: ConnectionClosed) => {
+      // alert(`${message.name}が退室したよ！`)
+      this.accounts.delete(message.accountId)
+    }
 
     const roomId = this.$route.params.roomId
     this.realtimeAPI.connect(roomId)
@@ -78,11 +124,17 @@ export default class RoomView extends Vue {
   }
 
   onClickAnswer () {
-    this.realtimeAPI.answer(this.myAnswer)
+    this.realtimeAPI.answer({ content: this.temporaryData.answer })
   }
 
   onClickCorrectAnswer () {
     this.realtimeAPI.correctAnswer(this.correctAnswer)
+  }
+
+  onClickRename () {
+    this.restAPI.accountName = this.name
+    this.realtimeAPI.accountName = this.name
+    this.realtimeAPI.rename({ name: this.name })
   }
 
   private uuidv4 () {
@@ -91,8 +143,5 @@ export default class RoomView extends Vue {
       return v.toString(16)
     })
   }
-}
-type AnswerWithSender = Answer & {
-  from: string;
 }
 </script>
