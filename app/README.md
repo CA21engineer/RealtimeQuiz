@@ -18,7 +18,8 @@ $ wscat --wait 600 -c localhost:18080/ws/room/debugRoomId/accountId/child2/name/
 $ wscat --wait 600 -c localhost:18080/ws/room/debugRoomId/accountId/child3/name/child3_name
 
 
-{"no":1, "content":"Quiz", "points":10}
-{"content":"Answer"}
-{"content":"", "points": 11}
+> {"no":1, "content":"Quiz", "points":10}
+> {"content":"Answer"}
+> {"content":"", "points": 11}
+> {"name":"新しい名前"}
 ```

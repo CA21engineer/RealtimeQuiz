@@ -14,10 +14,7 @@ import akka.util.Timeout
 import com.github.BambooTuna.RealtimeQuiz.application.json.RoomJson
 import com.github.BambooTuna.RealtimeQuiz.domain.Account
 import com.github.BambooTuna.RealtimeQuiz.domain.RoomAggregate.Protocol._
-import com.github.BambooTuna.RealtimeQuiz.domain.ws.{
-  WebSocketMessage,
-  WebSocketMessageWithSender
-}
+import com.github.BambooTuna.RealtimeQuiz.domain.ws.WebSocketMessage
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -49,7 +46,7 @@ class RoomHandler(roomAggregate: ActorRef)(
 
   def createRoomRoute: QueryP[(String, String)] = _ { (accountId, name) =>
     val f =
-      (roomAggregate ? CreateRoomRequest(Account(accountId, name)))
+      (roomAggregate ? CreateRoomRequest(Account.create(accountId, name)))
         .asInstanceOf[Future[CreateRoomResponse]]
     onComplete(f) {
       case Failure(exception) =>
@@ -67,7 +64,7 @@ class RoomHandler(roomAggregate: ActorRef)(
   def joinRoomRoute: QueryP[(String, String, String)] = _ {
     (roomId, accountId, name) =>
       val f =
-        (roomAggregate ? JoinRoomRequest(roomId, Account(accountId, name)))
+        (roomAggregate ? JoinRoomRequest(roomId, accountId, name))
           .asInstanceOf[Future[JoinRoomResponse]]
       onComplete(f) {
         case Failure(exception) =>
@@ -78,8 +75,7 @@ class RoomHandler(roomAggregate: ActorRef)(
               handleWebSocketMessages(
                 decodeFlow via connection.watchTermination()((_, f) => {
                   f.onComplete { _ =>
-                    println(s"RemoveRoomRequest: $roomId")
-                    roomAggregate ! RemoveRoomRequest(roomId)
+                    roomAggregate ! RemoveRoomRequest(accountId, roomId)
                   }(materializer.executionContext)
                 }) via encodeFlow)
             case JoinRoomFailure(message) =>
@@ -96,9 +92,8 @@ class RoomHandler(roomAggregate: ActorRef)(
     }
   }
 
-  def encodeFlow: Flow[WebSocketMessageWithSender, Message, NotUsed] = {
-    Flow[WebSocketMessageWithSender].map(a =>
-      TextMessage.Strict(a.toJsonString))
+  def encodeFlow: Flow[WebSocketMessage, Message, NotUsed] = {
+    Flow[WebSocketMessage].map(a => TextMessage.Strict(a.toJsonString))
   }
 
 }

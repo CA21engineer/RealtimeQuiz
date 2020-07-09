@@ -5,17 +5,15 @@ import akka.actor.Actor
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Flow
 import com.github.BambooTuna.RealtimeQuiz.domain.RoomAggregate.Protocol._
-import com.github.BambooTuna.RealtimeQuiz.domain.ws.{
-  WebSocketMessage,
-  WebSocketMessageWithSender
-}
+import com.github.BambooTuna.RealtimeQuiz.domain.ws.WebSocketMessage
 
 import scala.util.{Failure, Success, Try}
 
 class RoomAggregate extends Actor {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  val debugRoom = Room.create("debugRoomId", Account("admin", "I'm admin"))
+  val debugRoom =
+    Room.create("debugRoomId", Account.create("admin", "I'm admin"))
   val rooms: scala.collection.mutable.Map[String, Room] =
     scala.collection.mutable.Map(debugRoom.roomId -> debugRoom)
 
@@ -47,30 +45,33 @@ class RoomAggregate extends Actor {
   }
 
   def joinRoom(request: JoinRoomRequest)
-    : Try[Flow[WebSocketMessage, WebSocketMessageWithSender, NotUsed]] = {
+    : Try[Flow[WebSocketMessage, WebSocketMessage, NotUsed]] = {
     this.rooms.get(request.roomId) match {
       case Some(value) =>
         value
-          .join(request.account) match {
-          case Failure(_) => value.getConnection(request.account)
-          case Success(room) =>
-            this.rooms.update(room.roomId, room)
-            room.getConnection(request.account)
+          .join(request.accountId, request.accountName) match {
+          case Failure(_) => value.getConnection(request.accountId)
+          case Success(_) => value.getConnection(request.accountId)
         }
-      case None => Failure(new Exception("ルームが見つかりません"))
+      case scala.None => Failure(new Exception("ルームが見つかりません"))
     }
   }
 
   def leaveRoom(request: LeaveRoomRequest): Try[Unit] = {
     this.rooms.get(request.roomId) match {
-      case Some(value) =>
-        value.leave(request.account).map(r => this.rooms.update(r.roomId, r))
-      case None => Failure(new Exception("ルームが見つかりません"))
+      case Some(value) => value.leave(request.account)
+      case scala.None  => Failure(new Exception("ルームが見つかりません"))
     }
   }
 
   def removeRoom(request: RemoveRoomRequest): Unit = {
-    this.rooms.remove(request.roomId)
+    this.rooms
+      .get(request.roomId)
+      .filter(_.parent.accountId == request.accountId)
+      .foreach(_ => {
+        println(s"RemoveRoomRequest: ${request.roomId}")
+        this.rooms.remove(request.roomId)
+      })
   }
 }
 
@@ -86,16 +87,18 @@ object RoomAggregate {
     case class CreateRoomSuccess(roomId: String) extends CreateRoomResponse
     case class CreateRoomFailure(message: String) extends CreateRoomResponse
 
-    case class JoinRoomRequest(roomId: String, account: Account)
+    case class JoinRoomRequest(roomId: String,
+                               accountId: String,
+                               accountName: String)
     sealed trait JoinRoomResponse
     case class JoinRoomSuccess(
-        connection: Flow[WebSocketMessage, WebSocketMessageWithSender, NotUsed])
+        connection: Flow[WebSocketMessage, WebSocketMessage, NotUsed])
         extends JoinRoomResponse
     case class JoinRoomFailure(message: String) extends JoinRoomResponse
 
     case class LeaveRoomRequest(roomId: String, account: Account)
 
-    case class RemoveRoomRequest(roomId: String)
+    case class RemoveRoomRequest(accountId: String, roomId: String)
 
   }
 
