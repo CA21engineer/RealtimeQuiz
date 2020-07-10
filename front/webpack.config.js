@@ -1,37 +1,37 @@
-const path = require("path");
-const webpack = require("webpack");
+const path = require('path');
+const webpack = require('webpack');
 
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const HtmlPlugin = require("html-webpack-plugin");
+const HtmlPlugin = require('html-webpack-plugin');
 
-const TerserPlugin = require("terser-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 
-const workboxPlugin = require("workbox-webpack-plugin");
+const workboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
-  mode: "development",
+  mode: 'development',
 
   entry: {
-    index: "./src/index.js",
-    room: "./src/room.js",
+    index: './src/index.js',
+    room: './src/room.js',
   },
 
   plugins: [
     new HtmlPlugin({
-      chunks: ["index"],
-      filename: "index.html",
-      template: "./src/pages/index.html",
+      chunks: ['index'],
+      filename: 'index.html',
+      template: './src/pages/index.html',
     }),
     new HtmlPlugin({
-      chunks: ["room"],
-      filename: "room.html",
-      template: "./src/pages/room.html",
+      chunks: ['room'],
+      filename: 'room.html',
+      template: './src/pages/room.html',
     }),
     new webpack.ProgressPlugin(),
-    new MiniCssExtractPlugin({ filename: "main.[chunkhash].css" }),
+    new MiniCssExtractPlugin({ filename: 'main.[chunkhash].css' }),
     new workboxPlugin.GenerateSW({
-      swDest: "sw.js",
+      swDest: 'sw.js',
       clientsClaim: true,
       skipWaiting: false,
     }),
@@ -41,8 +41,8 @@ module.exports = {
     rules: [
       {
         test: /.(js|jsx)$/,
-        include: [path.resolve(__dirname, "src")],
-        loader: "babel-loader",
+        include: [path.resolve(__dirname, 'src')],
+        loader: 'babel-loader',
       },
       {
         test: /.(scss|css)$/,
@@ -52,17 +52,17 @@ module.exports = {
           //   loader: MiniCssExtractPlugin.loader,
           // },
           {
-            loader: "style-loader",
+            loader: 'style-loader',
           },
           {
-            loader: "css-loader",
+            loader: 'css-loader',
 
             options: {
               sourceMap: true,
             },
           },
           {
-            loader: "sass-loader",
+            loader: 'sass-loader',
 
             options: {
               sourceMap: true,
@@ -84,7 +84,7 @@ module.exports = {
         },
       },
 
-      chunks: "async",
+      chunks: 'async',
       minChunks: 1,
       minSize: 30000,
       name: true,

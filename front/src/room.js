@@ -1,10 +1,10 @@
-import { logger } from "./utils/log";
+import { logger } from './utils/log';
 
-import "./style/room.scss";
+import './style/room.scss';
 
-logger("Hello World from room main file!");
+logger('Hello World from room main file!');
 
-const p = document.createElement("p");
-p.textContent = "/room";
+const p = document.createElement('p');
+p.textContent = '/room';
 
 document.body.appendChild(p);
