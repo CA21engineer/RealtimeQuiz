@@ -48,9 +48,9 @@ module.exports = {
         test: /.(scss|css)$/,
 
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
+          // {
+          //   loader: MiniCssExtractPlugin.loader,
+          // },
           {
             loader: "style-loader",
           },
