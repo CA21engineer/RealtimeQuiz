@@ -7,7 +7,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm-run-all -s clean build:production",
-    "build:production": "webpack",
+    "build:production": "webpack --mode=production",
     "clean": "rimraf ./dist",
     "dev": "webpack-dev-server",
     "format": "npm-run-all -s format:*",
