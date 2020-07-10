@@ -1,15 +1,16 @@
-# 🚀 Welcome to your new awesome project!
+# RealtimeQuiz-front
 
-This project has been created using **webpack scaffold**, you can now run
-
-```
-npm run build
-```
-
-or
-
-```
-yarn build
+## Launching
+```sh
+$ npm install
+$ npm run dev
 ```
 
-to bundle your application
+## Rules
+### CSS
+BEM + SCSSでやります。
+
+命名規則は以下の通りです。
+**ブロック__要素--修飾子**
+
+例: `display__button--disabled`とか
