@@ -1,11 +1,16 @@
-# vue-template
+# RealtimeQuiz-front
 
-### serve
-```
-sh serve.sh 8080
+## Launching
+```sh
+$ npm install
+$ npm run dev
 ```
 
-### build
-```
-sh build.sh
-```
+## Rules
+### CSS
+BEM + SCSSでやります。
+
+命名規則は以下の通りです。
+**ブロック__要素--修飾子**
+
+例: `display__button--disabled`とか
