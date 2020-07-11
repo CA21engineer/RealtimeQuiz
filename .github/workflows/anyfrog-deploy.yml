@@ -1,0 +1,23 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: deploy
+        env:
+          SECRET_KEY: ${{ secrets.ANYFROG_NET_SSH_SECRET }}
+          SSH_USER: ${{ secrets.ANYFROG_NET_SSH_USER }}
+          SSH_ADDR: ${{ secrets.ANYFROG_NET_SSH_HOST }}
+          SSH_COMMAND: ${{ secrets.ANYFROG_NET_SSH_COMMAND }}
+          SSH_PORT: ${{ secrets.ANYFROG_NET_SSH_PORT }}
+        run: |
+          echo "$SECRET_KEY" > secret_key
+          chmod 600 secret_key
+          ssh -oStrictHostKeyChecking=no ${SSH_USER}@${SSH_ADDR} -p $SSH_PORT -i secret_key "$SSH_COMMAND"
