@@ -9,7 +9,7 @@
     "start": "next start",
     "dev": "next dev",
     "build": "npm-run-all -s clean build:production",
-    "build:production": "next build",
+    "build:production": "next build && next export -o dist/",
     "clean": "rimraf ./dist",
     "format": "npm-run-all -s format:*",
     "format:fix": "prettier --write './src/**/*.{ts, tsx, js, jsx, json}'",
