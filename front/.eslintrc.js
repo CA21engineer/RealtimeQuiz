@@ -28,6 +28,10 @@ module.exports = {
   rules: {
     'no-console': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
+    'no-param-reassign': [
+      'error',
+      { props: true, ignorePropertyModificationsFor: ['draft'] },
+    ],
     'react/prop-types': [2, { ignore: ['children'] }],
     'react/jsx-props-no-spreading': 0,
     'import/extensions': [
