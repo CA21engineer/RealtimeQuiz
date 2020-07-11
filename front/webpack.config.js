@@ -17,8 +17,13 @@ module.exports = (_, argv) => {
     mode: argv.mode || 'development',
 
     entry: {
-      index: './src/index.js',
-      room: './src/room.js',
+      index: './src/index.tsx',
+      room: './src/room.tsx',
+    },
+
+    resolve: {
+      mainFields: ['browser', 'main', 'module'],
+      extensions: ['.ts', '.tsx', 'scss'],
     },
 
     plugins: [
@@ -44,13 +49,12 @@ module.exports = (_, argv) => {
     module: {
       rules: [
         {
-          test: /.(js)$/,
+          test: /.t(s|sx)$/,
           include: [path.resolve(__dirname, 'src')],
-          loader: 'babel-loader',
+          loader: 'ts-loader',
         },
         {
           test: /.(scss|css)$/,
-
           use: [
             isProduction && {
               loader: MiniCssExtractPlugin.loader,
