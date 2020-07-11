@@ -19,7 +19,7 @@
 #### サーバからブラウザへ
 ```
 {
-    'type': 'Status',
+    'type': 'status',
 
     'data': {
         // 今の状態を示す
@@ -53,7 +53,7 @@
 ##### ブラウザからサーバへ 
 ```
 {
-    'type': 'joiningRoom',
+    'type': 'changeName',
 
     'data': {
         'accountName': string,
@@ -63,15 +63,7 @@
 ```
 
 ##### サーバからブラウザへ
-```
-{
-    'type': 'joinedRoom'
-
-    'data': {
-        'accountId': string,
-    }
-}
-```
+(none)
 
 ### 出題待ち状態
 

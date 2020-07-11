@@ -1,8 +1,4 @@
-export interface JoiningRoomData {
+export interface ChangeNameData {
     accountName: string,
     isSpectator: boolean,
-}
-
-export interface JoinedRoomData {
-    accountId: string,
 }
