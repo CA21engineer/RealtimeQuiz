@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppProps } from 'next/app';
 
-import '../style/global.scss';
+import 'style/global.scss';
 
 function App({ Component, pageProps }: AppProps) {
   return (
