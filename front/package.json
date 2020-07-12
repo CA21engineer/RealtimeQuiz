@@ -13,7 +13,7 @@
     "clean": "rimraf ./dist",
     "format": "npm-run-all -s format:*",
     "format:fix": "prettier --write './src/**/*.{ts, tsx, js, jsx, json}'",
-    "format:lint": "eslint ./src --ext .ts,.tsx,.js.jsx,.json",
+    "lint": "eslint ./src --ext .ts,.tsx,.js.jsx,.json",
     "storybook": "start-storybook -p 6006 -c .storybook"
   },
   "lint-staged": {
