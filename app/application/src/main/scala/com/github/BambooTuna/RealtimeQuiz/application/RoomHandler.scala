@@ -20,6 +20,9 @@ import scala.util.{Failure, Success}
 import io.circe.generic.auto._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.{Directive, Route}
+
 class RoomHandler(roomAggregate: ActorRef)(
     implicit materializer: Materializer) {
   type QueryP[Q] = Directive[Q] => Route
@@ -62,25 +65,30 @@ class RoomHandler(roomAggregate: ActorRef)(
   }
 
   def joinRoomRoute: QueryP[(String, String)] = _ { (roomId, accountId) =>
-    val f =
-      (roomAggregate ? JoinRoomRequest(roomId, accountId))
-        .asInstanceOf[Future[JoinRoomResponse]]
-    onComplete(f) {
-      case Failure(exception) =>
-        complete(StatusCodes.InternalServerError, exception.getMessage)
-      case Success(value) =>
-        value match {
-          case JoinRoomSuccess(connection) =>
-            handleWebSocketMessages(
-              decodeFlow via connection.watchTermination()((_, f) => {
-                f.onComplete { _ =>
-                  roomAggregate ! RemoveRoomRequest(accountId, roomId)
-                }(materializer.executionContext)
-              }) via encodeFlow)
-          case JoinRoomFailure(message) =>
-            println(message)
-            complete(StatusCodes.BadRequest, message)
-        }
+    parameters('isSpectator.as[Boolean] ?) { isSpectator =>
+      val f =
+        (roomAggregate ? JoinRoomRequest(roomId,
+                                         accountId,
+                                         isSpectator.getOrElse(false)))
+          .asInstanceOf[Future[JoinRoomResponse]]
+      onComplete(f) {
+        case Failure(exception) =>
+          complete(StatusCodes.InternalServerError, exception.getMessage)
+        case Success(value) =>
+          value match {
+            case JoinRoomSuccess(connection) =>
+              handleWebSocketMessages(
+                decodeFlow via connection.watchTermination()((_, f) => {
+                  f.onComplete { _ =>
+                    roomAggregate ! RemoveRoomRequest(accountId, roomId)
+                  }(materializer.executionContext)
+                }) via encodeFlow)
+            case JoinRoomFailure(message) =>
+              println(message)
+              complete(StatusCodes.BadRequest, message)
+          }
+      }
+
     }
   }
 

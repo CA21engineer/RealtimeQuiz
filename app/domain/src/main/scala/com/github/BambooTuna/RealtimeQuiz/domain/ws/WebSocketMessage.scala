@@ -2,9 +2,8 @@ package com.github.BambooTuna.RealtimeQuiz.domain.ws
 
 import com.github.BambooTuna.RealtimeQuiz.domain.{
   Account,
-  CurrentStatus,
-  Destination,
-  Internal
+  AlterStar,
+  CurrentStatus
 }
 import shapeless._
 import io.circe._
@@ -13,10 +12,11 @@ import io.circe.generic.auto._
 import io.circe.shapes._
 
 object WebSocketMessage {
-  type Messages = ParseError :+: CNil
+  type Messages =
+    JoiningRoom :+: SetQuestion :+: SetAnswer :+: SetAlterStars :+: GoToNextQuestion :+: CNil
 
   def parse(message: String): WebSocketMessage = {
-    val json = message.asJson
+    val json = parser.parse(message).getOrElse(Json.Null)
     json.hcursor.downField("type").as[String] match {
       case Left(value) => ParseError(value.getMessage(), message)
       case Right(value) =>
@@ -38,12 +38,9 @@ object WebSocketMessage {
 
 sealed trait WebSocketMessage {
   val typeName: String = getClass.getSimpleName
+
   override def toString: String = this match {
     case data: ParseError =>
-      Json
-        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
-        .noSpaces
-    case data: PlayerList =>
       Json
         .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
         .noSpaces
@@ -51,18 +48,46 @@ sealed trait WebSocketMessage {
       Json
         .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
         .noSpaces
+    case data: PlayerList =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+    case data: JoiningRoom =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+    case data: SetQuestion =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+    case data: SetAnswer =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+    case data: SetAlterStars =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+    case data: GoToNextQuestion =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
   }
 }
 
 case class ParseError(message: String, org: String) extends WebSocketMessage
-
+case class ConnectionClosed(id: String) extends WebSocketMessage
+// Receive Only
 case class PlayerList(
     currentStatus: CurrentStatus,
     currentQuestion: Option[String],
     currentTimeLimit: Option[Int],
     players: Seq[Account]
 ) extends WebSocketMessage
-case class ConnectionClosed(id: String) extends WebSocketMessage
 
-case class WebSocketMessageWithDestination(data: WebSocketMessage,
-                                           destination: Destination)
+// Send Only
+case class JoiningRoom(accountName: String) extends WebSocketMessage
+case class SetQuestion(question: String) extends WebSocketMessage
+case class SetAnswer(answer: String) extends WebSocketMessage
+case class SetAlterStars(alterStars: Seq[AlterStar]) extends WebSocketMessage
+case class GoToNextQuestion() extends WebSocketMessage

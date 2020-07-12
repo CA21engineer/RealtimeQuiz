@@ -1,4 +1,4 @@
-package com.github.BambooTuna.RealtimeQuiz.domain
+package com.github.BambooTuna.RealtimeQuiz.domain.ws
 
 sealed trait Destination {
   def accessible(id: String): Boolean

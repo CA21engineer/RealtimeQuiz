@@ -18,8 +18,11 @@ $ wscat --wait 600 -c localhost:18080/ws/room/DebugRoom/accountId/child2
 $ wscat --wait 600 -c localhost:18080/ws/room/DebugRoom/accountId/child3
 
 
-> {"no":1, "content":"Quiz", "points":10}
-> {"content":"Answer"}
-> {"content":"", "points": 11}
-> {"name":"新しい名前"}
+
+
+> {"type":"JoiningRoom", "data":{"accountName":"CHILD1"}}
+> {"type":"SetQuestion", "data":{"question":"問題です！"}}
+> {"type":"SetAnswer", "data":{"answer":"答えはこれ？"}}
+> {"type":"SetAlterStars", "data":{"alterStars":[{"accountId":"child1", "alterStars":10}]}}
+> {"type":"GoToNextQuestion", "data":{}}
 ```

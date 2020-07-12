@@ -17,14 +17,18 @@ case class Account(
     connectionStatus: ConnectionStatus = Offline
 ) {
 
-//  var connectionOpened: Boolean = false
-
-  def init(): Account = copy(answer = None, alterStars = 0)
+  def init(): Account = copy(answer = None, isAnswered = false, alterStars = 0)
 
   def rename(newName: String): Account = copy(name = newName)
-  def setAnswer(newAnswer: String): Account = copy(answer = Some(newAnswer))
-  def checkAnswer(f: String => Int): Account =
-    copy(stars = this.stars + this.answer.map(f).getOrElse(0))
+  def setAnswer(newAnswer: String): Account = {
+    if (!isAnswered) {
+      copy(answer = Some(newAnswer), isAnswered = true)
+    } else this
+  }
+  def checkAnswer(f: String => Int): Account = {
+    val alterStars = this.answer.map(f).getOrElse(0)
+    copy(stars = this.stars + alterStars, alterStars = alterStars)
+  }
 
   def hideAnswer: Account = copy(answer = None)
 

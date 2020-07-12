@@ -49,7 +49,7 @@ class QuizRoomAggregates extends Actor {
     this.rooms.get(request.roomId) match {
       case Some(value) =>
         value
-          .join(request.accountId) match {
+          .join(request.accountId, request.isSpectator) match {
           case Failure(_) => value.getConnection(request.accountId)
           case Success(_) => value.getConnection(request.accountId)
         }
@@ -87,7 +87,9 @@ object QuizRoomAggregates {
     case class CreateRoomSuccess(roomId: String) extends CreateRoomResponse
     case class CreateRoomFailure(message: String) extends CreateRoomResponse
 
-    case class JoinRoomRequest(roomId: String, accountId: String)
+    case class JoinRoomRequest(roomId: String,
+                               accountId: String,
+                               isSpectator: Boolean)
     sealed trait JoinRoomResponse
     case class JoinRoomSuccess(
         connection: Flow[WebSocketMessage, WebSocketMessage, NotUsed])
