@@ -1,35 +1,39 @@
 import { SetAlterStarsPayload } from '../interfaces/SetAlterStars';
 
 export class Emitter {
-    constructor(private emitter: (type: string, data?: any) => void) { }
+  private emitter: (type: string, data?: unknown) => void;
 
-    // 名前を変更する
-    public changeName(newName: string) {
-        this.emitter('changeName', newName);
-    }
+  constructor(emitter: (type: string, data?: unknown) => void) {
+    this.emitter = emitter;
+  }
 
-    // 問題を送信する
-    public setQuestion(question: string) {
-        this.emitter('setQuestion', question);
-    }
+  // 名前を変更する
+  public changeName(newName: string): void {
+    this.emitter('changeName', newName);
+  }
 
-    // 一斉に問題をオープンする
-    public openAnswers() {
-        this.emitter('openAnswers');
-    }
+  // 問題を送信する
+  public setQuestion(question: string): void {
+    this.emitter('setQuestion', question);
+  }
 
-    // 解答を送信する
-    public setAnswer(question: string) {
-        this.emitter('setAnswer', question);
-    }
+  // 一斉に問題をオープンする
+  public openAnswers(): void {
+    this.emitter('openAnswers');
+  }
 
-    // 変化させる星の数を設定する
-    public setAlterStars(alterStars: SetAlterStarsPayload) {
-        this.emitter('setAlterStars', alterStars);
-    }
+  // 解答を送信する
+  public setAnswer(question: string): void {
+    this.emitter('setAnswer', question);
+  }
 
-    // 次の問題を出題する
-    public goToNextQuestion() {
-        this.emitter('goToNextQuestion');
-    }
+  // 変化させる星の数を設定する
+  public setAlterStars(alterStars: SetAlterStarsPayload): void {
+    this.emitter('setAlterStars', alterStars);
+  }
+
+  // 次の問題を出題する
+  public goToNextQuestion(): void {
+    this.emitter('goToNextQuestion');
+  }
 }
