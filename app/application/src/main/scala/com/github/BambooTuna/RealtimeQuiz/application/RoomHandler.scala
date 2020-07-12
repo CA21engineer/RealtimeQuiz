@@ -11,17 +11,15 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
 import akka.stream.scaladsl.Flow
 import akka.util.Timeout
-import com.github.BambooTuna.RealtimeQuiz.application.json.RoomJson
+import com.github.BambooTuna.RealtimeQuiz.application.json.{CreateRoomJson, RoomJson}
 import com.github.BambooTuna.RealtimeQuiz.domain.QuizRoomAggregates.Protocol._
 import com.github.BambooTuna.RealtimeQuiz.domain.ws.WebSocketMessage
+
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 import io.circe.generic.auto._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{Directive, Route}
 
 class RoomHandler(roomAggregate: ActorRef)(
     implicit materializer: Materializer) {
@@ -46,21 +44,21 @@ class RoomHandler(roomAggregate: ActorRef)(
   }
 
   def createRoomRoute: QueryP[Tuple1[String]] = _ { accountId =>
-    //TODO Add Json Body
-    val roomName = "// TODOルーム名"
-    val f =
-      (roomAggregate ? CreateRoomRequest(accountId, roomName))
-        .asInstanceOf[Future[CreateRoomResponse]]
-    onComplete(f) {
-      case Failure(exception) =>
-        complete(StatusCodes.InternalServerError, exception.getMessage)
-      case Success(value) =>
-        value match {
-          case CreateRoomSuccess(roomId) =>
-            complete(StatusCodes.OK -> RoomJson(roomId, roomName, 0))
-          case CreateRoomFailure(message) =>
-            complete(StatusCodes.BadRequest, message)
-        }
+    entity(as[CreateRoomJson]) { json =>
+      val f =
+        (roomAggregate ? CreateRoomRequest(accountId, json.roomName))
+          .asInstanceOf[Future[CreateRoomResponse]]
+      onComplete(f) {
+        case Failure(exception) =>
+          complete(StatusCodes.InternalServerError, exception.getMessage)
+        case Success(value) =>
+          value match {
+            case CreateRoomSuccess(roomId) =>
+              complete(StatusCodes.OK -> RoomJson(roomId, json.roomName, 0))
+            case CreateRoomFailure(message) =>
+              complete(StatusCodes.BadRequest, message)
+          }
+      }
     }
   }
 
