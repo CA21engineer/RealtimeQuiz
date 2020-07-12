@@ -1,4 +1,4 @@
 // import test
-export const logger = (log: string) => {
+export function logger(log: string): void {
   console.log(log);
-};
+}
