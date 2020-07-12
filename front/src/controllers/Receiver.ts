@@ -36,8 +36,8 @@ export class Receiver extends ReceiverBase {
     }
 
     /**
-     * 強制解答送信要求が送られてきた時
-     * 一斉に解答オープンボタンを押した
+     * 強制解答送信要求が送られてきた
+     * 管理者が解答締め切りボタンを押した時
      */
     forceSendAnswer() {
         //
