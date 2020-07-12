@@ -32,7 +32,7 @@ module.exports = {
       'error',
       { props: true, ignorePropertyModificationsFor: ['draft'] },
     ],
-    'react/prop-types': [2, { ignore: ['children'] }],
+    'react/prop-types': [0, { ignore: ['children'] }],
     'react/jsx-props-no-spreading': 0,
     'import/extensions': [
       'error',

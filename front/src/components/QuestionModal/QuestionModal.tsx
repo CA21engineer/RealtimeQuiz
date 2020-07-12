@@ -37,8 +37,8 @@ export const QuestionModal: React.FC<Props> = ({
         inputBody={answerBody}
         onInputAnswer={onInputAnswer}
         onClickSubmitButton={onSubmitAnswer}
-        inputPlaceholder={'回答を入力'}
-        submitLabel={'回答する'}
+        inputPlaceholder="回答を入力"
+        submitLabel="回答する"
       />
     </div>
   );
