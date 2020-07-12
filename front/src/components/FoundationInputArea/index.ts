@@ -1,0 +1,1 @@
+export { FoundationInputArea } from './FoundationInputArea';

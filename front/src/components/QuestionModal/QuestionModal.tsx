@@ -1,7 +1,8 @@
 import React from 'react';
-import './questionModal.scss';
-import { FoundationButton } from '../FoundationButton';
 import { logger } from '../../utils/log';
+import { FoundationInputArea } from '../FoundationInputArea';
+
+import './questionModal.scss';
 
 type Props = {
   questionBody: string;
@@ -32,18 +33,13 @@ export const QuestionModal: React.FC<Props> = ({
       <h2 className="QuestionModal__Title">問題</h2>
       <h3 className="QuestionModal__QuestionBody">{questionBody}</h3>
       <span className="QuestionModal__RemainTime">{`残り時間 ${remainTime}秒`}</span>
-      <input
-        className="QuestionModal__Input"
-        type="text"
-        value={answerBody}
-        placeholder="回答を入力"
-        onChange={(e) => {
-          onInputAnswer(e.target.value);
-        }}
+      <FoundationInputArea
+        inputBody={answerBody}
+        onInputAnswer={onInputAnswer}
+        onClickSubmitButton={onSubmitAnswer}
+        inputPlaceholder={'回答を入力'}
+        submitLabel={'回答する'}
       />
-      <div className="QuestionModal__Submit">
-        <FoundationButton label="回答する" onClick={onSubmitAnswer} />
-      </div>
     </div>
   );
 };
