@@ -3,19 +3,17 @@ package com.github.BambooTuna.RealtimeQuiz.application
 import akka.NotUsed
 import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.model.ws.{BinaryMessage, Message, TextMessage}
+import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.pattern.ask
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directive
 import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
-import akka.stream.scaladsl.{Flow, Sink}
+import akka.stream.scaladsl.Flow
 import akka.util.Timeout
 import com.github.BambooTuna.RealtimeQuiz.application.json.RoomJson
-import com.github.BambooTuna.RealtimeQuiz.domain.Account
-import com.github.BambooTuna.RealtimeQuiz.domain.RoomAggregate.Protocol._
+import com.github.BambooTuna.RealtimeQuiz.domain.QuizRoomAggregates.Protocol._
 import com.github.BambooTuna.RealtimeQuiz.domain.ws.WebSocketMessage
-
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
@@ -38,15 +36,17 @@ class RoomHandler(roomAggregate: ActorRef)(
         complete(
           StatusCodes.OK ->
             value.rooms.map { room =>
-              RoomJson(room.roomId, room.children.size)
+              RoomJson(room.roomId, room.roomName, room.children.size)
             })
     }
 
   }
 
-  def createRoomRoute: QueryP[(String, String)] = _ { (accountId, name) =>
+  def createRoomRoute: QueryP[Tuple1[String]] = _ { accountId =>
+    //TODO Add Json Body
+    val roomName = "// TODOルーム名"
     val f =
-      (roomAggregate ? CreateRoomRequest(Account.create(accountId, name)))
+      (roomAggregate ? CreateRoomRequest(accountId, roomName))
         .asInstanceOf[Future[CreateRoomResponse]]
     onComplete(f) {
       case Failure(exception) =>
@@ -54,35 +54,34 @@ class RoomHandler(roomAggregate: ActorRef)(
       case Success(value) =>
         value match {
           case CreateRoomSuccess(roomId) =>
-            complete(StatusCodes.OK -> RoomJson(roomId, 0))
+            complete(StatusCodes.OK -> RoomJson(roomId, roomName, 0))
           case CreateRoomFailure(message) =>
             complete(StatusCodes.BadRequest, message)
         }
     }
   }
 
-  def joinRoomRoute: QueryP[(String, String, String)] = _ {
-    (roomId, accountId, name) =>
-      val f =
-        (roomAggregate ? JoinRoomRequest(roomId, accountId, name))
-          .asInstanceOf[Future[JoinRoomResponse]]
-      onComplete(f) {
-        case Failure(exception) =>
-          complete(StatusCodes.InternalServerError, exception.getMessage)
-        case Success(value) =>
-          value match {
-            case JoinRoomSuccess(connection) =>
-              handleWebSocketMessages(
-                decodeFlow via connection.watchTermination()((_, f) => {
-                  f.onComplete { _ =>
-                    roomAggregate ! RemoveRoomRequest(accountId, roomId)
-                  }(materializer.executionContext)
-                }) via encodeFlow)
-            case JoinRoomFailure(message) =>
-              println(message)
-              complete(StatusCodes.BadRequest, message)
-          }
-      }
+  def joinRoomRoute: QueryP[(String, String)] = _ { (roomId, accountId) =>
+    val f =
+      (roomAggregate ? JoinRoomRequest(roomId, accountId))
+        .asInstanceOf[Future[JoinRoomResponse]]
+    onComplete(f) {
+      case Failure(exception) =>
+        complete(StatusCodes.InternalServerError, exception.getMessage)
+      case Success(value) =>
+        value match {
+          case JoinRoomSuccess(connection) =>
+            handleWebSocketMessages(
+              decodeFlow via connection.watchTermination()((_, f) => {
+                f.onComplete { _ =>
+                  roomAggregate ! RemoveRoomRequest(accountId, roomId)
+                }(materializer.executionContext)
+              }) via encodeFlow)
+          case JoinRoomFailure(message) =>
+            println(message)
+            complete(StatusCodes.BadRequest, message)
+        }
+    }
   }
 
   def decodeFlow: Flow[Message, WebSocketMessage, NotUsed] = {
@@ -93,7 +92,7 @@ class RoomHandler(roomAggregate: ActorRef)(
   }
 
   def encodeFlow: Flow[WebSocketMessage, Message, NotUsed] = {
-    Flow[WebSocketMessage].map(a => TextMessage.Strict(a.toJsonString))
+    Flow[WebSocketMessage].map(a => TextMessage.Strict(a.toString))
   }
 
 }

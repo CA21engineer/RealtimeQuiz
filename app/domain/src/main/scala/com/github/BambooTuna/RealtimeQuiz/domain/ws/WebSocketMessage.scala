@@ -1,6 +1,11 @@
 package com.github.BambooTuna.RealtimeQuiz.domain.ws
 
-import com.github.BambooTuna.RealtimeQuiz.domain.{Account, Destination}
+import com.github.BambooTuna.RealtimeQuiz.domain.{
+  Account,
+  CurrentStatus,
+  Destination,
+  Internal
+}
 import shapeless._
 import io.circe._
 import io.circe.syntax._
@@ -8,40 +13,56 @@ import io.circe.generic.auto._
 import io.circe.shapes._
 
 object WebSocketMessage {
-  type Messages = Quiz :+: Answer :+: CorrectAnswer :+: ReName :+: CNil
+  type Messages = ParseError :+: CNil
+
   def parse(message: String): WebSocketMessage = {
-    parser.decode[Messages](message) match {
-      case Right(v) => Coproduct.unsafeGet(v).asInstanceOf[WebSocketMessage]
-      case Left(e)  => ParseError(e.getMessage, message)
+    val json = message.asJson
+    json.hcursor.downField("type").as[String] match {
+      case Left(value) => ParseError(value.getMessage(), message)
+      case Right(value) =>
+        json.hcursor.downField("data").as[Messages] match {
+          case Right(v) =>
+            val WebSocketMessage =
+              Coproduct.unsafeGet(v).asInstanceOf[WebSocketMessage]
+            if (WebSocketMessage.typeName == value) WebSocketMessage
+            else ParseError("typeName failed", message)
+          case Left(e) => ParseError(e.getMessage(), message)
+        }
     }
   }
+
+  def connectionClosed(id: String): WebSocketMessageWithDestination =
+    WebSocketMessageWithDestination(ConnectionClosed(id), Internal)
+
 }
 
 sealed trait WebSocketMessage {
-  def toJsonString: String = this.asJson.noSpaces
-  def addDestination(
-      destination: Destination): WebSocketMessageWithDestination =
-    WebSocketMessageWithDestination(this, destination)
+  val typeName: String = getClass.getSimpleName
+  override def toString: String = this match {
+    case data: ParseError =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+    case data: PlayerList =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+    case data: ConnectionClosed =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+  }
 }
 
-// Receive
 case class ParseError(message: String, org: String) extends WebSocketMessage
-case class ConnectionOpened(accountId: String, name: String)
-    extends WebSocketMessage
-case class ConnectionClosed(accountId: String, name: String)
-    extends WebSocketMessage
-case class TemporaryData(answer: String, points: Int) extends WebSocketMessage
 
-// Send & Receive
-case class Quiz(no: Int, content: String, points: Int) extends WebSocketMessage
-case class Answer(content: String) extends WebSocketMessage
-case class CorrectAnswer(content: String, points: Int) extends WebSocketMessage
+case class PlayerList(
+    currentStatus: CurrentStatus,
+    currentQuestion: Option[String],
+    currentTimeLimit: Option[Int],
+    players: Seq[Account]
+) extends WebSocketMessage
+case class ConnectionClosed(id: String) extends WebSocketMessage
 
-// Send
-case class ReName(name: String) extends WebSocketMessage
-
-case class WebSocketMessageWithDestination(message: WebSocketMessage,
-                                           destination: Destination) {
-  def toJsonString: String =
-    message.asJson.noSpaces
-}
+case class WebSocketMessageWithDestination(data: WebSocketMessage,
+                                           destination: Destination)
