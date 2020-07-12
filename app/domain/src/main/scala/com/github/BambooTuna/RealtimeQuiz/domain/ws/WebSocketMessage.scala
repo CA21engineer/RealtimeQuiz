@@ -47,6 +47,10 @@ sealed trait WebSocketMessage {
       Json
         .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
         .noSpaces
+    case data: ForceSendAnswer =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
   }
 }
 
@@ -59,6 +63,7 @@ case class PlayerList(
     currentTimeLimit: Option[Int],
     players: Seq[Account]
 ) extends WebSocketMessage
+case class ForceSendAnswer() extends WebSocketMessage
 
 // Send Only
 case class ChangeName(accountName: String) extends WebSocketMessage

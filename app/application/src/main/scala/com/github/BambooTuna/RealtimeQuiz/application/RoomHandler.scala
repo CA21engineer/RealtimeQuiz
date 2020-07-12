@@ -11,7 +11,10 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
 import akka.stream.scaladsl.Flow
 import akka.util.Timeout
-import com.github.BambooTuna.RealtimeQuiz.application.json.{CreateRoomJson, RoomJson}
+import com.github.BambooTuna.RealtimeQuiz.application.json.{
+  CreateRoomJson,
+  RoomJson
+}
 import com.github.BambooTuna.RealtimeQuiz.domain.QuizRoomAggregates.Protocol._
 import com.github.BambooTuna.RealtimeQuiz.domain.ws.WebSocketMessage
 

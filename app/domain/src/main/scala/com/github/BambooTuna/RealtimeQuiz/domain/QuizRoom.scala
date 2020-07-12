@@ -68,13 +68,14 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
     changeAccountStatus(accountId, _.activate)
     noticeEveryone()
     Flow
-      .fromSinkAndSource(sink(accountId),
-                         source via destinationFilterFlow(accountId))
-      .watchTermination()((_, f) => {
-        f.onComplete(_ =>
-          actorRef ! WebSocketMessage.connectionClosed(accountId))(
-          materializer.executionContext); NotUsed
-      })
+      .fromSinkAndSource(
+        sink(accountId).mapMaterializedValue(_.onComplete { _ =>
+          leave(accountId)
+          noticeEveryone()
+        // actorRef ! WebSocketMessage.connectionClosed(accountId)
+        }),
+        source via destinationFilterFlow(accountId)
+      )
   }
 
   protected def noticeEveryone(): Future[Unit] = {
@@ -139,6 +140,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       case v: PlayerList =>
         logger.debug(s"RoomId -> $roomId, $v")
       case v: ConnectionClosed =>
+        //TODO connection close
         logger.debug(s"RoomId -> $roomId, $v")
       case v: ChangeName =>
         changeAccountStatus(accountId, _.rename(v.accountName))
@@ -149,6 +151,10 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
             this.currentStatus = this.currentStatus.next
             this.currentQuestion = Some(v.question)
             //TODO タイマーをセットし一定時間後にforceSendAnswerを全員に送信
+//            Future {
+//              Thread.sleep(10 * 1000)
+//              actorRef ! WebSocketMessageWithDestination(ForceSendAnswer(), Users(this.children.map(_.id).toSeq))
+//            }
           })
           noticeEveryone()
         }
@@ -176,9 +182,6 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       case other =>
         logger.info(s"RoomId -> $roomId, $other")
     }
-//  def changeName(accountId: String, accountName: String): Unit = {
-//    changeAccountStatus(accountId, _.rename(accountName))
-//  }
 }
 
 object QuizRoom {
