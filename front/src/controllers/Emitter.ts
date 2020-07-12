@@ -1,4 +1,4 @@
-import { SetAlterStarsData } from '../interfaces/SetAlterStars';
+import { SetAlterStarsPayload } from '../interfaces/SetAlterStars';
 
 export class Emitter {
     constructor(private emitter: (type: string, data?: any) => void) { }
@@ -24,7 +24,7 @@ export class Emitter {
     }
 
     // 変化させる星の数を設定する
-    public setAlterStars(alterStars: SetAlterStarsData) {
+    public setAlterStars(alterStars: SetAlterStarsPayload) {
         this.emitter('setAlterStars', alterStars);
     }
 

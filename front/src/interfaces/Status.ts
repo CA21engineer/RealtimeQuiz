@@ -1,4 +1,4 @@
-export interface StatusData {
+export interface GameRoomStatusData {
     // ゲームの状態を示す
     currentStatus: 'WAITING_QUESTION' | 'CLOSE_ANSWER' | 'OPEN_ANSWER' | 'OPEN_AGGRIGATE';
 

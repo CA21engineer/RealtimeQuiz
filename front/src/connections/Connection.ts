@@ -14,8 +14,8 @@ export abstract class Connection {
 
     // エミッターを作成する TODO: もう少しいい感じの設計をしたい
     public createEmitter() {
-        return new Emitter((type: string, data?: any) => {
-            this.emitData(type, data ? data : {});
+        return new Emitter((type: string, data: any = {}) => {
+            this.emitData(type, data);
         });
     }
 

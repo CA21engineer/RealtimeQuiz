@@ -1,10 +1,10 @@
 import { ReceiverBase } from './ReceiverBase';
-import { StatusData } from '../interfaces/Status';
+import { GameRoomStatusData } from '../interfaces/Status';
 
 export class Receiver extends ReceiverBase {
     callHandler(type: string, data: unknown) {
         if (type === 'status') {
-            const statusData = data as StatusData;
+            const statusData = data as GameRoomStatusData;
             this.onStatusChanged(statusData);
             return true;
         } else if (type === 'forceSendAnswer') {
@@ -31,7 +31,7 @@ export class Receiver extends ReceiverBase {
      * => 誰かが退出した etc...
      */
     // @ts-ignore
-    onStatusChanged(data: StatusData) {
+    onStatusChanged(data: GameRoomStatusData) {
         //
     }
 
