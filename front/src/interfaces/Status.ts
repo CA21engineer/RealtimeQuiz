@@ -11,10 +11,10 @@ export interface StatusData {
 export interface PlayerStatus {
     id: string,
     name: string,
-    isAdmin: boolean,
-    isSpectator: boolean,
+    role: 'admin' | 'player' | 'spectator',
     stars: number,
     answer: string | null,
     isAnswered: boolean,
     alterStars: number,
+    connectionStatus: 'online' | 'offline',
 }
