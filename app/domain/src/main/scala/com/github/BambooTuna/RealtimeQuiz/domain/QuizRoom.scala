@@ -140,7 +140,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
         logger.debug(s"RoomId -> $roomId, $v")
       case v: ConnectionClosed =>
         logger.debug(s"RoomId -> $roomId, $v")
-      case v: JoiningRoom =>
+      case v: ChangeName =>
         changeAccountStatus(accountId, _.rename(v.accountName))
         noticeEveryone()
       case v: SetQuestion =>
@@ -166,7 +166,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
                                   _.checkAnswer(_ => alterStar.alterStars)))
           noticeEveryone()
         }
-      case v: GoToNextQuestion =>
+      case GoToNextQuestion =>
         if (isParent(accountId) && this.currentStatus == OpenAggregate) {
           this.currentStatus = this.currentStatus.next
           this.children.foreach(account =>

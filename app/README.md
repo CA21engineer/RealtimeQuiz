@@ -20,7 +20,7 @@ $ wscat --wait 600 -c localhost:18080/ws/room/DebugRoom/accountId/child3
 
 
 
-> {"type":"JoiningRoom", "data":{"accountName":"CHILD1"}}
+> {"type":"ChangeName", "data":{"accountName":"CHILD1"}}
 > {"type":"SetQuestion", "data":{"question":"問題です！"}}
 > {"type":"SetAnswer", "data":{"answer":"答えはこれ？"}}
 > {"type":"SetAlterStars", "data":{"alterStars":[{"accountId":"child1", "alterStars":10}]}}
