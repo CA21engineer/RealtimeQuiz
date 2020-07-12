@@ -18,12 +18,13 @@ const Room: React.FC = () => {
   const users: User[] = [];
   const questionBody = '';
   const answerBody = '';
+  const isAnswerFinished = false;
   const onInputAnswer: (input: string) => void = (input) => console.log(input);
   const onSubmitAnswer: React.MouseEventHandler = (e) => console.log(e);
 
   return (
     <div className="Room__view">
-      {status === ViewStatus.WAITING_ANSWER ? (
+      {status === ViewStatus.WAITING_ANSWER && !isAnswerFinished ? (
         <QuestionModal
           questionBody={questionBody}
           remainTime={0}
@@ -33,6 +34,9 @@ const Room: React.FC = () => {
         />
       ) : null}
       <p>{expressRoomStatus(status)}</p>
+      {questionBody !== '' ? (
+        <p className="Room__QuestionBox">{questionBody}</p>
+      ) : null}
       {users.map((user) => (
         <QuizPanel
           key={user.name}
