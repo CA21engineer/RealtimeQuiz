@@ -30,6 +30,7 @@ export class Receiver extends ReceiverBase {
      * => 誰かが入室した
      * => 誰かが退出した etc...
      */
+    // @ts-ignore
     onStatusChanged(data: StatusData) {
         //
     }
