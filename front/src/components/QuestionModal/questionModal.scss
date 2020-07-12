@@ -1,0 +1,26 @@
+.QuestionModal__Container {
+  background: darkorange;
+  max-width: 480px;
+  box-sizing: border-box;
+  padding: 1em;
+}
+
+.QuestionModal__Title {
+  text-align: center;
+  margin: 0;
+}
+
+.QuestionModal__RemainTime {
+  display: block;
+  text-align: right;
+}
+
+.QuestionModal__Input {
+  width: 100%;
+  line-height: 1.5em;
+}
+
+.QuestionModal__Submit {
+  padding: 1em 0;
+  text-align: center;
+}
