@@ -4,7 +4,7 @@ import { Store } from 'store';
 
 import 'style/global.scss';
 
-function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <Store>
       <main>
