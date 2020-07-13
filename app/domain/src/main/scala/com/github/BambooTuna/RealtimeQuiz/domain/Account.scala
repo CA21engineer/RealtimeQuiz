@@ -1,6 +1,10 @@
 package com.github.BambooTuna.RealtimeQuiz.domain
 
-import com.github.BambooTuna.RealtimeQuiz.domain.AccountRole.Spectator
+import com.github.BambooTuna.RealtimeQuiz.domain.AccountRole.{
+  Admin,
+  Player,
+  Spectator
+}
 import com.github.BambooTuna.RealtimeQuiz.domain.ConnectionStatus.{
   Offline,
   Online
@@ -28,6 +32,11 @@ case class Account(
   def checkAnswer(f: String => Int): Account = {
     val alterStars = this.answer.map(f).getOrElse(0)
     copy(stars = this.stars + alterStars, alterStars = alterStars)
+  }
+  def changeRole(role: AccountRole): Account = role match {
+    case Admin              => copy(role = role)
+    case _ if role != Admin => copy(role = role)
+    case _                  => this
   }
 
   def hideAnswer: Account = copy(answer = None)

@@ -40,7 +40,7 @@ class RoomHandler(roomAggregate: ActorRef)(
         complete(
           StatusCodes.OK ->
             value.rooms.map { room =>
-              RoomJson(room.roomId, room.roomName, room.children.size)
+              RoomJson(room.roomId, room.roomName, room.participants)
             })
     }
 

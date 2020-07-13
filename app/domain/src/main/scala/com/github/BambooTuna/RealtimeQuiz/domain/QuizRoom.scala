@@ -30,7 +30,8 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
   var parent: Account
-  var children: Set[Account] = Set.empty
+  protected var children: Set[Account] = Set.empty
+  def participants: Int = children.map(_.role == Player).size
   var currentStatus: CurrentStatus = WaitingQuestion
   var currentQuestion: Option[String] = None
 
@@ -47,10 +48,11 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
 
   def join(accountId: String, isSpectator: Boolean): Try[Unit] = Try {
     require(children.size < 10, "満員です >= 10")
+    val role = if (isSpectator) Spectator else Player
     if (!isParent(accountId) && !isChild(accountId)) {
-      this.children = this.children + Account.apply(accountId,
-                                                    if (isSpectator) Spectator
-                                                    else Player)
+      this.children = this.children + Account.apply(accountId, role)
+    } else if (isChild(accountId)) {
+      changeAccountStatus(accountId, _.changeRole(role))
     }
   }
 
