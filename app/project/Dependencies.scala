@@ -70,6 +70,10 @@ object Monix {
   val version      = "io.monix" %% "monix" % monixVersion
 }
 
+object Enumeratum {
+  val version = "com.beachape" %% "enumeratum-circe" % "1.5.21"
+}
+
 object MySQLConnectorJava {
   val version = "mysql" % "mysql-connector-java" % "5.1.42"
 }

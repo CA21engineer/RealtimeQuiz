@@ -35,7 +35,8 @@ object Settings {
       Logback.classic,
       LogstashLogbackEncoder.encoder,
       Config.core,
-      Monix.version
+      Monix.version,
+      Enumeratum.version
     ),
     scalafmtOnCompile in Compile := true,
     scalafmtTestOnCompile in Compile := true

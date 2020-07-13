@@ -1,0 +1,33 @@
+.QuizPanel__Container {
+  background: darkorange;
+  max-width: 480px;
+}
+
+.QuizPanel__Header {
+  background: tomato;
+  display: flex;
+  justify-content: space-between;
+}
+
+.QuizPanel__NameArea {
+  padding: 1em 1.5em;
+  width: calc(100% - 8em);
+  margin: 0;
+}
+
+.QuizPanel__StarArea {
+  background: saddlebrown;
+  height: 100%;
+  margin: auto;
+  text-align: center;
+  width: 8em;
+  margin: 0;
+  padding: 1em 1.5em;
+}
+
+.QuizPanel__AnswerArea {
+  line-height: 1em;
+  height: 2em;
+  padding: 0.25em 0 0.25em;
+  text-align: center;
+}
