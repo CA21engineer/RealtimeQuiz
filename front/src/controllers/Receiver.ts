@@ -54,7 +54,7 @@ export class Receiver extends ReceiverBase {
 
   /**
    * 強制解答送信要求が送られてきた時
-   * 一斉に解答オープンボタンを押した
+   * 管理者が解答締め切りボタンを押した時
    */
   forceSendAnswer(): void {
     this.gameStatusDispatch({
