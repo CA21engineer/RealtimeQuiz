@@ -1,3 +1,3 @@
 export interface SetQuestionData {
-    question: string,
+  question: string;
 }
