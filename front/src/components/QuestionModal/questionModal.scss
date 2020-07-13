@@ -1,6 +1,21 @@
+.QuestionModal__Wrapper {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  right: 40px;
+  bottom: 40px;
+  outline: none;
+  padding: 20px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .QuestionModal__Container {
   background: darkorange;
   max-width: 480px;
+  width: 100%;
   box-sizing: border-box;
   padding: 1em;
 }

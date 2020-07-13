@@ -3,7 +3,7 @@ import './index.scss';
 
 import { FoundationInputArea } from '../../components/FoundationInputArea';
 
-const Index: React.FC = () => {
+export const Index: React.FC = () => {
   return (
     <div className="Index__view">
       <p className="Index__label">ニックネームを入力してください．</p>
@@ -19,5 +19,3 @@ const Index: React.FC = () => {
     </div>
   );
 };
-
-export default Index;
