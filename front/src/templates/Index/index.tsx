@@ -2,6 +2,7 @@ import React from 'react';
 import './index.scss';
 
 import { FoundationInputArea } from '../../components/FoundationInputArea';
+import { RoomCard } from '../../components/RoomCard';
 
 type Room = {
   id: string;
@@ -26,18 +27,7 @@ export const Index: React.FC = () => {
       />
       {rooms.map((room) => {
         return (
-          <div key={room.id} className="Room__container">
-            <p className="Room__Title">{room.title}</p>
-            <p className="Room__RoomInfo">{room.roomInfo}</p>
-            <button
-              type="button"
-              onClick={() => {
-                console.log('Hello');
-              }}
-            >
-              入室する
-            </button>
-          </div>
+          <RoomCard key={room.id} title={room.title} roomInfo={room.roomInfo} />
         );
       })}
     </div>
