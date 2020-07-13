@@ -6,7 +6,7 @@
 
 ## 動作確認
 ```bash
-$ curl -X POST localhost:18080/api/room/accountId/parent -d '{}'
+$ curl -X POST -d '{"roomName":"LTクイズ大会の部屋"}' -H 'Content-type: application/json' localhost:18080/api/room/accountId/parent
 {"roomId":"cc9d2afa23b64bfa9275cc496f835dde"}
 
 $ curl -X GET localhost:18080/api/room
