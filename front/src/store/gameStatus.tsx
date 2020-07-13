@@ -7,6 +7,7 @@ import { Receiver } from 'controllers/Receiver';
 
 export type PersonalStatus = {
   answer: string;
+  isAnswered: boolean;
 };
 
 export type Controller = {
@@ -16,15 +17,16 @@ export type Controller = {
 
 export type GameStatus = {
   personalStatus: PersonalStatus;
-  status: GameRoomStatusData;
+  roomStatus: GameRoomStatusData;
   controllers: Controller;
 };
 
 const initialState: GameStatus = {
   personalStatus: {
     answer: '',
+    isAnswered: false,
   },
-  status: {
+  roomStatus: {
     currentStatus: 'WAITING_QUESTION',
     currentQuestion: null,
     players: [],
@@ -38,6 +40,7 @@ const initialState: GameStatus = {
 enum Action {
   'UPDATE_STATUS' = 'UPDATE_STATUS',
   'INIT_CONTROLLERS' = 'INIT_CONTROLLERS',
+  'ANSWER' = 'ANSWER',
   'EMIT_FORCE_ANSWER' = 'EMIT_FORCE_ANSWER',
   'UPDATE_PERSONAL_ANSWER' = 'UPDATE_PERSONAL_ANSWER',
 }
@@ -45,7 +48,7 @@ enum Action {
 export type GameStatusAction = {
   type: keyof typeof Action;
   payload?: {
-    personalStatus?: PersonalStatus;
+    personalStatus?: { [P in keyof PersonalStatus]?: PersonalStatus[P] };
     status?: GameRoomStatusData;
     controllers?: Controller;
   };
@@ -61,7 +64,11 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
       }
 
       return produce(state, (draft) => {
-        draft.status = status;
+        draft.roomStatus = status;
+
+        if (state.roomStatus.currentStatus === 'WAITING_QUESTION') {
+          draft.personalStatus.isAnswered = false;
+        }
       });
     }
 
@@ -74,6 +81,12 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
 
       return produce(state, (draft) => {
         draft.controllers = controllers;
+      });
+    }
+
+    case 'ANSWER': {
+      return produce(state, (draft) => {
+        draft.personalStatus.isAnswered = true;
       });
     }
 

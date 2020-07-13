@@ -1,17 +1,20 @@
-import { ViewStatus } from '../../types/ViewStatus';
+import { GameRoomStatusData } from 'interfaces/Status';
 
-export function expressRoomStatus(status: ViewStatus): string {
+export function expressRoomStatus(
+  status: GameRoomStatusData['currentStatus']
+): string {
   switch (status) {
-    case ViewStatus.WAITING_QUESTION:
+    case 'WAITING_QUESTION':
       return '出題を待っています…';
-    case ViewStatus.WAITING_ANSWER:
+    case 'WAITING_ANSWER':
       return '解答オープンを待っています…';
-    case ViewStatus.CLOSE_ANSWER:
-    case ViewStatus.OPEN_ANSWER:
+    case 'CLOSE_ANSWER':
       return '結果発表を待っています…';
-    case ViewStatus.OPEN_AGGRIGATE:
+    case 'OPEN_ANSWER':
+      return '結果発表を待っています…';
+    case 'OPEN_AGGRIGATE':
       return '結果発表';
     default:
-      throw new Error('Fatal: ユーザの状態が不明です．');
+      throw new Error(`Fatal: ユーザの状態が不明です．: ${status}`);
   }
 }
