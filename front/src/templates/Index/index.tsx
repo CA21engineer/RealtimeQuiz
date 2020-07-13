@@ -12,6 +12,9 @@ type Room = {
 
 export const Index: React.FC = () => {
   const rooms: Room[] = [];
+  const onEnterRoom = () => {
+    console.log('OnEnterRoom');
+  };
   return (
     <div className="Index__view">
       <h1 className="Index__Title">RealTime Quiz!</h1>
@@ -27,7 +30,12 @@ export const Index: React.FC = () => {
       />
       {rooms.map((room) => {
         return (
-          <RoomCard key={room.id} title={room.title} roomInfo={room.roomInfo} />
+          <RoomCard
+            key={room.id}
+            title={room.title}
+            roomInfo={room.roomInfo}
+            onEnterRoom={onEnterRoom}
+          />
         );
       })}
     </div>
