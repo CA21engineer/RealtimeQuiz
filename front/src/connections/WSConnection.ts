@@ -1,4 +1,6 @@
 import { Connection } from './Connection';
+import { ConnectionInfo } from '../interfaces/ConnectionInfo';
+import { WS_BASE_URL } from '../configurations/Config';
 
 /*
  * WebSocket利用時の差分を吸収する
@@ -8,12 +10,15 @@ import { Connection } from './Connection';
 export class WSConnection extends Connection {
   private socket: WebSocket;
 
-  constructor(destination: string) {
+  constructor(connectionInfo: ConnectionInfo) {
     super();
 
-    this.socket = new WebSocket(destination);
+    this.socket = new WebSocket(
+      `${WS_BASE_URL}room/${connectionInfo.roomId}/accountId/${connectionInfo.accountId}`
+    );
 
     this.socket.addEventListener('open', () => {
+      console.log('コネクション確立');
       this.callFunction('open', null);
     });
 

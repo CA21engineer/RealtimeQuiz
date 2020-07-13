@@ -22,7 +22,7 @@ export const FoundationInputArea: React.FC<Props> = ({
       <input
         className="FoundationInputArea__Input"
         type="text"
-        value={inputBody}
+        defaultValue={inputBody}
         placeholder={inputPlaceholder}
         onChange={(e) => {
           onInputAnswer(e.target.value);

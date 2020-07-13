@@ -1,3 +1,3 @@
 export interface SetAnswerData {
-    answer: string,
+  answer: string;
 }

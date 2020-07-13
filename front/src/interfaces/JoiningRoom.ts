@@ -1,4 +1,4 @@
 export interface ChangeNameData {
-    accountName: string,
-    isSpectator: boolean,
+  accountName: string;
+  isSpectator: boolean;
 }
