@@ -33,10 +33,19 @@ export const QuizPanel: React.FC<Props> = ({
     logger(`Fatal: Start number is unexpected. Given ${starNumber}.`);
   }
   // HELP ME: 急募，なんかいい書き方
-  let starText = '';
-  for (let i = 0; i < starNumber; i += 1) {
-    starText += '⭐️';
-  }
+  const getStarText = (star: number) => {
+    const STAR_LIMIT = 5;
+    if (star > STAR_LIMIT) {
+      return `⭐️ + ${star}`;
+    }
+
+    return [...Array(star)].reduce((acc: string) => {
+      return `${acc}⭐️`;
+    }, '');
+  };
+
+  const starText = getStarText(starNumber);
+
   return (
     <div
       className={classNames({
