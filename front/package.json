@@ -17,7 +17,7 @@
     "storybook": "start-storybook -p 6006 -c .storybook"
   },
   "lint-staged": {
-    "*.{js, json}": [
+    "*.{tsx, ts, jsx, js, json}": [
       "prettier --write",
       "git add"
     ]
