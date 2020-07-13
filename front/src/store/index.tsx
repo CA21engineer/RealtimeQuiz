@@ -1,13 +1,8 @@
 import React from 'react';
-import { RoomStatusContextWrapper } from './roomStatus';
-import { WebsocketControllerContextWrapper } from './websocketController';
+import { GameStatusContextWrapper } from './gameStatus';
 
 export const Store: React.FC<{ children: React.ReactChild }> = ({
   children,
 }) => {
-  return (
-    <WebsocketControllerContextWrapper>
-      <RoomStatusContextWrapper>{children}</RoomStatusContextWrapper>
-    </WebsocketControllerContextWrapper>
-  );
+  return <GameStatusContextWrapper>{children}</GameStatusContextWrapper>;
 };
