@@ -11,6 +11,9 @@ case object CurrentStatus
     with StringCirceEnum[CurrentStatus] {
 
   case object WaitingQuestion extends CurrentStatus("WAITING_QUESTION") {
+    override def next: CurrentStatus = WaitingAnswer
+  }
+  case object WaitingAnswer extends CurrentStatus("WAITING_ANSWER") {
     override def next: CurrentStatus = CloseAnswer
   }
   case object CloseAnswer extends CurrentStatus("CLOSE_ANSWER") {

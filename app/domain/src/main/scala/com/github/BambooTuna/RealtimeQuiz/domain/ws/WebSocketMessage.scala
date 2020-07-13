@@ -20,7 +20,9 @@ object WebSocketMessage {
     json.hcursor.downField("type").as[String] match {
       case Left(value) => ParseError(value.getMessage(), message)
       case Right(value) =>
-        if (value == "GoToNextQuestion") GoToNextQuestion
+        if (value == GoToNextQuestion.typeName) GoToNextQuestion
+        else if (value == CloseApplications.typeName) CloseApplications
+        else if (value == OpenAnswers.typeName) OpenAnswers
         else {
           json.hcursor.downField("data").as[Messages] match {
             case Right(v) =>
@@ -69,5 +71,13 @@ case class ForceSendAnswer() extends WebSocketMessage
 case class ChangeName(accountName: String) extends WebSocketMessage
 case class SetQuestion(question: String) extends WebSocketMessage
 case class SetAnswer(answer: String) extends WebSocketMessage
+case object CloseApplications extends WebSocketMessage {
+  override val typeName: String = "CloseApplications"
+}
+case object OpenAnswers extends WebSocketMessage {
+  override val typeName: String = "OpenAnswers"
+}
 case class SetAlterStars(alterStars: Seq[AlterStar]) extends WebSocketMessage
-case object GoToNextQuestion extends WebSocketMessage
+case object GoToNextQuestion extends WebSocketMessage {
+  override val typeName: String = "GoToNextQuestion"
+}

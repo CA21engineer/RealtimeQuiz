@@ -12,6 +12,7 @@ import com.github.BambooTuna.RealtimeQuiz.domain.CurrentStatus.{
   CloseAnswer,
   OpenAggregate,
   OpenAnswer,
+  WaitingAnswer,
   WaitingQuestion
 }
 import com.github.BambooTuna.RealtimeQuiz.domain.lib.StreamSupport
@@ -78,10 +79,10 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       )
   }
 
-  protected def noticeEveryone(): Future[Unit] = {
+  protected def noticeEveryone(hide: Boolean = true): Future[Unit] = {
     Future {
       Thread.sleep(500)
-      noticePlayersState(actorRef ! _)
+      noticePlayersState(actorRef ! _)(hide)
     }
   }
 
@@ -99,8 +100,8 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       }
   }
 
-  protected def noticePlayersState(
-      f: WebSocketMessageWithDestination => Unit): Unit = {
+  protected def noticePlayersState(f: WebSocketMessageWithDestination => Unit)(
+      hide: Boolean): Unit = {
     val everyone = this.children + parent
     f(
       WebSocketMessageWithDestination(
@@ -120,7 +121,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
           currentStatus = currentStatus,
           currentQuestion = currentQuestion,
           currentTimeLimit = None,
-          players = everyone.map(_.hideAnswer).toSeq
+          players = (if (hide) everyone.map(_.hideAnswer) else everyone).toSeq
         ),
         Users(this.children.map(_.id).toSeq)
       )
@@ -159,9 +160,20 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
           noticeEveryone()
         }
       case v: SetAnswer =>
-        if (canAnswer(accountId) && this.currentStatus == CloseAnswer) {
+        if (canAnswer(accountId) && this.currentStatus == WaitingAnswer) {
           changeAccountStatus(accountId, _.setAnswer(v.answer))
           noticeEveryone()
+        }
+      case CloseApplications =>
+        if (this.currentStatus == WaitingAnswer) {
+          this.currentStatus = this.currentStatus.next
+          noticeEveryone()
+          //TODO send children ForceSendAnswer
+        }
+      case OpenAnswers =>
+        if (this.currentStatus == CloseAnswer) {
+          this.currentStatus = this.currentStatus.next
+          noticeEveryone(hide = false)
         }
       case v: SetAlterStars =>
         if (isParent(accountId) && this.currentStatus == OpenAnswer) {
@@ -170,11 +182,12 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
             alterStar =>
               changeAccountStatus(alterStar.accountId,
                                   _.checkAnswer(_ => alterStar.alterStars)))
-          noticeEveryone()
+          noticeEveryone(hide = false)
         }
       case GoToNextQuestion =>
         if (isParent(accountId) && this.currentStatus == OpenAggregate) {
           this.currentStatus = this.currentStatus.next
+          this.currentQuestion = None
           this.children.foreach(account =>
             changeAccountStatus(account.id, _.init()))
           noticeEveryone()
