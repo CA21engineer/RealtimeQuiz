@@ -66,7 +66,7 @@ const Room: React.FC = () => {
           answerBody=""
           onInputAnswer={dispatchAnswer}
           onSubmitAnswer={onSubmitAnswer}
-          isOpen={roomStatus.currentStatus !== 'OPEN_ANSWER'}
+          isOpen={roomStatus.currentStatus === 'OPEN_ANSWER'}
         />
       </div>
     );
