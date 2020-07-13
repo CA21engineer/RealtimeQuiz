@@ -1,20 +1,29 @@
 import React from 'react';
+import classNames from 'classnames';
 import './quizPanel.scss';
 import { logger } from '../../utils/log';
 
 const STAR_NUMBER_MAX = 5;
 const STAR_NUMBER_MIN = 0;
 
+export enum PlusMinus {
+  'Plus',
+  'Minus',
+  'None',
+}
+
 type Props = {
   name: string;
   starNumber: number;
   answerText: string;
+  plusMinus?: PlusMinus;
 };
 
 export const QuizPanel: React.FC<Props> = ({
   name,
   starNumber,
   answerText,
+  plusMinus = PlusMinus.None,
 }) => {
   if (
     Number.isNaN(starNumber) ||
@@ -29,7 +38,13 @@ export const QuizPanel: React.FC<Props> = ({
     starText += '⭐️';
   }
   return (
-    <div className="QuizPanel__Container">
+    <div
+      className={classNames({
+        QuizPanel__Container: true,
+        'QuizPanel__Container--Plus': PlusMinus.Plus === plusMinus,
+        'QuizPanel__Container--Minus': PlusMinus.Minus === plusMinus,
+      })}
+    >
       <div className="QuizPanel__Header">
         <p className="QuizPanel__NameArea">{name}</p>
         <span className="QuizPanel__StarArea">{starText}</span>
