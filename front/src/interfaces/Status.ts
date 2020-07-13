@@ -1,10 +1,6 @@
 export interface GameRoomStatusData {
-  // ゲームの状態を示す
-  currentStatus:
-    | 'WAITING_QUESTION'
-    | 'CLOSE_ANSWER'
-    | 'OPEN_ANSWER'
-    | 'OPEN_AGGRIGATE';
+    // ゲームの状態を示す
+    currentStatus: 'WAITING_QUESTION' | 'WAITING_ANSWER' | 'CLOSE_ANSWER' | 'OPEN_ANSWER' | 'OPEN_AGGRIGATE';
 
   // 今の問題
   currentQuestion: string | null;
