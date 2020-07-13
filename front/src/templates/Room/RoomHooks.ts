@@ -18,3 +18,11 @@ export function expressRoomStatus(
       throw new Error(`Fatal: ユーザの状態が不明です．: ${status}`);
   }
 }
+
+/* eslint @typescript-eslint/explicit-module-boundary-types: 0 */
+export const useRoom = () => {
+  return {
+    expressRoomStatus,
+  };
+};
+

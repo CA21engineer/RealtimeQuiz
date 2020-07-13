@@ -13,6 +13,7 @@ storiesOf('QuestionModal', module).add('default', () => {
       onSubmitAnswer={() => {
         logger('None of arguments');
       }}
+      isOpen
     />
   );
 });

@@ -2,14 +2,15 @@ import React, { useCallback, useEffect, useContext } from 'react';
 import { GameStatusContext } from 'store/gameStatus';
 import { Receiver } from 'controllers/Receiver';
 import { WSConnection } from 'connections/WSConnection';
+import { useRoom } from './RoomHooks';
 
 import './room.scss';
 
 import { QuizPanel } from '../../components/QuizPanel';
-import { expressRoomStatus } from './expressRoomStatus';
 import { QuestionModal } from '../../components/QuestionModal';
 
-const Room: React.FC = () => {
+export const Room: React.FC = () => {
+  const { expressRoomStatus } = useRoom();
   const { state, dispatch } = useContext(GameStatusContext);
   const { roomStatus } = state;
 
@@ -103,5 +104,3 @@ const Room: React.FC = () => {
     </div>
   );
 };
-
-export default Room;
