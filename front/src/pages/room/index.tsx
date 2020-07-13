@@ -1,6 +1,5 @@
 import React, { useEffect, useContext } from 'react';
 import { GameStatusContext } from 'store/gameStatus';
-import { Emitter } from 'controllers/Emitter';
 import { Receiver } from 'controllers/Receiver';
 import { WSConnection } from 'connections/WSConnection';
 
@@ -31,7 +30,7 @@ const Room: React.FC = () => {
 
   useEffect(() => {
     // TODO: URLをちゃんとしたのに直す
-    const connection = new WSConnection('wss://hogehoge.com');
+    const connection = new WSConnection({ roomId: 'hogehoge', accountId: 'hugahuga' });
     const receiver = new Receiver(gameStatus.dispatch);
     connection.setReceivers(receiver);
     const emitter = connection.createEmitter();
