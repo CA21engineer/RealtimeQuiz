@@ -1,20 +1,24 @@
 export interface GameRoomStatusData {
-    // ゲームの状態を示す
-    currentStatus: 'WAITING_QUESTION' | 'CLOSE_ANSWER' | 'OPEN_ANSWER' | 'OPEN_AGGRIGATE';
+  // ゲームの状態を示す
+  currentStatus:
+    | 'WAITING_QUESTION'
+    | 'CLOSE_ANSWER'
+    | 'OPEN_ANSWER'
+    | 'OPEN_AGGRIGATE';
 
-    // 今の問題
-    currentQuestion: string | null
+  // 今の問題
+  currentQuestion: string | null;
 
-    players: PlayerStatus[],
+  players: PlayerStatus[];
 }
 
 export interface PlayerStatus {
-    id: string,
-    name: string,
-    role: 'admin' | 'player' | 'spectator',
-    stars: number,
-    answer: string | null,
-    isAnswered: boolean,
-    alterStars: number,
-    connectionStatus: 'online' | 'offline',
+  id: string;
+  name: string;
+  role: 'admin' | 'player' | 'spectator';
+  stars: number;
+  answer: string | null;
+  isAnswered: boolean;
+  alterStars: number;
+  connectionStatus: 'online' | 'offline';
 }
