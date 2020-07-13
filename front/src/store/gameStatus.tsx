@@ -1,7 +1,7 @@
 import { createContext, Reducer, Dispatch } from 'react';
 import produce from 'immer';
 import { generateContextWrapper } from 'utils/store/contextHelper';
-import { GameRoomStatusData, PlayerStatus } from 'interfaces/Status';
+import { GameRoomStatusData } from 'interfaces/Status';
 import { Emitter } from 'controllers/Emitter';
 import { Receiver } from 'controllers/Receiver';
 
@@ -42,7 +42,7 @@ enum Action {
   'UPDATE_PERSONAL_ANSWER' = 'UPDATE_PERSONAL_ANSWER',
 }
 
-type GameStatusAction = {
+export type GameStatusAction = {
   type: keyof typeof Action;
   payload?: {
     personalStatus?: PersonalStatus;
@@ -77,6 +77,7 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
       });
     }
 
+    // reducerの責務ではないが...
     case 'EMIT_FORCE_ANSWER': {
       const { personalStatus, controllers } = state;
 

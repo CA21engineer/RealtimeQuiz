@@ -32,7 +32,7 @@ const Room: React.FC = () => {
   useEffect(() => {
     // TODO: URLをちゃんとしたのに直す
     const connection = new WSConnection('wss://hogehoge.com');
-    const receiver = new Receiver();
+    const receiver = new Receiver(gameStatus.dispatch);
     connection.setReceivers(receiver);
     const emitter = connection.createEmitter();
 

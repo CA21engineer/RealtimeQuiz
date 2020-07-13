@@ -1,7 +1,16 @@
+import { Dispatch } from 'react';
+import { GameStatusAction } from 'store/gameStatus';
 import { ReceiverBase } from './ReceiverBase';
 import { GameRoomStatusData } from '../interfaces/Status';
 
 export class Receiver extends ReceiverBase {
+  private gameStatusDispatch: Dispatch<GameStatusAction>;
+
+  constructor(dispatch: Dispatch<GameStatusAction>) {
+    super();
+    this.gameStatusDispatch = dispatch;
+  }
+
   callHandler(type: string, data: unknown): boolean {
     switch (type) {
       case 'status':
@@ -35,8 +44,12 @@ export class Receiver extends ReceiverBase {
    * => 誰かが退出した etc...
    */
   onStatusChanged(data: GameRoomStatusData): void {
-    // dummy for lint
-    console.log(this, data);
+    this.gameStatusDispatch({
+      type: 'UPDATE_STATUS',
+      payload: {
+        status: data,
+      },
+    });
   }
 
   /**
@@ -44,7 +57,8 @@ export class Receiver extends ReceiverBase {
    * 一斉に解答オープンボタンを押した
    */
   forceSendAnswer(): void {
-    // dummy for lint
-    console.log(this);
+    this.gameStatusDispatch({
+      type: 'EMIT_FORCE_ANSWER',
+    });
   }
 }
