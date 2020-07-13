@@ -1,4 +1,9 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
+import { WebsocketControllerContext } from 'store/websocketController';
+import { Emitter } from 'controllers/Emitter';
+import { Receiver } from 'controllers/Receiver';
+import { WSConnection } from 'connections/WSConnection';
+
 import './room.scss';
 
 import { ViewStatus } from '../../types/ViewStatus';
@@ -21,6 +26,26 @@ const Room: React.FC = () => {
   const isAnswerFinished = false;
   const onInputAnswer: (input: string) => void = (input) => console.log(input);
   const onSubmitAnswer: React.MouseEventHandler = (e) => console.log(e);
+
+  const controller = useContext(WebsocketControllerContext);
+
+  useEffect(() => {
+    // TODO: URLをちゃんとしたのに直す
+    const connection = new WSConnection('wss://hogehoge.com');
+    const receiver = new Receiver();
+    connection.setReceivers(receiver);
+    const emitter = connection.createEmitter();
+
+    controller.dispatch({
+      type: 'INIT',
+      payload: {
+        controllers: {
+          emitter,
+          receiver,
+        },
+      },
+    });
+  }, []);
 
   return (
     <div className="Room__view">
