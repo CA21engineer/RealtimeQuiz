@@ -15,7 +15,7 @@ import org.slf4j.{Logger, LoggerFactory}
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
 import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
 import com.github.BambooTuna.RealtimeQuiz.application.RoomHandler
-import com.github.BambooTuna.RealtimeQuiz.domain.RoomAggregate
+import com.github.BambooTuna.RealtimeQuiz.domain.QuizRoomAggregates
 
 import scala.util.control.NonFatal
 
@@ -54,7 +54,7 @@ class ServiceHandler(implicit actorSystem: ActorSystem,
   }
 
   val roomAggregate =
-    actorSystem.actorOf(Props[RoomAggregate], RoomAggregate.name)
+    actorSystem.actorOf(Props[QuizRoomAggregates], QuizRoomAggregates.name)
   val roomHandler = new RoomHandler(roomAggregate)
 
   def restApiRoute(implicit materializer: Materializer): Route = {
@@ -62,7 +62,7 @@ class ServiceHandler(implicit actorSystem: ActorSystem,
       Router(
         route(GET, "room", roomHandler.getRoomsRoute),
         route(POST,
-              "room" / "accountId" / Segment / "name" / Segment,
+              "room" / "accountId" / Segment,
               roomHandler.createRoomRoute),
       ).create
     }
@@ -72,7 +72,7 @@ class ServiceHandler(implicit actorSystem: ActorSystem,
     pathPrefix("ws") {
       Router(
         route(GET,
-              "room" / Segment / "accountId" / Segment / "name" / Segment,
+              "room" / Segment / "accountId" / Segment,
               roomHandler.joinRoomRoute),
       ).create
     }

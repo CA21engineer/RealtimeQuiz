@@ -1,6 +1,10 @@
 package com.github.BambooTuna.RealtimeQuiz.domain.ws
 
-import com.github.BambooTuna.RealtimeQuiz.domain.{Account, Destination}
+import com.github.BambooTuna.RealtimeQuiz.domain.{
+  Account,
+  AlterStar,
+  CurrentStatus
+}
 import shapeless._
 import io.circe._
 import io.circe.syntax._
@@ -8,40 +12,72 @@ import io.circe.generic.auto._
 import io.circe.shapes._
 
 object WebSocketMessage {
-  type Messages = Quiz :+: Answer :+: CorrectAnswer :+: ReName :+: CNil
+  type Messages =
+    ChangeName :+: SetQuestion :+: SetAnswer :+: SetAlterStars :+: CNil
+
   def parse(message: String): WebSocketMessage = {
-    parser.decode[Messages](message) match {
-      case Right(v) => Coproduct.unsafeGet(v).asInstanceOf[WebSocketMessage]
-      case Left(e)  => ParseError(e.getMessage, message)
+    val json = parser.parse(message).getOrElse(Json.Null)
+    json.hcursor.downField("type").as[String] match {
+      case Left(value) => ParseError(value.getMessage(), message)
+      case Right(value) =>
+        if (value == GoToNextQuestion.typeName) GoToNextQuestion
+        else if (value == CloseApplications.typeName) CloseApplications
+        else if (value == OpenAnswers.typeName) OpenAnswers
+        else {
+          json.hcursor.downField("data").as[Messages] match {
+            case Right(v) =>
+              val WebSocketMessage =
+                Coproduct.unsafeGet(v).asInstanceOf[WebSocketMessage]
+              if (WebSocketMessage.typeName == value) WebSocketMessage
+              else ParseError("typeName failed", message)
+            case Left(e) => ParseError(e.getMessage(), message)
+          }
+        }
     }
   }
+
+  def connectionClosed(id: String): WebSocketMessageWithDestination =
+    WebSocketMessageWithDestination(ConnectionClosed(id), Internal)
+
 }
 
 sealed trait WebSocketMessage {
-  def toJsonString: String = this.asJson.noSpaces
-  def addDestination(
-      destination: Destination): WebSocketMessageWithDestination =
-    WebSocketMessageWithDestination(this, destination)
+  val typeName: String = getClass.getSimpleName
+
+  override def toString: String = this match {
+    case data: PlayerList =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+    case data: ForceSendAnswer =>
+      Json
+        .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
+        .noSpaces
+  }
 }
 
-// Receive
 case class ParseError(message: String, org: String) extends WebSocketMessage
-case class ConnectionOpened(accountId: String, name: String)
-    extends WebSocketMessage
-case class ConnectionClosed(accountId: String, name: String)
-    extends WebSocketMessage
-case class TemporaryData(answer: String, points: Int) extends WebSocketMessage
+case class ConnectionClosed(id: String) extends WebSocketMessage
+// Receive Only
+case class PlayerList(
+    currentStatus: CurrentStatus,
+    currentQuestion: Option[String],
+    currentTimeLimit: Option[Int],
+    players: Seq[Account]
+) extends WebSocketMessage
+case class ForceSendAnswer() extends WebSocketMessage
 
-// Send & Receive
-case class Quiz(no: Int, content: String, points: Int) extends WebSocketMessage
-case class Answer(content: String) extends WebSocketMessage
-case class CorrectAnswer(content: String, points: Int) extends WebSocketMessage
-
-// Send
-case class ReName(name: String) extends WebSocketMessage
-
-case class WebSocketMessageWithDestination(message: WebSocketMessage,
-                                           destination: Destination) {
-  def toJsonString: String =
-    message.asJson.noSpaces
+// Send Only
+case class ChangeName(accountName: String) extends WebSocketMessage
+case class SetQuestion(question: String) extends WebSocketMessage
+case class SetAnswer(answer: String) extends WebSocketMessage
+case object CloseApplications extends WebSocketMessage {
+  override val typeName: String = "CloseApplications"
+}
+case object OpenAnswers extends WebSocketMessage {
+  override val typeName: String = "OpenAnswers"
+}
+case class SetAlterStars(alterStars: Seq[AlterStar]) extends WebSocketMessage
+case object GoToNextQuestion extends WebSocketMessage {
+  override val typeName: String = "GoToNextQuestion"
 }

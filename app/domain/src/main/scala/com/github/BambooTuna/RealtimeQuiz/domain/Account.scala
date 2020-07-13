@@ -1,34 +1,62 @@
 package com.github.BambooTuna.RealtimeQuiz.domain
 
-import akka.NotUsed
-import akka.actor.ActorRef
-import akka.stream.Materializer
-import akka.stream.scaladsl.Source
-import com.github.BambooTuna.RealtimeQuiz.domain.lib.StreamSupport
-import com.github.BambooTuna.RealtimeQuiz.domain.ws.{Answer, WebSocketMessage}
+import com.github.BambooTuna.RealtimeQuiz.domain.AccountRole.{
+  Admin,
+  Player,
+  Spectator
+}
+import com.github.BambooTuna.RealtimeQuiz.domain.ConnectionStatus.{
+  Offline,
+  Online
+}
 
-case class Account(accountId: String,
-                   name: String,
-                   answer: Answer,
-                   points: Int) {
-  require(accountId.nonEmpty && name.nonEmpty)
+case class Account(
+    id: String,
+    name: String,
+    role: AccountRole,
+    stars: Int,
+    answer: Option[String],
+    isAnswered: Boolean,
+    alterStars: Int,
+    connectionStatus: ConnectionStatus = Offline
+) {
+
+  def init(): Account = copy(answer = None, isAnswered = false, alterStars = 0)
 
   def rename(newName: String): Account = copy(name = newName)
-  def updateAnswer(newAnswer: Answer): Account = copy(answer = newAnswer)
-  def checkTheAnswer(f: Answer => Int): Account =
-    copy(points = this.points + f(this.answer))
+  def setAnswer(newAnswer: String): Account = {
+    if (!isAnswered) {
+      copy(answer = Some(newAnswer), isAnswered = true)
+    } else this
+  }
+  def checkAnswer(f: String => Int): Account = {
+    val alterStars = this.answer.map(f).getOrElse(0)
+    copy(stars = this.stars + alterStars, alterStars = alterStars)
+  }
+  def changeRole(role: AccountRole): Account = role match {
+    case Admin              => copy(role = role)
+    case _ if role != Admin => copy(role = role)
+    case _                  => this
+  }
+
+  def hideAnswer: Account = copy(answer = None)
+
+  def activate: Account = copy(connectionStatus = Online)
+  def leave: Account = copy(connectionStatus = Offline)
 
   override def equals(obj: Any): Boolean = obj match {
-    case Account(accountId, _, _, _) => this.accountId == accountId
-    case _                           => false
+    case account: Account => this.id == account.id
+    case _                => false
   }
+
 }
 
 object Account {
-  def empty(accountId: String): Account = {
-    Account(accountId, "_", Answer(""), 0)
+  def apply(id: String, role: AccountRole): Account = {
+    Account(id, "名無しさん", role, 0, None, isAnswered = false, 0)
   }
-  def create(accountId: String, name: String): Account = {
-    Account(accountId, name, Answer(""), 0)
+
+  def apply(id: String): Account = {
+    Account(id, "名無しさん", Spectator, 0, None, isAnswered = false, 0)
   }
 }
