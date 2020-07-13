@@ -1,6 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { RoomStatusContext } from 'store/roomStatus';
-import { WebsocketControllerContext } from 'store/websocketController';
+import { GameStatusContext } from 'store/gameStatus';
 import { Emitter } from 'controllers/Emitter';
 import { Receiver } from 'controllers/Receiver';
 import { WSConnection } from 'connections/WSConnection';
@@ -28,8 +27,7 @@ const Room: React.FC = () => {
   const onInputAnswer: (input: string) => void = (input) => console.log(input);
   const onSubmitAnswer: React.MouseEventHandler = (e) => console.log(e);
 
-  const roomStatus = useContext(RoomStatusContext);
-  const controller = useContext(WebsocketControllerContext);
+  const gameStatus = useContext(GameStatusContext);
 
   useEffect(() => {
     // TODO: URLをちゃんとしたのに直す
@@ -38,8 +36,8 @@ const Room: React.FC = () => {
     connection.setReceivers(receiver);
     const emitter = connection.createEmitter();
 
-    controller.dispatch({
-      type: 'INIT',
+    gameStatus.dispatch({
+      type: 'INIT_CONTROLLERS',
       payload: {
         controllers: {
           emitter,
