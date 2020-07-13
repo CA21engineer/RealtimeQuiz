@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from 'react';
+import { RoomStatusContext } from 'store/roomStatus';
 import { WebsocketControllerContext } from 'store/websocketController';
 import { Emitter } from 'controllers/Emitter';
 import { Receiver } from 'controllers/Receiver';
@@ -27,6 +28,7 @@ const Room: React.FC = () => {
   const onInputAnswer: (input: string) => void = (input) => console.log(input);
   const onSubmitAnswer: React.MouseEventHandler = (e) => console.log(e);
 
+  const roomStatus = useContext(RoomStatusContext);
   const controller = useContext(WebsocketControllerContext);
 
   useEffect(() => {

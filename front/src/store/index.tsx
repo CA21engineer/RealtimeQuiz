@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusContextWrapper } from './status';
+import { RoomStatusContextWrapper } from './roomStatus';
 import { WebsocketControllerContextWrapper } from './websocketController';
 
 export const Store: React.FC<{ children: React.ReactChild }> = ({
@@ -7,7 +7,7 @@ export const Store: React.FC<{ children: React.ReactChild }> = ({
 }) => {
   return (
     <WebsocketControllerContextWrapper>
-      <StatusContextWrapper>{children}</StatusContextWrapper>
+      <RoomStatusContextWrapper>{children}</RoomStatusContextWrapper>
     </WebsocketControllerContextWrapper>
   );
 };
