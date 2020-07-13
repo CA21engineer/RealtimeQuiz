@@ -1,7 +1,7 @@
 import React from 'react';
 import './admin_room.scss';
 import { FoundationButton } from '../../components/FoundationButton';
-import { QuizPanel } from '../../components/QuizPanel';
+import { QuizAdminPanel } from '../../components/QuizAdminPanel';
 
 // FIXME: 仕様よう分かっとらんでな、あとで直す
 type User = {
@@ -10,9 +10,14 @@ type User = {
   input: string;
 };
 
+type UserStatus = {
+  user: User;
+  givenStar: number;
+};
+
 export const AdminRoom: React.FC = () => {
   const questionBody = '';
-  const users: User[] = [];
+  const userStatusArray: UserStatus[] = [];
   const remainTime = 0;
   return (
     <div className="AdminRoom__view">
@@ -33,12 +38,14 @@ export const AdminRoom: React.FC = () => {
           onClick={() => console.log('結果発表')}
         />
       </div>
-      {users.map((user) => (
-        <QuizPanel
-          key={user.name}
-          name={user.name}
-          starNumber={user.starNumber}
-          answerText={user.input}
+      {userStatusArray.map((userStatus) => (
+        <QuizAdminPanel
+          key={userStatus.user.name}
+          name={userStatus.user.name}
+          starNumber={userStatus.user.starNumber}
+          answerText={userStatus.user.input}
+          givenStar={userStatus.givenStar}
+          setValue={(starNumber: number) => console.log(starNumber)}
         />
       ))}
     </div>
