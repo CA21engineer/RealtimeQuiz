@@ -1,8 +1,9 @@
 import React, { useCallback, useContext } from 'react';
 import { GameStatusContext } from 'store/gameStatus';
+import { getAnswerWithPlayer } from 'utils/getAnswer';
+import { QuizPanel } from 'components/QuizPanel';
+import { QuestionModal } from 'components/QuestionModal';
 import { usePlayer } from './PlayerHooks';
-import { QuizPanel } from '../../components/QuizPanel';
-import { QuestionModal } from '../../components/QuestionModal';
 
 import './player.scss';
 
@@ -62,7 +63,12 @@ export const Player: React.FC = () => {
   const renderUser = roomStatus.players
     .filter(({ role }) => role === 'player')
     .map((player) => {
-      const answer = player.isAnswered ? '解答中...' : player.answer || '';
+      const answer = getAnswerWithPlayer(
+        roomStatus.currentStatus,
+        player.isAnswered,
+        player.answer || ''
+      );
+
       return (
         <QuizPanel
           key={player.id}
