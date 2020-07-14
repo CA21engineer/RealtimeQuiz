@@ -29,17 +29,19 @@ export const AdminSubmitQuestion: React.FC = () => {
         <FoundationButton label="出題する" onClick={submitQuestion} />
       </div>
 
-      {players.map((player) => {
-        const answer = player.isAnswered ? '解答中...' : player.answer || '';
-        return (
-          <QuizPanel
-            key={player.id}
-            name={player.name}
-            starNumber={player.stars}
-            answerText={answer}
-          />
-        );
-      })}
+      {players
+        .filter(({ role }) => role === 'player')
+        .map((player) => {
+          const answer = player.isAnswered ? '解答中...' : player.answer || '';
+          return (
+            <QuizPanel
+              key={player.id}
+              name={player.name}
+              starNumber={player.stars}
+              answerText={answer}
+            />
+          );
+        })}
     </div>
   );
 };

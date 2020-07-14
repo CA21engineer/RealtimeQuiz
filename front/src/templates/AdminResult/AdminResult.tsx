@@ -25,17 +25,19 @@ export const AdminResult: React.FC = () => {
         <input className="AdminRoom__QuestionBox" value={currentQuestion} />
       )}
       <FoundationButton label="次の問題へ" onClick={emitGoToNextQuestion} />
-      {players.map((player) => {
-        const answer = player.isAnswered ? '解答中...' : player.answer || '';
-        return (
-          <QuizPanel
-            key={player.id}
-            name={player.name}
-            starNumber={player.stars}
-            answerText={answer}
-          />
-        );
-      })}
+      {players
+        .filter(({ role }) => role === 'player')
+        .map((player) => {
+          const answer = player.isAnswered ? '解答中...' : player.answer || '';
+          return (
+            <QuizPanel
+              key={player.id}
+              name={player.name}
+              starNumber={player.stars}
+              answerText={answer}
+            />
+          );
+        })}
     </div>
   );
 };

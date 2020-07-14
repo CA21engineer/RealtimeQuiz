@@ -45,7 +45,7 @@ export const Player: React.FC = () => {
           answerBody=""
           onInputAnswer={dispatchAnswer}
           onSubmitAnswer={onSubmitAnswer}
-          isOpen={roomStatus.currentStatus === 'OPEN_ANSWER'}
+          isOpen={roomStatus.currentStatus === 'WAITING_ANSWER'}
         />
       </div>
     );
@@ -59,17 +59,19 @@ export const Player: React.FC = () => {
     return <p className="Player__QuestionBox">{currentQuestion}</p>;
   };
 
-  const renderUser = roomStatus.players.map((player) => {
-    const answer = player.isAnswered ? '解答中...' : player.answer || '';
-    return (
-      <QuizPanel
-        key={player.id}
-        name={player.name}
-        starNumber={player.stars}
-        answerText={answer}
-      />
-    );
-  });
+  const renderUser = roomStatus.players
+    .filter(({ role }) => role === 'player')
+    .map((player) => {
+      const answer = player.isAnswered ? '解答中...' : player.answer || '';
+      return (
+        <QuizPanel
+          key={player.id}
+          name={player.name}
+          starNumber={player.stars}
+          answerText={answer}
+        />
+      );
+    });
 
   return (
     <div className="Player__Wrapper">
