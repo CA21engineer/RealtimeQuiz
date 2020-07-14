@@ -35,6 +35,14 @@ export const QuizPanel: React.FC<Props> = ({
   // HELP ME: 急募，なんかいい書き方
   const getStarText = (star: number) => {
     const STAR_LIMIT = 5;
+    if (star === 0) {
+      return '⭐️ * 0';
+    }
+
+    if (star < 0) {
+      return `⭐️ ${star}`;
+    }
+
     if (star > STAR_LIMIT) {
       return `⭐️ + ${star}`;
     }
