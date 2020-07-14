@@ -5,7 +5,7 @@ export interface GameRoomStatusData {
     | 'WAITING_ANSWER'
     | 'CLOSE_ANSWER'
     | 'OPEN_ANSWER'
-    | 'OPEN_AGGRIGATE';
+    | 'OPEN_AGGREGATE';
 
   // 今の問題
   currentQuestion: string | null;
