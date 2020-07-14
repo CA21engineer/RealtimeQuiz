@@ -32,7 +32,7 @@ export class Emitter {
 
   // 変化させる星の数を設定する
   public setAlterStars(alterStars: SetAlterStarsPayload): void {
-    this.emitter('SetAlterStars', { alterStars });
+    this.emitter('SetAlterStars', alterStars);
   }
 
   // 次の問題を出題する
