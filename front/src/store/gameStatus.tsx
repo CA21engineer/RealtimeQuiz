@@ -1,13 +1,15 @@
 import { createContext, Reducer, Dispatch } from 'react';
 import produce from 'immer';
 import { generateContextWrapper } from 'utils/store/contextHelper';
-import { GameRoomStatusData } from 'interfaces/Status';
+import { GameRoomStatusData, PlayerStatus } from 'interfaces/Status';
+import { getAccountId } from 'libraries/AccountId';
 import { Emitter } from 'controllers/Emitter';
 import { Receiver } from 'controllers/Receiver';
 
 export type PersonalStatus = {
   answer: string;
   isAnswered: boolean;
+  currentStatus: PlayerStatus | null;
 };
 
 export type Controller = {
@@ -25,6 +27,7 @@ const initialState: GameStatus = {
   personalStatus: {
     answer: '',
     isAnswered: false,
+    currentStatus: null,
   },
   roomStatus: {
     currentStatus: 'WAITING_QUESTION',
@@ -68,6 +71,15 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
 
         if (state.roomStatus.currentStatus === 'WAITING_QUESTION') {
           draft.personalStatus.isAnswered = false;
+        }
+
+        const accountId = getAccountId();
+        const selfStatus = status.players.filter(
+          (player) => player.id === accountId
+        )[0];
+
+        if (selfStatus) {
+          draft.personalStatus.currentStatus = selfStatus;
         }
       });
     }

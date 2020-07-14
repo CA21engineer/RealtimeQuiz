@@ -1,6 +1,6 @@
 import { GameRoomStatusData } from 'interfaces/Status';
 
-export function expressRoomStatus(
+export function expressPlayerStatus(
   status: GameRoomStatusData['currentStatus']
 ): string {
   switch (status) {
@@ -12,7 +12,7 @@ export function expressRoomStatus(
       return '結果発表を待っています…';
     case 'OPEN_ANSWER':
       return '結果発表を待っています…';
-    case 'OPEN_AGGRIGATE':
+    case 'OPEN_AGGREGATE':
       return '結果発表';
     default:
       throw new Error(`Fatal: ユーザの状態が不明です．: ${status}`);
@@ -20,9 +20,9 @@ export function expressRoomStatus(
 }
 
 /* eslint @typescript-eslint/explicit-module-boundary-types: 0 */
-export const useRoom = () => {
+export const usePlayer = () => {
   return {
-    expressRoomStatus,
+    expressPlayerStatus,
   };
 };
 

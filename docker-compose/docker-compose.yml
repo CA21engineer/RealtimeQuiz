@@ -1,0 +1,31 @@
+version: "3.4"
+services:
+  api-server:
+    restart: always
+    build: ../app/apiServer/target/docker/stage
+    # volumes:
+    #   - ../../front/dist:/dist
+    networks:
+      - default
+
+  front:
+    restart: always
+    build:
+      dockerfile: ../docker-compose/node/Dockerfile
+      context: ../front/
+    networks:
+      - default
+    stdin_open: true
+
+  nginx:
+    restart: always
+    image: nginx:latest
+    ports:
+      - 3100:80
+    volumes:
+      - ./nginx/root/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - default
+    depends_on:
+      - front
+      - api-server

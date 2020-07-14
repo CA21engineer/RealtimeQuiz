@@ -1,0 +1,5 @@
+.next
+.scaffdog
+.storybook
+dist
+node_modules

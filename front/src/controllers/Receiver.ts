@@ -13,26 +13,17 @@ export class Receiver extends ReceiverBase {
 
   callHandler(type: string, data: unknown): boolean {
     switch (type) {
-      case 'status':
+      case 'Status':
       case 'PlayerList': {
         this.onStatusChanged(data as GameRoomStatusData);
         return true;
       }
-      case 'forceSendAnswer':
+      case 'ForceSendAnswer':
         this.forceSendAnswer();
-        return true;
-      case 'open':
-        this.joinedRoom();
         return true;
       default:
         return false;
     }
-  }
-
-  // ルームに正常に入室した
-  joinedRoom(): void {
-    // dummy for lint
-    console.log(this);
   }
 
   /**
