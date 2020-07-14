@@ -1,3 +1,14 @@
+.flexColumnCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.FoundationInputArea {
+  @extend .flexColumnCenter;
+  width: 400px;
+}
+
 .FoundationInputArea__Input {
   width: 100%;
   line-height: 1.5em;
@@ -6,4 +17,9 @@
 .FoundationInputArea__Submit {
   padding: 1em 0;
   text-align: center;
+}
+
+.FoundationInputArea__Input {
+  height: 40px;
+  font-size: 18px;
 }

@@ -20,7 +20,7 @@ export const FoundationInputArea: React.FC<Props> = ({
   inputRef,
 }) => {
   return (
-    <>
+    <div className="FoundationInputArea">
       <input
         className="FoundationInputArea__Input"
         type="text"
@@ -32,6 +32,6 @@ export const FoundationInputArea: React.FC<Props> = ({
       <div className="FoundationInputArea__Submit">
         <FoundationButton label={submitLabel} onClick={onClickSubmitButton} />
       </div>
-    </>
+    </div>
   );
 };
