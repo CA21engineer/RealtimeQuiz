@@ -5,7 +5,7 @@ export const getAnswerWithPlayer = (
   isAnswered: boolean,
   answer: string
 ): string => {
-  if (['OPEN_ANSWER', 'OPEN_AGGRIGATE'].includes(status)) {
+  if (['OPEN_ANSWER', 'OPEN_AGGREGATE'].includes(status)) {
     return answer;
   }
   if (isAnswered) {
