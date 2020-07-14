@@ -36,4 +36,9 @@ export class Emitter {
   public goToNextQuestion(): void {
     this.emitter('goToNextQuestion');
   }
+
+  // 解答を締め切る
+  public closeApplications(): void {
+    this.emitter('closeApplications');
+  }
 }

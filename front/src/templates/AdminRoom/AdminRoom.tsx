@@ -1,53 +1,94 @@
-import React from 'react';
+import React, { useEffect, useCallback, useContext, useState } from 'react';
+import { GameStatusContext } from 'store/gameStatus';
+import { FoundationButton } from 'components/FoundationButton';
+import { QuizAdminPanel } from 'components/QuizAdminPanel';
+
 import './admin_room.scss';
-import { FoundationButton } from '../../components/FoundationButton';
-import { QuizAdminPanel } from '../../components/QuizAdminPanel';
-
-// FIXME: 仕様よう分かっとらんでな、あとで直す
-type User = {
-  name: string;
-  starNumber: number;
-  input: string;
-};
-
-type UserStatus = {
-  user: User;
-  givenStar: number;
-};
 
 export const AdminRoom: React.FC = () => {
-  const questionBody = '';
-  const userStatusArray: UserStatus[] = [];
-  const remainTime = 0;
+  const [alterStarsRef, setAlterStarsRef] = useState<
+    React.RefObject<HTMLInputElement>[]
+  >();
+  const { state } = useContext(GameStatusContext);
+  const { roomStatus, controllers } = state;
+  const { players, currentQuestion } = roomStatus;
+
+  const EmitCloseApplications = useCallback(() => {
+    if (!controllers.emitter) {
+      return;
+    }
+
+    controllers.emitter.goToNextQuestion();
+  }, [controllers]);
+
+  const emitOpenAnswers = useCallback(() => {
+    if (!controllers.emitter) {
+      return;
+    }
+
+    controllers.emitter.openAnswers();
+  }, [controllers]);
+
+  const emitAlterStars = useCallback(() => {
+    if (!controllers.emitter || !alterStarsRef) {
+      return;
+    }
+
+    const data = alterStarsRef.map((ref, index) => {
+      return {
+        accountId: players[index].id,
+        alterStars: Number(ref.current?.value) || 0,
+      };
+    });
+
+    controllers.emitter.setAlterStars({
+      alterStars: data,
+    });
+  }, [controllers]);
+
+  useEffect(() => {
+    const refs = [...Array(roomStatus.players.length)].map(() =>
+      React.createRef<HTMLInputElement>()
+    );
+
+    setAlterStarsRef(refs);
+  }, [roomStatus]);
+
+  const renderQuizAdminPanels = () => {
+    if (!alterStarsRef || !alterStarsRef.length) {
+      return null;
+    }
+
+    return players.map((player, index) => {
+      const answer = player.isAnswered ? '解答中...' : player.answer || '';
+
+      return (
+        <QuizAdminPanel
+          key={player.id}
+          name={player.name}
+          starNumber={player.stars}
+          answerText={answer}
+          starsRef={alterStarsRef[index]}
+        />
+      );
+    });
+  };
+
   return (
     <div className="AdminRoom__view">
-      <p>{`制限時間残り${remainTime}秒`}</p>
       <div>
         <h1>問題を出題しています</h1>
-        <input className="AdminRoom__QuestionBox" value={questionBody} />
+        {currentQuestion && (
+          <input className="AdminRoom__QuestionBox" value={currentQuestion} />
+        )}
         <FoundationButton
           label="解答を締め切る"
-          onClick={() => console.log('解答を締め切る')}
+          onClick={EmitCloseApplications}
         />
-        <FoundationButton
-          label="一斉にオープン"
-          onClick={() => console.log('一斉にオープン')}
-        />
-        <FoundationButton
-          label="結果発表"
-          onClick={() => console.log('結果発表')}
-        />
+        <FoundationButton label="一斉にオープン" onClick={emitOpenAnswers} />
+        <FoundationButton label="結果発表" onClick={emitAlterStars} />
+        {renderQuizAdminPanels()}
       </div>
-      {userStatusArray.map((userStatus) => (
-        <QuizAdminPanel
-          key={userStatus.user.name}
-          name={userStatus.user.name}
-          starNumber={userStatus.user.starNumber}
-          answerText={userStatus.user.input}
-          givenStar={userStatus.givenStar}
-          setValue={(starNumber: number) => console.log(starNumber)}
-        />
-      ))}
     </div>
   );
 };
