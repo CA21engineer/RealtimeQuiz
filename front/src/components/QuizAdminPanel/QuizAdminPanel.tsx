@@ -7,6 +7,7 @@ type Props = {
   starNumber: number;
   answerText: string;
   starsRef?: React.Ref<HTMLInputElement>;
+  isOnline: boolean;
 };
 
 export const QuizAdminPanel: React.FC<Props> = ({
@@ -14,11 +15,17 @@ export const QuizAdminPanel: React.FC<Props> = ({
   starNumber,
   answerText,
   starsRef,
+  isOnline,
 }) => {
   const [givenStar, setGivenStar] = React.useState(0);
   return (
     <div className="QuizAdminPanel__Container">
-      <QuizPanel name={name} starNumber={starNumber} answerText={answerText} />
+      <QuizPanel
+        name={name}
+        starNumber={starNumber}
+        answerText={answerText}
+        isOnline={isOnline}
+      />
       <div className="QuizAdminPanel__StarPanel">
         <button
           className="QuizAdminPanel__StarButton"

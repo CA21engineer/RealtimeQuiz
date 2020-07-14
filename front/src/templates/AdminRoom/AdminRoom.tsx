@@ -77,6 +77,7 @@ export const AdminRoom: React.FC = () => {
             starNumber={player.stars}
             answerText={answer}
             starsRef={alterStarsRef[index]}
+            isOnline={player.connectionStatus === 'online'}
           />
         );
       });

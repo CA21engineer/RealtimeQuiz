@@ -33,6 +33,7 @@ export const QuizPanelContainer: React.FC<QuizPanelContainerType> = ({
           name={player.name}
           starNumber={player.stars}
           answerText={answer}
+          isOnline={player.connectionStatus === 'online'}
         />
       );
     });

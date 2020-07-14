@@ -17,6 +17,7 @@ type Props = {
   starNumber: number;
   answerText: string;
   plusMinus?: PlusMinus;
+  isOnline: boolean;
 };
 
 export const QuizPanel: React.FC<Props> = ({
@@ -24,6 +25,7 @@ export const QuizPanel: React.FC<Props> = ({
   starNumber,
   answerText,
   plusMinus = PlusMinus.None,
+  isOnline,
 }) => {
   if (
     Number.isNaN(starNumber) ||
@@ -53,6 +55,7 @@ export const QuizPanel: React.FC<Props> = ({
   };
 
   const starText = getStarText(starNumber);
+  const onlineText = isOnline ? 'オンライン' : 'オフライン';
 
   return (
     <div
@@ -64,6 +67,7 @@ export const QuizPanel: React.FC<Props> = ({
     >
       <div className="QuizPanel__Header">
         <p className="QuizPanel__NameArea">{name}</p>
+        <p className="QuizPanel__Status">{onlineText}</p>
         <span className="QuizPanel__StarArea">{starText}</span>
       </div>
       <p className="QuizPanel__AnswerArea">{answerText}</p>
