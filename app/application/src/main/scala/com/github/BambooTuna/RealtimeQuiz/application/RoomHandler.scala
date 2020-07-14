@@ -23,10 +23,13 @@ import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 import io.circe.generic.auto._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+import org.slf4j.{Logger, LoggerFactory}
 
 class RoomHandler(roomAggregate: ActorRef)(
     implicit materializer: Materializer) {
   type QueryP[Q] = Directive[Q] => Route
+
+  val logger: Logger = LoggerFactory.getLogger(getClass)
 
   implicit val timeout = Timeout(5.seconds)
 
@@ -78,12 +81,8 @@ class RoomHandler(roomAggregate: ActorRef)(
         case Success(value) =>
           value match {
             case JoinRoomSuccess(connection) =>
-              handleWebSocketMessages(
-                decodeFlow via connection.watchTermination()((_, f) => {
-                  f.onComplete { _ =>
-                    roomAggregate ! RemoveRoomRequest(accountId, roomId)
-                  }(materializer.executionContext)
-                }) via encodeFlow)
+              //TODO when parent disconnected, remove room from aggregate
+              handleWebSocketMessages(decodeFlow via connection via encodeFlow)
             case JoinRoomFailure(message) =>
               println(message)
               complete(StatusCodes.BadRequest, message)
@@ -101,7 +100,7 @@ class RoomHandler(roomAggregate: ActorRef)(
   }
 
   def encodeFlow: Flow[WebSocketMessage, Message, NotUsed] = {
-    Flow[WebSocketMessage].map(a => TextMessage.Strict(a.toString))
+    Flow[WebSocketMessage].map(a => TextMessage.Strict(a.toJsonString))
   }
 
 }

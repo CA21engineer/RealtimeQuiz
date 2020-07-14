@@ -44,7 +44,7 @@ object WebSocketMessage {
 sealed trait WebSocketMessage {
   val typeName: String = getClass.getSimpleName
 
-  override def toString: String = this match {
+  def toJsonString: String = this match {
     case data: PlayerList =>
       Json
         .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
@@ -53,6 +53,7 @@ sealed trait WebSocketMessage {
       Json
         .obj("type" -> Json.fromString(typeName), "data" -> data.asJson)
         .noSpaces
+    case _ => """{"type":"ERROR"}"""
   }
 }
 
