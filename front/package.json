@@ -7,7 +7,8 @@
   "main": "index.js",
   "scripts": {
     "start": "next start",
-    "start:ci": "npm-run-all -s clean:next build:production start",
+    "start:server": "next start -p 3100",
+    "start:ci": "npm-run-all -s clean:next build:production start:server",
     "dev": "next dev",
     "build": "npm-run-all -s clean build:production",
     "build:production": "next build && next export -o dist/",
