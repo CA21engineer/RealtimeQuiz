@@ -8,6 +8,7 @@ import { Player } from 'templates/Player';
 import { AdminResult } from 'templates/AdminResult';
 import { AdminSubmitQuestion } from 'templates/AdminSubmitQuestion';
 import { AdminRoom } from 'templates/AdminRoom';
+import { Loading } from 'templates/Loading';
 
 const RoomPage: React.FC = () => {
   const INIT_NAME = '名無しさん';
@@ -44,7 +45,7 @@ const RoomPage: React.FC = () => {
   }, [query]);
 
   if (!currentStatus) {
-    return null;
+    return <Loading />;
   }
 
   switch (currentStatus.role) {
@@ -81,8 +82,7 @@ const RoomPage: React.FC = () => {
       }
 
     default:
-      // TODO: サスペンドの追加
-      return null;
+      return <Loading />;
   }
 };
 
