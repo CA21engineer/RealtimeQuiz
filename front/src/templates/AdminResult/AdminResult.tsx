@@ -1,34 +1,41 @@
-import React from 'react';
-import './admin_result.scss';
-import { FoundationButton } from '../../components/FoundationButton';
-import { QuizPanel } from '../../components/QuizPanel';
+import React, { useCallback, useContext } from 'react';
+import { GameStatusContext } from 'store/gameStatus';
+import { FoundationButton } from 'components/FoundationButton';
+import { QuizPanel } from 'components/QuizPanel';
 
-// FIXME: 仕様よう分かっとらんでな、あとで直す
-type User = {
-  name: string;
-  starNumber: number;
-  input: string;
-};
+import './adminResult.scss';
 
 export const AdminResult: React.FC = () => {
-  const questionBody = '';
-  const users: User[] = [];
+  const { state } = useContext(GameStatusContext);
+  const { roomStatus, controllers } = state;
+  const { players, currentQuestion } = roomStatus;
+
+  const emitGoToNextQuestion = useCallback(() => {
+    if (!controllers.emitter) {
+      return;
+    }
+
+    controllers.emitter.goToNextQuestion();
+  }, [controllers]);
+
   return (
     <div className="SubmitQuestion__view">
       <p>結果発表</p>
-      <p className="Room__QuestionBox">{questionBody}</p>
-      <FoundationButton
-        label="次の問題へ"
-        onClick={() => console.log('次の問題へ')}
-      />
-      {users.map((user) => (
-        <QuizPanel
-          key={user.name}
-          name={user.name}
-          starNumber={user.starNumber}
-          answerText={user.input}
-        />
-      ))}
+      {currentQuestion && (
+        <input className="AdminRoom__QuestionBox" value={currentQuestion} />
+      )}
+      <FoundationButton label="次の問題へ" onClick={emitGoToNextQuestion} />
+      {players.map((player) => {
+        const answer = player.isAnswered ? '解答中...' : player.answer || '';
+        return (
+          <QuizPanel
+            key={player.id}
+            name={player.name}
+            starNumber={player.stars}
+            answerText={answer}
+          />
+        );
+      })}
     </div>
   );
 };
