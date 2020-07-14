@@ -12,7 +12,7 @@ export function expressPlayerStatus(
       return '結果発表を待っています…';
     case 'OPEN_ANSWER':
       return '結果発表を待っています…';
-    case 'OPEN_AGGRIGATE':
+    case 'OPEN_AGGREGATE':
       return '結果発表';
     default:
       throw new Error(`Fatal: ユーザの状態が不明です．: ${status}`);

@@ -66,7 +66,7 @@ const RoomPage: React.FC = () => {
         }
 
         case 'CLOSE_ANSWER':
-        case 'OPEN_AGGRIGATE':
+        case 'OPEN_AGGREGATE':
         case 'WAITING_ANSWER': {
           return <AdminRoom />;
         }
