@@ -1,0 +1,1 @@
+export { QuizAdminPanel } from './QuizAdminPanel';
