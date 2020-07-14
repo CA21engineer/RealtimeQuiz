@@ -18,7 +18,7 @@ export const AdminRoom: React.FC = () => {
       return;
     }
 
-    controllers.emitter.goToNextQuestion();
+    controllers.emitter.closeApplications();
   }, [controllers]);
 
   const emitOpenAnswers = useCallback(() => {

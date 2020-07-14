@@ -9,36 +9,39 @@ export class Emitter {
 
   // 名前を変更する
   public changeName(newName: string): void {
-    this.emitter('changeName', newName);
+    this.emitter('ChangeName', {
+      accountName: newName,
+      // isSpectator: false,
+    });
   }
 
   // 問題を送信する
   public setQuestion(question: string): void {
-    this.emitter('setQuestion', question);
+    this.emitter('SetQuestion', { question });
   }
 
   // 一斉に問題をオープンする
   public openAnswers(): void {
-    this.emitter('openAnswers');
+    this.emitter('OpenAnswers');
   }
 
   // 解答を送信する
-  public setAnswer(question: string): void {
-    this.emitter('setAnswer', question);
+  public setAnswer(answer: string): void {
+    this.emitter('SetAnswer', { answer });
   }
 
   // 変化させる星の数を設定する
   public setAlterStars(alterStars: SetAlterStarsPayload): void {
-    this.emitter('setAlterStars', alterStars);
+    this.emitter('SetAlterStars', alterStars);
   }
 
   // 次の問題を出題する
   public goToNextQuestion(): void {
-    this.emitter('goToNextQuestion');
+    this.emitter('GoToNextQuestion');
   }
 
   // 解答を締め切る
   public closeApplications(): void {
-    this.emitter('closeApplications');
+    this.emitter('CloseApplications');
   }
 }
