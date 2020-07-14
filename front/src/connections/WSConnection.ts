@@ -39,11 +39,11 @@ export class WSConnection extends Connection {
       this.callFunction('open', null);
     });
 
-    this.socket.addEventListener('onerror', () => {
+    this.socket.addEventListener('error', () => {
       throw new Error('接続できませんでした');
     });
 
-    this.socket.addEventListener('onclose', () => {
+    this.socket.addEventListener('close', () => {
       console.log('コネクションが切断されたため再度接続を試みます...');
       this.connect();
     })
