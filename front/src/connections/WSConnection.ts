@@ -38,7 +38,7 @@ export class WSConnection extends Connection {
   private setMessageHandler(): void {
     this.socket.addEventListener('message', (event) => {
       const json = JSON.parse(event.data);
-      this.callFunction(json.type, json);
+      this.callFunction(json.type, json.data);
     });
   }
 }

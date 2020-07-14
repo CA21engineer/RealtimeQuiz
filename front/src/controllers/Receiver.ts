@@ -14,11 +14,10 @@ export class Receiver extends ReceiverBase {
   callHandler(type: string, data: unknown): boolean {
     switch (type) {
       case 'status':
-        {
-          const statusData = data as GameRoomStatusData;
-          this.onStatusChanged(statusData);
-        }
+      case 'PlayerList': {
+        this.onStatusChanged(data as GameRoomStatusData);
         return true;
+      }
       case 'forceSendAnswer':
         this.forceSendAnswer();
         return true;
