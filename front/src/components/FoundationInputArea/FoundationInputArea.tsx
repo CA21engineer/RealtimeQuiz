@@ -4,10 +4,11 @@ import './foundationInputArea.scss';
 
 type Props = {
   inputBody: string;
-  onInputAnswer: (input: string) => void;
+  onInputAnswer?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClickSubmitButton: React.MouseEventHandler;
   inputPlaceholder: string;
   submitLabel: string;
+  inputRef?: React.Ref<HTMLInputElement>;
 };
 
 export const FoundationInputArea: React.FC<Props> = ({
@@ -16,6 +17,7 @@ export const FoundationInputArea: React.FC<Props> = ({
   onClickSubmitButton,
   inputPlaceholder,
   submitLabel,
+  inputRef,
 }) => {
   return (
     <>
@@ -24,9 +26,8 @@ export const FoundationInputArea: React.FC<Props> = ({
         type="text"
         defaultValue={inputBody}
         placeholder={inputPlaceholder}
-        onChange={(e) => {
-          onInputAnswer(e.target.value);
-        }}
+        onChange={onInputAnswer}
+        ref={inputRef}
       />
       <div className="FoundationInputArea__Submit">
         <FoundationButton label={submitLabel} onClick={onClickSubmitButton} />
