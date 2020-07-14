@@ -1,10 +1,9 @@
 FROM node:12
 
 WORKDIR /usr/src/app
-COPY ./package*.json ./
+COPY . .
 RUN npm install
-
-RUN npm-run-all -s clean:next build:production
+RUN npm run start:ci
 
 EXPOSE 3100
 
