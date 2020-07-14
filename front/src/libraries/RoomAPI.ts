@@ -7,7 +7,7 @@ import { ConnectionInfo } from '../interfaces/ConnectionInfo';
  * 現在あるルーム情報の配列を返す
  */
 export const getRoomList = async (): Promise<RoomInformation[]> => {
-  const roomInformation = (await fetch(`${API_BASE_URL}room`).then((r) =>
+  const roomInformation = (await fetch(`${API_BASE_URL()}room`).then((r) =>
     r.json()
   )) as unknown;
 
@@ -22,7 +22,7 @@ export const createNewRoomThenGetInfo = async (
 ): Promise<ConnectionInfo> => {
   const accountId = getAccountId();
 
-  const roomInfo = ((await fetch(`${API_BASE_URL}room/accountId/${accountId}`, {
+  const roomInfo = ((await fetch(`${API_BASE_URL()}room/accountId/${accountId}`, {
     method: 'POST',
     headers: {
       'Content-type': 'application/json',

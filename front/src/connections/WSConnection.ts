@@ -14,7 +14,7 @@ export class WSConnection extends Connection {
     super();
 
     this.socket = new WebSocket(
-      `${WS_BASE_URL}room/${connectionInfo.roomId}/accountId/${connectionInfo.accountId}`
+      `${WS_BASE_URL()}room/${connectionInfo.roomId}/accountId/${connectionInfo.accountId}`
     );
 
     this.socket.addEventListener('open', () => {
