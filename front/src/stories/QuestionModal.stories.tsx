@@ -9,7 +9,8 @@ storiesOf('QuestionModal', module).add('default', () => {
       questionBody="カイジの人間ダービーで石田さんはなんと言って奈落へ落ちていったでしょうか"
       remainTime={10}
       answerBody=""
-      onInputAnswer={(text: string) => logger(text)}
+      onInputAnswer={(e: React.ChangeEvent<HTMLInputElement>) =>
+        console.log(e.target.value)}
       onSubmitAnswer={() => {
         logger('None of arguments');
       }}

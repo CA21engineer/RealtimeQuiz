@@ -56,7 +56,8 @@ export const Room: React.FC = () => {
   }, [query]);
 
   const renderQuestionModal = () => {
-    const dispatchAnswer = (answer: string) => {
+    const dispatchAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const answer = e.target.value;
       dispatch({
         type: 'UPDATE_PERSONAL_ANSWER',
         payload: {
@@ -66,6 +67,7 @@ export const Room: React.FC = () => {
         },
       });
     };
+
     return (
       <div className="Room__QuestionModal">
         <QuestionModal

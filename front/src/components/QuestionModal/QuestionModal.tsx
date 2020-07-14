@@ -9,7 +9,7 @@ type Props = {
   questionBody: string;
   remainTime: number;
   answerBody: string;
-  onInputAnswer: (text: string) => void;
+  onInputAnswer: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmitAnswer: React.MouseEventHandler;
   isOpen: boolean;
 };

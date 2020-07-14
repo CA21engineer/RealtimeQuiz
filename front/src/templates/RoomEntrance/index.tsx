@@ -9,7 +9,7 @@ const RoomEntrance: React.FC = () => {
       <p className="Room__label">ニックネームを入力してください．</p>
       <FoundationInputArea
         inputBody=""
-        onInputAnswer={(inputName: string) => console.log(inputName)}
+        onInputAnswer={(e) => console.log(e)}
         onClickSubmitButton={() => {
           console.log('Send server');
         }}
