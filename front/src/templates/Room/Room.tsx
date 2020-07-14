@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect, useContext } from 'react';
+import { useRouter } from 'next/router';
 import { GameStatusContext } from 'store/gameStatus';
 import { Receiver } from 'controllers/Receiver';
 import { WSConnection } from 'connections/WSConnection';
 import { useRoom } from './RoomHooks';
-
-import './room.scss';
-
 import { QuizPanel } from '../../components/QuizPanel';
 import { QuestionModal } from '../../components/QuestionModal';
 
+import './room.scss';
+
 export const Room: React.FC = () => {
+  const { query } = useRouter();
   const { expressRoomStatus } = useRoom();
   const { state, dispatch } = useContext(GameStatusContext);
   const { roomStatus } = state;
@@ -28,10 +29,16 @@ export const Room: React.FC = () => {
   }, [state, dispatch]);
 
   useEffect(() => {
-    // TODO: URLをちゃんとしたのに直す
+    const { roomId } = query;
+    const { accountId } = query;
+
+    if (typeof roomId !== 'string' || typeof accountId !== 'string') {
+      return;
+    }
+
     const connection = new WSConnection({
-      roomId: 'hogehoge',
-      accountId: 'hugahuga',
+      roomId,
+      accountId,
     });
     const receiver = new Receiver(dispatch);
     connection.setReceivers(receiver);
@@ -46,7 +53,7 @@ export const Room: React.FC = () => {
         },
       },
     });
-  }, []);
+  }, [query]);
 
   const renderQuestionModal = () => {
     const dispatchAnswer = (answer: string) => {
