@@ -14,18 +14,18 @@ export const QuizPanelContainer: React.FC<QuizPanelContainerType> = ({
 }: QuizPanelContainerType) => {
   const { roomStatus } = useQuizPanelContainer();
 
+  const filter =
+    roleType === 'admin' ? getAnswerWithAdmin : getAnswerWithPlayer;
+
   const renderUser = roomStatus.players
     .filter(({ role }) => role === 'player')
     .sort((a, b) => b.stars - a.stars)
     .map((player) => {
-      const answer =
-        roleType === 'admin'
-          ? getAnswerWithAdmin(player.isAnswered, player.answer || '')
-          : getAnswerWithPlayer(
-              roomStatus.currentStatus,
-              player.isAnswered,
-              player.answer || ''
-            );
+      const answer = filter(
+        roomStatus.currentStatus,
+        player.isAnswered,
+        player.answer || ''
+      );
 
       return (
         <QuizPanel

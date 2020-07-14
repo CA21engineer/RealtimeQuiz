@@ -65,6 +65,7 @@ export const AdminRoom: React.FC = () => {
       .sort((a, b) => b.stars - a.stars)
       .map((player, index) => {
         const answer = getAnswerWithAdmin(
+          roomStatus.currentStatus,
           player.isAnswered,
           player.answer || ''
         );
