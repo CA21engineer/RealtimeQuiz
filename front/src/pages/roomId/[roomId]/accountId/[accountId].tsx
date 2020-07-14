@@ -55,6 +55,10 @@ const RoomPage: React.FC = () => {
 
       return <Player />;
 
+    case 'spectator': {
+      return <Player />;
+    }
+
     case 'admin':
       switch (roomStatus.currentStatus) {
         case 'WAITING_QUESTION': {

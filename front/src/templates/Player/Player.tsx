@@ -41,7 +41,13 @@ export const Player: React.FC = () => {
       });
     };
 
+    const role = personalStatus?.currentStatus?.role;
+    if (!role) {
+      return null;
+    }
+
     const isOpen =
+      role !== 'spectator' &&
       roomStatus.currentStatus === 'WAITING_ANSWER' &&
       !personalStatus.isAnswered;
 
