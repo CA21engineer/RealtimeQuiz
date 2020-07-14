@@ -1,7 +1,6 @@
 $MAIN_TEXT_COLOR: #666666;
 $MAIN_UI_WIDTH: 250px;
 
-
 .flexColumnCenter {
   display: flex;
   flex-direction: column;
@@ -14,4 +13,5 @@ $MAIN_UI_WIDTH: 250px;
 
 body {
   color: $MAIN_TEXT_COLOR;
+  background-color: #AAAAAA;
 }
