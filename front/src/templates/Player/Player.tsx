@@ -1,8 +1,5 @@
-import React, { useCallback, useEffect, useContext } from 'react';
-import { useRouter } from 'next/router';
+import React, { useCallback, useContext } from 'react';
 import { GameStatusContext } from 'store/gameStatus';
-import { Receiver } from 'controllers/Receiver';
-import { WSConnection } from 'connections/WSConnection';
 import { usePlayer } from './PlayerHooks';
 import { QuizPanel } from '../../components/QuizPanel';
 import { QuestionModal } from '../../components/QuestionModal';
@@ -10,7 +7,6 @@ import { QuestionModal } from '../../components/QuestionModal';
 import './player.scss';
 
 export const Player: React.FC = () => {
-  const { query } = useRouter();
   const { expressPlayerStatus } = usePlayer();
   const { state, dispatch } = useContext(GameStatusContext);
   const { roomStatus } = state;
@@ -27,33 +23,6 @@ export const Player: React.FC = () => {
       type: 'ANSWER',
     });
   }, [state, dispatch]);
-
-  useEffect(() => {
-    const { roomId } = query;
-    const { accountId } = query;
-
-    if (typeof roomId !== 'string' || typeof accountId !== 'string') {
-      return;
-    }
-
-    const connection = new WSConnection({
-      roomId,
-      accountId,
-    });
-    const receiver = new Receiver(dispatch);
-    connection.setReceivers(receiver);
-    const emitter = connection.createEmitter();
-
-    dispatch({
-      type: 'INIT_CONTROLLERS',
-      payload: {
-        controllers: {
-          emitter,
-          receiver,
-        },
-      },
-    });
-  }, [query]);
 
   const renderQuestionModal = () => {
     const dispatchAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
