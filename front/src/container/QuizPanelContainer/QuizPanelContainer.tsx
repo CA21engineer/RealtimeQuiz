@@ -38,5 +38,9 @@ export const QuizPanelContainer: React.FC<QuizPanelContainerType> = ({
       );
     });
 
-  return <>{renderUser}</>;
+  return (
+    <>
+      {renderUser}
+    </>
+  );
 };
