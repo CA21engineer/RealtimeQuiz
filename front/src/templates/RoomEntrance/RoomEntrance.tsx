@@ -1,20 +1,32 @@
-import React from 'react';
-import './room_entrance.scss';
+import React, { useCallback, useContext, useRef } from 'react';
+import { GameStatusContext } from 'store/gameStatus';
+import { FoundationInputArea } from 'components/FoundationInputArea';
 
-import { FoundationInputArea } from '../../components/FoundationInputArea';
+import './roomEntrance.scss';
 
 export const RoomEntrance: React.FC = () => {
+  const nameRef = useRef<HTMLInputElement>(null);
+  const { state } = useContext(GameStatusContext);
+  const { controllers } = state;
+
+  const emitChangeName = useCallback(() => {
+    if (!nameRef.current || !controllers.emitter) {
+      return;
+    }
+
+    const name = nameRef.current.value;
+
+    controllers.emitter.changeName(name);
+  }, [controllers, nameRef]);
   return (
     <div className="Room__view">
       <p className="Room__label">ニックネームを入力してください．</p>
       <FoundationInputArea
         inputBody=""
-        onInputAnswer={(e) => console.log(e)}
-        onClickSubmitButton={() => {
-          console.log('Send server');
-        }}
+        onClickSubmitButton={emitChangeName}
         inputPlaceholder="ニックネーム"
         submitLabel="入室"
+        inputRef={nameRef}
       />
     </div>
   );

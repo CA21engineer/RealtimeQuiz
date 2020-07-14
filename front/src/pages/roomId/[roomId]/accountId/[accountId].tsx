@@ -3,12 +3,14 @@ import { useRouter } from 'next/router';
 import { GameStatusContext } from 'store/gameStatus';
 import { Receiver } from 'controllers/Receiver';
 import { WSConnection } from 'connections/WSConnection';
+import { RoomEntrance } from 'templates/RoomEntrance';
 import { Player } from 'templates/Player';
 import { AdminResult } from 'templates/AdminResult';
 import { AdminSubmitQuestion } from 'templates/AdminSubmitQuestion';
 import { AdminRoom } from 'templates/AdminRoom';
 
 const RoomPage: React.FC = () => {
+  const INIT_NAME = '名無しさん';
   const { query } = useRouter();
   const { state, dispatch } = useContext(GameStatusContext);
   const { personalStatus, roomStatus } = state;
@@ -47,6 +49,10 @@ const RoomPage: React.FC = () => {
 
   switch (currentStatus.role) {
     case 'player':
+      if (currentStatus.name === INIT_NAME) {
+        return <RoomEntrance />;
+      }
+
       return <Player />;
 
     case 'admin':
