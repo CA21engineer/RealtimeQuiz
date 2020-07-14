@@ -1,6 +1,6 @@
 import { GameRoomStatusData } from 'interfaces/Status';
 
-export function expressRoomStatus(
+export function expressPlayerStatus(
   status: GameRoomStatusData['currentStatus']
 ): string {
   switch (status) {
@@ -20,9 +20,9 @@ export function expressRoomStatus(
 }
 
 /* eslint @typescript-eslint/explicit-module-boundary-types: 0 */
-export const useRoom = () => {
+export const usePlayer = () => {
   return {
-    expressRoomStatus,
+    expressPlayerStatus,
   };
 };
 

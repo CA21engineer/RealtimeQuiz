@@ -1,8 +1,8 @@
 import React from 'react';
-import { Room } from 'templates/Room';
+import { Player } from 'templates/Player';
 
 const RoomPage: React.FC = () => {
-  return <Room />;
+  return <Player />;
 };
 
 export default RoomPage;
