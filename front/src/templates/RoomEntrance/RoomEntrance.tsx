@@ -15,6 +15,9 @@ export const RoomEntrance: React.FC = () => {
     }
 
     const name = nameRef.current.value;
+    if (name === '') {
+      return;
+    }
 
     controllers.emitter.changeName(name);
   }, [controllers, nameRef]);
