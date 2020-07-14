@@ -28,6 +28,10 @@ export const Player: React.FC = () => {
   const renderQuestionModal = () => {
     const dispatchAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
       const answer = e.target.value;
+      if (answer === '') {
+        return;
+      }
+
       dispatch({
         type: 'UPDATE_PERSONAL_ANSWER',
         payload: {
