@@ -35,3 +35,16 @@
   padding-bottom: 25px;
   margin-bottom: 25px;
 }
+
+.SubmitQuestion__PlayerList {
+  display: flex;
+  border-radius: 7px;
+  background-color: rgba(0, 0, 0, 0.09);
+
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .QuizPanel__Container {
+    margin: 10px;
+  }
+}

@@ -1,0 +1,26 @@
+.flexColumnCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Player__Question {
+  font-size: 1.3rem;
+}
+
+.Player__Wrapper {
+  @extend .flexColumnCenter;
+}
+
+.Player__List {
+  display: flex;
+  border-radius: 7px;
+  background-color: rgba(0, 0, 0, 0.09);
+
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .QuizPanel__Container {
+    margin: 10px;
+  }
+}

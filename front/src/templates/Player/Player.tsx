@@ -80,7 +80,9 @@ export const Player: React.FC = () => {
       </p>
       {renderQuestionBody()}
       {renderQuestionModal()}
-      <QuizPanelContainer roleType="player" />
+      <div className="Player__List">
+        <QuizPanelContainer roleType="player" />
+      </div>
     </div>
   );
 };
