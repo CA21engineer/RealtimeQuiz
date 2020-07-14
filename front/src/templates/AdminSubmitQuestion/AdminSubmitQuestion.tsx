@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useRef } from 'react';
+import { getAnswerWithAdmin } from 'utils/getAnswer';
 import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
 import { QuizPanel } from 'components/QuizPanel';
@@ -32,7 +33,10 @@ export const AdminSubmitQuestion: React.FC = () => {
       {players
         .filter(({ role }) => role === 'player')
         .map((player) => {
-          const answer = player.isAnswered ? '解答中...' : player.answer || '';
+          const answer = getAnswerWithAdmin(
+            player.isAnswered,
+            player.answer || ''
+          );
           return (
             <QuizPanel
               key={player.id}

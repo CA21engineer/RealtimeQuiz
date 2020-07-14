@@ -1,15 +1,16 @@
 import React, { useCallback, useContext } from 'react';
 import { GameStatusContext } from 'store/gameStatus';
+import { getAnswerWithPlayer } from 'utils/getAnswer';
+import { QuizPanel } from 'components/QuizPanel';
+import { QuestionModal } from 'components/QuestionModal';
 import { usePlayer } from './PlayerHooks';
-import { QuizPanel } from '../../components/QuizPanel';
-import { QuestionModal } from '../../components/QuestionModal';
 
 import './player.scss';
 
 export const Player: React.FC = () => {
   const { expressPlayerStatus } = usePlayer();
   const { state, dispatch } = useContext(GameStatusContext);
-  const { roomStatus } = state;
+  const { roomStatus, personalStatus } = state;
 
   const onSubmitAnswer: React.MouseEventHandler = useCallback(() => {
     const { emitter } = state.controllers;
@@ -37,6 +38,10 @@ export const Player: React.FC = () => {
       });
     };
 
+    const isOpen =
+      roomStatus.currentStatus === 'WAITING_ANSWER' &&
+      !personalStatus.isAnswered;
+
     return (
       <div className="Player__QuestionModal">
         <QuestionModal
@@ -45,7 +50,7 @@ export const Player: React.FC = () => {
           answerBody=""
           onInputAnswer={dispatchAnswer}
           onSubmitAnswer={onSubmitAnswer}
-          isOpen={roomStatus.currentStatus === 'WAITING_ANSWER'}
+          isOpen={isOpen}
         />
       </div>
     );
@@ -62,7 +67,12 @@ export const Player: React.FC = () => {
   const renderUser = roomStatus.players
     .filter(({ role }) => role === 'player')
     .map((player) => {
-      const answer = player.isAnswered ? '解答中...' : player.answer || '';
+      const answer = getAnswerWithPlayer(
+        roomStatus.currentStatus,
+        player.isAnswered,
+        player.answer || ''
+      );
+
       return (
         <QuizPanel
           key={player.id}

@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useContext, useState } from 'react';
+import { getAnswerWithAdmin } from 'utils/getAnswer';
 import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
 import { QuizAdminPanel } from 'components/QuizAdminPanel';
@@ -60,7 +61,7 @@ export const AdminRoom: React.FC = () => {
     }
 
     return players.map((player, index) => {
-      const answer = player.isAnswered ? '解答中...' : player.answer || '';
+      const answer = getAnswerWithAdmin(player.isAnswered, player.answer || '');
 
       return (
         <QuizAdminPanel
