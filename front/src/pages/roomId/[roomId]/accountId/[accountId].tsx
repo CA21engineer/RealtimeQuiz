@@ -61,12 +61,12 @@ const RoomPage: React.FC = () => {
           return <AdminSubmitQuestion />;
         }
 
-        case 'OPEN_ANSWER': {
+        case 'OPEN_AGGREGATE': {
           return <AdminResult />;
         }
 
+        case 'OPEN_ANSWER':
         case 'CLOSE_ANSWER':
-        case 'OPEN_AGGREGATE':
         case 'WAITING_ANSWER': {
           return <AdminRoom />;
         }
