@@ -5,15 +5,27 @@ export const getAnswerWithPlayer = (
   isAnswered: boolean,
   answer: string
 ): string => {
-  if (['OPEN_ANSWER', 'OPEN_AGGREGATE'].includes(status)) {
-    return answer || '未解答';
-  }
+  switch (status) {
+    case 'OPEN_ANSWER':
+    case 'OPEN_AGGREGATE': {
+      return answer || '未解答';
+    }
 
-  if (isAnswered || status === 'CLOSE_ANSWER') {
-    return '解答済み';
-  }
+    case 'CLOSE_ANSWER': {
+      return '解答済み';
+    }
 
-  return '解答中...';
+    case 'WAITING_QUESTION': {
+      return '待機中...';
+    }
+
+    case 'WAITING_ANSWER': {
+      return isAnswered ? '解答済み' : '解答中...';
+    }
+
+    default:
+      return '';
+  }
 };
 
 export const getAnswerWithAdmin = (
@@ -21,13 +33,22 @@ export const getAnswerWithAdmin = (
   isAnswered: boolean,
   answer: string
 ): string => {
-  if (['OPEN_ANSWER', 'OPEN_AGGREGATE', 'CLOSE_ANSWER'].includes(status)) {
-    return answer || '未解答';
-  }
+  switch (status) {
+    case 'CLOSE_ANSWER':
+    case 'OPEN_ANSWER':
+    case 'OPEN_AGGREGATE': {
+      return answer || '未解答';
+    }
 
-  if (isAnswered) {
-    return answer;
-  }
+    case 'WAITING_QUESTION': {
+      return '待機中...';
+    }
 
-  return '解答中...';
+    default:
+      if (isAnswered) {
+        return answer;
+      }
+
+      return '解答中...';
+  }
 };
