@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import router from 'next/router';
 import './index.scss';
 
 import { FoundationInputArea } from 'components/FoundationInputArea';
@@ -22,7 +21,8 @@ export const Index: React.FC = () => {
 
   const onEnterRoom = useCallback(async (roomName: string) => {
     const accountId = getAccountId();
-    router.push(`/roomId/${roomName}/accountId/${accountId}`);
+    window.location.href = `/roomId/${roomName}/accountId/${accountId}`;
+    // router.push(`/roomId/${roomName}/accountId/${accountId}`);
   }, []);
 
   const onEnterNewRoom = useCallback(async () => {
@@ -32,7 +32,8 @@ export const Index: React.FC = () => {
     }
 
     const { accountId, roomId } = await createNewRoomThenGetInfo(roomName);
-    router.push(`/roomId/${roomId}/accountId/${accountId}`);
+    // router.push(`/roomId/${roomId}/accountId/${accountId}`);
+    window.location.href = `/roomId/${roomId}/accountId/${accountId}`;
   }, []);
 
   const renderRoomCards = rooms.map((room) => {
@@ -41,7 +42,7 @@ export const Index: React.FC = () => {
         key={room.roomId}
         title={room.roomName}
         roomInfo={`${room.participants}人が参加中`}
-        onEnterRoom={() => onEnterRoom(room.roomName)}
+        onEnterRoom={() => onEnterRoom(room.roomId)}
       />
     );
   });
