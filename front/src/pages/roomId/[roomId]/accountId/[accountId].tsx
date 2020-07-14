@@ -61,7 +61,7 @@ const RoomPage: React.FC = () => {
           return <AdminSubmitQuestion />;
         }
 
-        case 'OPEN_AGGRIGATE': {
+        case 'OPEN_AGGREGATE': {
           return <AdminResult />;
         }
 
