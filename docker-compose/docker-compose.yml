@@ -13,8 +13,6 @@ services:
     build:
       dockerfile: ../docker-compose/node/Dockerfile
       context: ../front/
-    volumes:
-      - ../front:/usr/src/app
     networks:
       - default
     stdin_open: true
