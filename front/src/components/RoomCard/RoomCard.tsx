@@ -5,7 +5,7 @@ import { FoundationButton } from '../FoundationButton/FoundationButton';
 type Props = {
   title: string;
   roomInfo: string;
-  onEnterRoom: () => void;
+  onEnterRoom: (() => void) | (() => Promise<void>);
 };
 
 export const RoomCard: React.FC<Props> = ({ title, roomInfo, onEnterRoom }) => {

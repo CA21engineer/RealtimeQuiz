@@ -126,7 +126,7 @@ type ContextType = { state: GameStatus; dispatch: Dispatch<GameStatusAction> };
 
 export const GameStatusContext = createContext<ContextType>({} as ContextType);
 
-export const GameStatusContextWrapper = generateContextWrapper(
+export const GameStatusContextProvider = generateContextWrapper(
   GameStatusContext,
   reducer,
   initialState
