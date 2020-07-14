@@ -10,7 +10,7 @@ import './player.scss';
 export const Player: React.FC = () => {
   const { expressPlayerStatus } = usePlayer();
   const { state, dispatch } = useContext(GameStatusContext);
-  const { roomStatus } = state;
+  const { roomStatus, personalStatus } = state;
 
   const onSubmitAnswer: React.MouseEventHandler = useCallback(() => {
     const { emitter } = state.controllers;
@@ -38,6 +38,10 @@ export const Player: React.FC = () => {
       });
     };
 
+    const isOpen =
+      roomStatus.currentStatus === 'WAITING_ANSWER' &&
+      !personalStatus.isAnswered;
+
     return (
       <div className="Player__QuestionModal">
         <QuestionModal
@@ -46,7 +50,7 @@ export const Player: React.FC = () => {
           answerBody=""
           onInputAnswer={dispatchAnswer}
           onSubmitAnswer={onSubmitAnswer}
-          isOpen={roomStatus.currentStatus === 'WAITING_ANSWER'}
+          isOpen={isOpen}
         />
       </div>
     );
