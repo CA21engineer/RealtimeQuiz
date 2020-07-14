@@ -16,13 +16,16 @@
   color: #FFFFFF;
   background-color: rgba(0,0,0,0);
   border: #FFFFFF 2px solid;
+  height: 40px;
+  font-size: 18px;
+  border-radius: 3.5px;
 }
+
+.FoundationInputArea__Input::placeholder {
+  color: #FFFFFF;
+}
+
 
 .FoundationInputArea__Submit {
   text-align: center;
-}
-
-.FoundationInputArea__Input {
-  height: 40px;
-  font-size: 18px;
 }
