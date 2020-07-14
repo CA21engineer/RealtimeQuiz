@@ -55,7 +55,10 @@ export const QuizPanel: React.FC<Props> = ({
   };
 
   const starText = getStarText(starNumber);
-  const onlineText = isOnline ? 'オンライン' : 'オフライン';
+  if (!isOnline) {
+    // eslint-disable-next-line no-param-reassign
+    name += '(オフライン)'
+  }
 
   return (
     <div
@@ -67,7 +70,6 @@ export const QuizPanel: React.FC<Props> = ({
     >
       <div className="QuizPanel__Header">
         <p className="QuizPanel__NameArea">{name}</p>
-        <p className="QuizPanel__Status">{onlineText}</p>
         <span className="QuizPanel__StarArea">{starText}</span>
       </div>
       <p className="QuizPanel__AnswerArea">{answerText}</p>

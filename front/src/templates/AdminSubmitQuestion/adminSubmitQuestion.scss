@@ -1,0 +1,37 @@
+.flexColumnCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.SubmitQuestion__view {
+  @extend .flexColumnCenter;
+}
+
+.SubmitQuestion__InputQuestion {
+  @extend .flexColumnCenter;
+  background-color: hsl(25, 100%, 48%);
+
+  color: #FFFFFF;
+  width: 460px;
+  border-radius: 7px;
+
+  h1 {
+    margin: 0;
+    font-size: 1.3rem;
+    padding-top: 25px;
+    font-weight: normal;
+    padding-bottom: 25px;
+  }
+
+  input {
+    margin-bottom: 25px;
+    height: 40px;
+    border: #FFFFFF 2px solid;
+    border-radius: 3.5px;
+    width: 400px;
+  }
+
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+}

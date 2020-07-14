@@ -1,10 +1,15 @@
 .QuizPanel__Container {
-  background: darkorange;
-  max-width: 480px;
+  color: #FFFFFF;
+  background: hsl(25, 100%, 68%);
+  width: 380px;
+  height: 150px;
+  border-radius: 7px;
+  margin: 0;
 }
 
 .QuizPanel__Header {
-  background: tomato;
+  background: hsl(25, 100%, 58%);
+  border-radius: 7px;
   display: flex;
   justify-content: space-between;
 }
@@ -16,18 +21,18 @@
 }
 
 .QuizPanel__StarArea {
-  background: saddlebrown;
+  border-radius: 0 7px 0 0;
+  background: hsl(25, 100%, 58%);
   height: 100%;
-  margin: auto;
   text-align: center;
   width: 8em;
-  margin: 0;
   padding: 1em 1.5em;
 }
 
 .QuizPanel__AnswerArea {
-  line-height: 1em;
-  height: 2em;
-  padding: 0.25em 0 0.25em;
+  background: hsl(25, 100%, 68%);
+  margin: 0;
+  font-size: 1.2rem;
+  padding: 10px 10px;
   text-align: center;
 }

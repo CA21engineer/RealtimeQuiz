@@ -27,29 +27,31 @@ export const QuizAdminPanel: React.FC<Props> = ({
         isOnline={isOnline}
       />
       <div className="QuizAdminPanel__StarPanel">
-        <button
-          className="QuizAdminPanel__StarButton"
-          onClick={() => setGivenStar((s) => s - 1)}
-          type="button"
-        >
-          {`⭐️-${1}`}
-        </button>
-        <input
-          className="QuizAdminPanel__InputStar"
-          type="number"
-          value={givenStar}
-          onChange={(e) => {
-            setGivenStar(e.target.valueAsNumber);
-          }}
-          ref={starsRef}
-        />
-        <button
-          className="QuizAdminPanel__StarButton"
-          onClick={() => setGivenStar((s) => s + 1)}
-          type="button"
-        >
-          {`⭐️+${1}`}
-        </button>
+        <div className="QuizAdminPanel__StarController">
+          <button
+            className="QuizAdminPanel__StarButton"
+            onClick={() => setGivenStar((s) => s - 1)}
+            type="button"
+          >
+            {`⭐️-${1}`}
+          </button>
+          <input
+            className="QuizAdminPanel__InputStar"
+            type="number"
+            value={givenStar}
+            onChange={(e) => {
+              setGivenStar(e.target.valueAsNumber);
+            }}
+            ref={starsRef}
+          />
+          <button
+            className="QuizAdminPanel__StarButton"
+            onClick={() => setGivenStar((s) => s + 1)}
+            type="button"
+          >
+            {`⭐️+${1}`}
+          </button>
+        </div>
       </div>
     </div>
   );

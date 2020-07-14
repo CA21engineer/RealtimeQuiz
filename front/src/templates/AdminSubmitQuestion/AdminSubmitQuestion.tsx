@@ -22,8 +22,8 @@ export const AdminSubmitQuestion: React.FC = () => {
   return (
     <div className="SubmitQuestion__view">
       <p>出題を待っています…</p>
-      <div>
-        <h1>問題を出題しています</h1>
+      <div className="SubmitQuestion__InputQuestion">
+        <h1>問題を出題してください</h1>
         <input className="Room__QuestionBox" type="text" ref={questionRef} />
         <FoundationButton label="出題する" onClick={submitQuestion} />
       </div>

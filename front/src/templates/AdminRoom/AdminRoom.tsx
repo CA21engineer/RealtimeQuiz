@@ -85,17 +85,21 @@ export const AdminRoom: React.FC = () => {
 
   return (
     <div className="AdminRoom__view">
-      <div>
+      <div className="AdminRoom__controller">
         <h1>問題を出題しています</h1>
         {currentQuestion && (
-          <input className="AdminRoom__QuestionBox" value={currentQuestion} />
+          <p className="AdminRoom__QuestionBox">{currentQuestion}</p>
         )}
-        <FoundationButton
-          label="解答を締め切る"
-          onClick={EmitCloseApplications}
-        />
-        <FoundationButton label="一斉にオープン" onClick={emitOpenAnswers} />
-        <FoundationButton label="結果発表" onClick={emitAlterStars} />
+        <div className="AdminRoom__Buttons">
+          <FoundationButton
+            label="解答を締め切る"
+            onClick={EmitCloseApplications}
+          />
+          <FoundationButton label="一斉にオープン" onClick={emitOpenAnswers} />
+          <FoundationButton label="結果発表" onClick={emitAlterStars} />
+        </div>
+      </div>
+      <div className="AdminRoom__Panels">
         {renderQuizAdminPanels()}
       </div>
     </div>

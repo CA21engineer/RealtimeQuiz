@@ -1,5 +1,9 @@
 .QuizAdminPanel__Container {
-  width: 480px;
+  display: flex;
+  flex-direction: column;
+  background-color: hsl(25, 100%, 58%);
+  border-radius: 7px;
+  margin: 20px;
 }
 
 .QuizAdminPanel__StarButton {
@@ -11,6 +15,43 @@
 .QuizAdminPanel__StarPanel {
   display: flex;
   justify-content: space-between;
+  height: 60px;
+
+  button {
+    height: 40px;
+    border-radius: 3.5px;
+    border: #FFFFFF 2px solid;
+    background-color: rgba(0,0,0,0);
+    font-size: 1.2rem;
+    color: #FFFFFF;
+  }
+
+  input {
+    height: 40px;
+    border-radius: 3.5px;
+    border: #FFFFFF 2px solid;
+    background-color: rgba(0,0,0,0);
+    font-size: 1.2rem;
+    color: #FFFFFF;
+    text-align: center;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance:textfield;
+  }
+}
+
+.QuizAdminPanel__StarController {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .QuizAdminPanel__InputStar {
