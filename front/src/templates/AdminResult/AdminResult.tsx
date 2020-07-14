@@ -1,15 +1,14 @@
 import React, { useCallback, useContext } from 'react';
-import { getAnswerWithAdmin } from 'utils/getAnswer';
 import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
-import { QuizPanel } from 'components/QuizPanel';
+import { QuizPanelContainer } from 'container/QuizPanelContainer';
 
 import './adminResult.scss';
 
 export const AdminResult: React.FC = () => {
   const { state } = useContext(GameStatusContext);
   const { roomStatus, controllers } = state;
-  const { players, currentQuestion } = roomStatus;
+  const { currentQuestion } = roomStatus;
 
   const emitGoToNextQuestion = useCallback(() => {
     if (!controllers.emitter) {
@@ -26,22 +25,7 @@ export const AdminResult: React.FC = () => {
         <input className="AdminRoom__QuestionBox" value={currentQuestion} />
       )}
       <FoundationButton label="次の問題へ" onClick={emitGoToNextQuestion} />
-      {players
-        .filter(({ role }) => role === 'player')
-        .map((player) => {
-          const answer = getAnswerWithAdmin(
-            player.isAnswered,
-            player.answer || ''
-          );
-          return (
-            <QuizPanel
-              key={player.id}
-              name={player.name}
-              starNumber={player.stars}
-              answerText={answer}
-            />
-          );
-        })}
+      <QuizPanelContainer roleType="admin" />
     </div>
   );
 };

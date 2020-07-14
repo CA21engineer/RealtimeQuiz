@@ -1,16 +1,14 @@
 import React, { useCallback, useContext, useRef } from 'react';
-import { getAnswerWithAdmin } from 'utils/getAnswer';
 import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
-import { QuizPanel } from 'components/QuizPanel';
+import { QuizPanelContainer } from 'container/QuizPanelContainer';
 
 import './adminSubmitQuestion.scss';
 
 export const AdminSubmitQuestion: React.FC = () => {
   const questionRef = useRef<HTMLInputElement>(null);
   const { state } = useContext(GameStatusContext);
-  const { roomStatus, controllers } = state;
-  const { players } = roomStatus;
+  const { controllers } = state;
 
   const submitQuestion = useCallback(() => {
     const question = questionRef.current?.value;
@@ -29,23 +27,7 @@ export const AdminSubmitQuestion: React.FC = () => {
         <input className="Room__QuestionBox" type="text" ref={questionRef} />
         <FoundationButton label="出題する" onClick={submitQuestion} />
       </div>
-
-      {players
-        .filter(({ role }) => role === 'player')
-        .map((player) => {
-          const answer = getAnswerWithAdmin(
-            player.isAnswered,
-            player.answer || ''
-          );
-          return (
-            <QuizPanel
-              key={player.id}
-              name={player.name}
-              starNumber={player.stars}
-              answerText={answer}
-            />
-          );
-        })}
+      <QuizPanelContainer roleType="admin" />
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import { GameStatusContext } from 'store/gameStatus';
-import { getAnswerWithPlayer } from 'utils/getAnswer';
-import { QuizPanel } from 'components/QuizPanel';
+import { QuizPanelContainer } from 'container/QuizPanelContainer';
 import { QuestionModal } from 'components/QuestionModal';
 import { usePlayer } from './PlayerHooks';
 
@@ -68,25 +67,6 @@ export const Player: React.FC = () => {
     return <p className="Player__QuestionBox">{currentQuestion}</p>;
   };
 
-  const renderUser = roomStatus.players
-    .filter(({ role }) => role === 'player')
-    .map((player) => {
-      const answer = getAnswerWithPlayer(
-        roomStatus.currentStatus,
-        player.isAnswered,
-        player.answer || ''
-      );
-
-      return (
-        <QuizPanel
-          key={player.id}
-          name={player.name}
-          starNumber={player.stars}
-          answerText={answer}
-        />
-      );
-    });
-
   return (
     <div className="Player__Wrapper">
       <p className="Player__Question">
@@ -94,7 +74,7 @@ export const Player: React.FC = () => {
       </p>
       {renderQuestionBody()}
       {renderQuestionModal()}
-      {renderUser}
+      <QuizPanelContainer roleType="player" />
     </div>
   );
 };

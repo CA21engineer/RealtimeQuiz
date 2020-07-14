@@ -62,6 +62,7 @@ export const AdminRoom: React.FC = () => {
 
     return players
       .filter(({ role }) => role === 'player')
+      .sort((a, b) => b.stars - a.stars)
       .map((player, index) => {
         const answer = getAnswerWithAdmin(
           player.isAnswered,
