@@ -49,15 +49,19 @@ export const Index: React.FC = () => {
   return (
     <div className="Index__view">
       <h1 className="Index__Title">RealTime Quiz!</h1>
-      <p className="Index__Description">新しく部屋を作る</p>
-      <FoundationInputArea
-        inputBody=""
-        onClickSubmitButton={onEnterNewRoom}
-        inputPlaceholder="部屋名を入力"
-        submitLabel="部屋を作る"
-        inputRef={roomInputRef}
-      />
-      {renderRoomCards}
+      <div className="Index__CreateNewRoom">
+        <p className="Index__Description">新しく部屋を作る</p>
+        <FoundationInputArea
+          inputBody=""
+          onClickSubmitButton={onEnterNewRoom}
+          inputPlaceholder="部屋名を入力"
+          submitLabel="部屋を作る"
+          inputRef={roomInputRef}
+        />
+      </div>
+      <div className="Index__RoomList">
+        {renderRoomCards}
+      </div>
     </div>
   );
 };

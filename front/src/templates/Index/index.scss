@@ -1,0 +1,30 @@
+.flexColumnCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Index__view {
+  @extend .flexColumnCenter;
+}
+
+.Index__Title {
+}
+
+.Index__CreateNewRoom {
+  @extend .flexColumnCenter;
+
+  width: 460px;
+  color: #FFFFFF;
+  background-color: hsl(25, 100%, 48%);
+
+  border-radius: 7px;
+
+  .Index__Description {
+    font-size: 1.3rem;
+  }
+
+  padding-bottom: 25px;
+}
+
+

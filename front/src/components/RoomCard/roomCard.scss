@@ -1,5 +1,17 @@
 .Room__container {
+  width: 460px;
   max-width: 480px;
-  border: 1px solid green;
+  border-radius: 7px;
+  background-color: hsl(25, 100%, 65%);
   text-align: center;
+  color: #FBFBFB;
+
+  .Room__Title {
+    padding-top: 25px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+
+  padding-bottom: 25px;
 }
