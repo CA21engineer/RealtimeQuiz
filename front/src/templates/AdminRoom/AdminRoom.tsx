@@ -60,19 +60,24 @@ export const AdminRoom: React.FC = () => {
       return null;
     }
 
-    return players.map((player, index) => {
-      const answer = getAnswerWithAdmin(player.isAnswered, player.answer || '');
+    return players
+      .filter(({ role }) => role === 'player')
+      .map((player, index) => {
+        const answer = getAnswerWithAdmin(
+          player.isAnswered,
+          player.answer || ''
+        );
 
-      return (
-        <QuizAdminPanel
-          key={player.id}
-          name={player.name}
-          starNumber={player.stars}
-          answerText={answer}
-          starsRef={alterStarsRef[index]}
-        />
-      );
-    });
+        return (
+          <QuizAdminPanel
+            key={player.id}
+            name={player.name}
+            starNumber={player.stars}
+            answerText={answer}
+            starsRef={alterStarsRef[index]}
+          />
+        );
+      });
   };
 
   return (
