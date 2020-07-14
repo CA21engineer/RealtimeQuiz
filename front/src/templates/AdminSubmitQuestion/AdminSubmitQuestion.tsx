@@ -1,7 +1,8 @@
 import React from 'react';
-import './submit_question.scss';
-import { FoundationButton } from '../../components/FoundationButton';
-import { QuizPanel } from '../../components/QuizPanel';
+import { FoundationButton } from 'components/FoundationButton';
+import { QuizPanel } from 'components/QuizPanel';
+
+import './adminSubmitQuestion.scss';
 
 // FIXME: 仕様よう分かっとらんでな、あとで直す
 type User = {
@@ -10,7 +11,7 @@ type User = {
   input: string;
 };
 
-export const SubmitQuestion: React.FC = () => {
+export const AdminSubmitQuestion: React.FC = () => {
   const questionBody = '';
   const users: User[] = [];
   return (

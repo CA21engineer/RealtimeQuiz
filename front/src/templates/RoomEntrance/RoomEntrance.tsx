@@ -3,7 +3,7 @@ import './room_entrance.scss';
 
 import { FoundationInputArea } from '../../components/FoundationInputArea';
 
-const RoomEntrance: React.FC = () => {
+export const RoomEntrance: React.FC = () => {
   return (
     <div className="Room__view">
       <p className="Room__label">ニックネームを入力してください．</p>
@@ -19,5 +19,3 @@ const RoomEntrance: React.FC = () => {
     </div>
   );
 };
-
-export default RoomEntrance;
