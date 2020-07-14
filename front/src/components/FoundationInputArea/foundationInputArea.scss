@@ -12,10 +12,13 @@
 .FoundationInputArea__Input {
   width: 100%;
   line-height: 1.5em;
+  margin-bottom: 25px;
+  color: #FFFFFF;
+  background-color: rgba(0,0,0,0);
+  border: #FFFFFF 2px solid;
 }
 
 .FoundationInputArea__Submit {
-  padding: 1em 0;
   text-align: center;
 }
 

@@ -15,12 +15,16 @@
   @extend .flexColumnCenter;
 
   width: 460px;
-  background-color: #FAFAFA;
-  margin-bottom: 25px;
+  color: #FFFFFF;
+  background-color: hsl(25, 100%, 48%);
+
+  border-radius: 7px;
 
   .Index__Description {
     font-size: 1.3rem;
   }
+
+  padding-bottom: 25px;
 }
 
 
