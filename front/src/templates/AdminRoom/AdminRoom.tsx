@@ -45,7 +45,7 @@ export const AdminRoom: React.FC = () => {
     controllers.emitter.setAlterStars({
       alterStars: data,
     });
-  }, [controllers]);
+  }, [controllers, alterStarsRef]);
 
   useEffect(() => {
     const refs = [...Array(roomStatus.players.length)].map(() =>
