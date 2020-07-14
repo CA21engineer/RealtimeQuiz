@@ -1,17 +1,13 @@
-import React, { useCallback, useEffect, useContext } from 'react';
-import { useRouter } from 'next/router';
+import React, { useCallback, useContext } from 'react';
 import { GameStatusContext } from 'store/gameStatus';
-import { Receiver } from 'controllers/Receiver';
-import { WSConnection } from 'connections/WSConnection';
-import { useRoom } from './RoomHooks';
+import { usePlayer } from './PlayerHooks';
 import { QuizPanel } from '../../components/QuizPanel';
 import { QuestionModal } from '../../components/QuestionModal';
 
-import './room.scss';
+import './player.scss';
 
-export const Room: React.FC = () => {
-  const { query } = useRouter();
-  const { expressRoomStatus } = useRoom();
+export const Player: React.FC = () => {
+  const { expressPlayerStatus } = usePlayer();
   const { state, dispatch } = useContext(GameStatusContext);
   const { roomStatus } = state;
 
@@ -28,33 +24,6 @@ export const Room: React.FC = () => {
     });
   }, [state, dispatch]);
 
-  useEffect(() => {
-    const { roomId } = query;
-    const { accountId } = query;
-
-    if (typeof roomId !== 'string' || typeof accountId !== 'string') {
-      return;
-    }
-
-    const connection = new WSConnection({
-      roomId,
-      accountId,
-    });
-    const receiver = new Receiver(dispatch);
-    connection.setReceivers(receiver);
-    const emitter = connection.createEmitter();
-
-    dispatch({
-      type: 'INIT_CONTROLLERS',
-      payload: {
-        controllers: {
-          emitter,
-          receiver,
-        },
-      },
-    });
-  }, [query]);
-
   const renderQuestionModal = () => {
     const dispatchAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
       const answer = e.target.value;
@@ -69,7 +38,7 @@ export const Room: React.FC = () => {
     };
 
     return (
-      <div className="Room__QuestionModal">
+      <div className="Player__QuestionModal">
         <QuestionModal
           questionBody={roomStatus.currentQuestion || ''}
           remainTime={0}
@@ -87,7 +56,7 @@ export const Room: React.FC = () => {
       return null;
     }
 
-    return <p className="Room__QuestionBox">{currentQuestion}</p>;
+    return <p className="Player__QuestionBox">{currentQuestion}</p>;
   };
 
   const renderUser = roomStatus.players.map((player) => {
@@ -103,9 +72,9 @@ export const Room: React.FC = () => {
   });
 
   return (
-    <div className="Room__Wrapper">
-      <p className="Room__Question">
-        {expressRoomStatus(roomStatus.currentStatus)}
+    <div className="Player__Wrapper">
+      <p className="Player__Question">
+        {expressPlayerStatus(roomStatus.currentStatus)}
       </p>
       {renderQuestionBody()}
       {renderQuestionModal()}
