@@ -41,7 +41,7 @@ export const Index: React.FC = () => {
         key={room.roomId}
         title={room.roomName}
         roomInfo={`${room.participants}人が参加中`}
-        onEnterRoom={() => onEnterRoom(room.roomName)}
+        onEnterRoom={() => onEnterRoom(room.roomId)}
       />
     );
   });
