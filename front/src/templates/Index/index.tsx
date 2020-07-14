@@ -12,12 +12,12 @@ export const Index: React.FC = () => {
   const roomInputRef = useRef<HTMLInputElement>(null);
   const [rooms, setRooms] = useState<RoomInformation[]>([]);
   useEffect(() => {
-    const setCurrentRooms = async () => {
+    const setTimeoutId = setInterval(async () => {
       const currentRooms = await getRoomList();
       setRooms(currentRooms);
-    };
+    }, 1000);
 
-    setCurrentRooms();
+    return () => clearInterval(setTimeoutId);
   }, []);
 
   const onEnterRoom = useCallback(async (roomName: string) => {
@@ -59,9 +59,7 @@ export const Index: React.FC = () => {
           inputRef={roomInputRef}
         />
       </div>
-      <div className="Index__RoomList">
-        {renderRoomCards}
-      </div>
+      <div className="Index__RoomList">{renderRoomCards}</div>
     </div>
   );
 };

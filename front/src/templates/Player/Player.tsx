@@ -1,7 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import { GameStatusContext } from 'store/gameStatus';
-import { getAnswerWithPlayer } from 'utils/getAnswer';
-import { QuizPanel } from 'components/QuizPanel';
+import { QuizPanelContainer } from 'container/QuizPanelContainer';
 import { QuestionModal } from 'components/QuestionModal';
 import { usePlayer } from './PlayerHooks';
 
@@ -28,6 +27,10 @@ export const Player: React.FC = () => {
   const renderQuestionModal = () => {
     const dispatchAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
       const answer = e.target.value;
+      if (answer === '') {
+        return;
+      }
+
       dispatch({
         type: 'UPDATE_PERSONAL_ANSWER',
         payload: {
@@ -38,7 +41,13 @@ export const Player: React.FC = () => {
       });
     };
 
+    const role = personalStatus?.currentStatus?.role;
+    if (!role) {
+      return null;
+    }
+
     const isOpen =
+      role !== 'spectator' &&
       roomStatus.currentStatus === 'WAITING_ANSWER' &&
       !personalStatus.isAnswered;
 
@@ -64,25 +73,6 @@ export const Player: React.FC = () => {
     return <p className="Player__QuestionBox">{currentQuestion}</p>;
   };
 
-  const renderUser = roomStatus.players
-    .filter(({ role }) => role === 'player')
-    .map((player) => {
-      const answer = getAnswerWithPlayer(
-        roomStatus.currentStatus,
-        player.isAnswered,
-        player.answer || ''
-      );
-
-      return (
-        <QuizPanel
-          key={player.id}
-          name={player.name}
-          starNumber={player.stars}
-          answerText={answer}
-        />
-      );
-    });
-
   return (
     <div className="Player__Wrapper">
       <p className="Player__Question">
@@ -90,7 +80,7 @@ export const Player: React.FC = () => {
       </p>
       {renderQuestionBody()}
       {renderQuestionModal()}
-      {renderUser}
+      <QuizPanelContainer roleType="player" />
     </div>
   );
 };

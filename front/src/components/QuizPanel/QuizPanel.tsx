@@ -40,7 +40,7 @@ export const QuizPanel: React.FC<Props> = ({
     }
 
     if (star < 0) {
-      return `⭐️ ${star}`;
+      return `⭐️ - ${star * -1}`;
     }
 
     if (star > STAR_LIMIT) {
