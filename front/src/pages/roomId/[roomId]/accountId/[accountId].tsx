@@ -1,5 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
+import { INIT_PLAYER_NAME } from 'constants/room';
 import { GameStatusContext } from 'store/gameStatus';
 import { Receiver } from 'controllers/Receiver';
 import { WSConnection } from 'connections/WSConnection';
@@ -11,7 +12,6 @@ import { AdminRoom } from 'templates/AdminRoom';
 import { Loading } from 'templates/Loading';
 
 const RoomPage: React.FC = () => {
-  const INIT_NAME = '名無しさん';
   const { query } = useRouter();
   const { state, dispatch } = useContext(GameStatusContext);
   const { personalStatus, roomStatus } = state;
@@ -55,7 +55,7 @@ const RoomPage: React.FC = () => {
 
   switch (currentStatus.role) {
     case 'player':
-      if (currentStatus.name === INIT_NAME) {
+      if (currentStatus.name === INIT_PLAYER_NAME) {
         return <RoomEntrance />;
       }
 
