@@ -16,7 +16,7 @@ export interface GameRoomStatusData {
 export interface PlayerStatus {
   id: string;
   name: string;
-  role: 'admin' | 'player' | 'spectator';
+  role: 'admin' | 'player';
   stars: number;
   answer: string | null;
   isAnswered: boolean;

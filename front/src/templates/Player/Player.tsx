@@ -49,7 +49,7 @@ export const Player: React.FC = () => {
     }
 
     const isOpen =
-      role !== 'spectator' &&
+      !personalStatus.isSpectator &&
       roomStatus.currentStatus === 'WAITING_ANSWER' &&
       !personalStatus.isAnswered;
 
@@ -73,10 +73,10 @@ export const Player: React.FC = () => {
         {expressPlayerStatus(roomStatus.currentStatus)}
       </p>
       {currentQuestion && (
-      <div className="Player__Question">
-        <QuestionContent content={currentQuestion} />
-      </div>
-    )}
+        <div className="Player__Question">
+          <QuestionContent content={currentQuestion} />
+        </div>
+      )}
       {renderQuestionModal()}
       <div className="Player__List">
         <QuizPanelContainer

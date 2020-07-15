@@ -10,6 +10,7 @@ export type PersonalStatus = {
   answer: string;
   isAnswered: boolean;
   currentStatus: PlayerStatus | null;
+  isSpectator: boolean;
 };
 
 export type Controller = {
@@ -28,6 +29,7 @@ const initialState: GameStatus = {
     answer: '',
     isAnswered: false,
     currentStatus: null,
+    isSpectator: false,
   },
   roomStatus: {
     currentStatus: 'WAITING_QUESTION',
@@ -54,7 +56,10 @@ export type GameStatusAction = {
     personalStatus?: { [P in keyof PersonalStatus]?: PersonalStatus[P] };
     status?: GameRoomStatusData;
     controllers?: Controller;
+
+    // custom
     accountId?: string;
+    isSpectator?: boolean;
   };
 };
 
@@ -107,6 +112,9 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
 
       return produce(state, (draft) => {
         draft.controllers = controllers;
+
+        const isSpectator = action.payload?.isSpectator;
+        draft.personalStatus.isSpectator = !!isSpectator;
       });
     }
 

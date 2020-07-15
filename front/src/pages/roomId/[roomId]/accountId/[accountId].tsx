@@ -18,8 +18,7 @@ const RoomPage: React.FC = () => {
   const { currentStatus } = personalStatus;
 
   useEffect(() => {
-    const { roomId } = query;
-    const { accountId } = query;
+    const { roomId, accountId, isSpectator } = query;
 
     if (typeof roomId !== 'string' || typeof accountId !== 'string') {
       return;
@@ -41,12 +40,17 @@ const RoomPage: React.FC = () => {
           receiver,
         },
         accountId,
+        isSpectator: isSpectator === 'true',
       },
     });
   }, [query]);
 
   if (!currentStatus) {
     return <Loading />;
+  }
+
+  if (personalStatus.isSpectator) {
+    return <Player />;
   }
 
   switch (currentStatus.role) {
@@ -56,10 +60,6 @@ const RoomPage: React.FC = () => {
       }
 
       return <Player />;
-
-    case 'spectator': {
-      return <Player />;
-    }
 
     case 'admin':
       switch (roomStatus.currentStatus) {
