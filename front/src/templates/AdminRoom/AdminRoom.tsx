@@ -1,5 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import { getAnswerWithAdmin } from 'utils/getAnswer';
+import { INIT_PLAYER_NAME } from 'constants/room';
 import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
 import { QuizAdminPanel } from 'components/QuizAdminPanel';
@@ -51,7 +52,9 @@ export const AdminRoom: React.FC = () => {
 
   const renderQuizAdminPanels = () => {
     return players
-      .filter(({ role }) => role === 'player')
+      .filter(
+        ({ role, name }) => role === 'player' && name !== INIT_PLAYER_NAME
+      )
       .sort((a, b) => b.stars - a.stars)
       .map((player) => {
         const answer = getAnswerWithAdmin(

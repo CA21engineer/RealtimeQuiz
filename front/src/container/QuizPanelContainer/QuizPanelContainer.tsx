@@ -1,4 +1,5 @@
 import React from 'react';
+import { INIT_PLAYER_NAME } from 'constants/room';
 import { getAccountId } from 'libraries/AccountId';
 import { getAnswerWithPlayer, getAnswerWithAdmin } from 'utils/getAnswer';
 import { PlayerStatus } from 'interfaces/Status';
@@ -23,7 +24,7 @@ export const QuizPanelContainer: React.FC<QuizPanelContainerType> = ({
     roleType === 'admin' ? getAnswerWithAdmin : getAnswerWithPlayer;
 
   const renderUser = roomStatus.players
-    .filter(({ role }) => role === 'player')
+    .filter(({ role, name }) => role === 'player' && name !== INIT_PLAYER_NAME)
     .sort((a, b) => b.stars - a.stars)
     .sort((a) => (a.id === accountId ? -1 : 1))
     .map((player) => {
