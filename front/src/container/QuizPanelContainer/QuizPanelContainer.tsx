@@ -8,12 +8,14 @@ import './quizPanelContainer.scss';
 
 type QuizPanelContainerType = {
   roleType: PlayerStatus['role'];
+  highlight?: boolean;
 };
 
 export const QuizPanelContainer: React.FC<QuizPanelContainerType> = ({
   roleType,
+  highlight = false,
 }: QuizPanelContainerType) => {
-  const { roomStatus } = useQuizPanelContainer();
+  const { roomStatus, getPlusMinus } = useQuizPanelContainer();
 
   const accountId = getAccountId();
 
@@ -31,20 +33,19 @@ export const QuizPanelContainer: React.FC<QuizPanelContainerType> = ({
         player.answer || ''
       );
 
+      const plusMinus = highlight ? getPlusMinus(player.alterStars) : 'None';
+
       return (
         <QuizPanel
           key={player.id}
           name={player.name}
           starNumber={player.stars}
           answerText={answer}
+          plusMinus={plusMinus}
           isOnline={player.connectionStatus === 'online'}
         />
       );
     });
 
-  return (
-    <div className="quizPanelContainer">
-      {renderUser}
-    </div>
-  );
+  return <div className="quizPanelContainer">{renderUser}</div>;
 };

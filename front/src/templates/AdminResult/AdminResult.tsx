@@ -27,7 +27,7 @@ export const AdminResult: React.FC = () => {
         )}
         <FoundationButton label="次の問題へ" onClick={emitGoToNextQuestion} />
       </div>
-      <QuizPanelContainer roleType="admin" />
+      <QuizPanelContainer roleType="admin" highlight />
     </div>
   );
 };

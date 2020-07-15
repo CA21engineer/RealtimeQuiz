@@ -79,7 +79,10 @@ export const Player: React.FC = () => {
     )}
       {renderQuestionModal()}
       <div className="Player__List">
-        <QuizPanelContainer roleType="player" />
+        <QuizPanelContainer
+          roleType="player"
+          highlight={roomStatus.currentStatus === 'OPEN_AGGREGATE'}
+        />
       </div>
     </div>
   );

@@ -40,6 +40,7 @@ const RoomPage: React.FC = () => {
           emitter,
           receiver,
         },
+        accountId,
       },
     });
   }, [query]);

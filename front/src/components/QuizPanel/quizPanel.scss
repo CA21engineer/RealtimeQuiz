@@ -1,4 +1,4 @@
-.QuizPanel__Container {
+%__Container {
   color: #FFFFFF;
   background: hsl(25, 100%, 68%);
   width: 380px;
@@ -7,32 +7,77 @@
   margin: 0;
 }
 
-.QuizPanel__Header {
-  background: hsl(25, 100%, 58%);
-  border-radius: 7px;
-  display: flex;
-  justify-content: space-between;
-}
+.QuizPanel {
+  &__Container {
+    @extend %__Container;
 
-.QuizPanel__NameArea {
-  padding: 1em 1.5em;
-  width: calc(100% - 8em);
-  margin: 0;
-}
+    &--Plus {
+      @extend %__Container;
+      background: #e06666;
 
-.QuizPanel__StarArea {
-  border-radius: 0 7px 0 0;
-  background: hsl(25, 100%, 58%);
-  height: 100%;
-  text-align: center;
-  width: 8em;
-  padding: 1em 1.5em;
-}
+      .QuizPanel {
+        &__Header {
+          background: #cc0100;
+        }
 
-.QuizPanel__AnswerArea {
-  background: hsl(25, 100%, 68%);
-  margin: 0;
-  font-size: 1.2rem;
-  padding: 10px 10px;
-  text-align: center;
+        &__StarArea {
+          background: #990000;
+        }
+
+        &__AnswerArea {
+          background: #e06666;
+        }
+      }
+    }
+
+    &--Minus {
+      @extend %__Container;
+      background: #6d9eeb;
+
+      .QuizPanel {
+
+        &__Header {
+          background: #4a86e8;
+        }
+
+        &__StarArea {
+          background: #3c78d8;
+        }
+
+        &__AnswerArea {
+          background: #6d9eeb;
+        }
+      }
+    }
+  }
+
+  &__Header {
+    background: hsl(25, 100%, 58%);
+    border-radius: 7px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__NameArea {
+    padding: 1em 1.5em;
+    width: calc(100% - 8em);
+    margin: 0;
+  }
+
+  &__StarArea {
+    border-radius: 0 7px 0 0;
+    background: hsl(25, 100%, 58%);
+    height: 100%;
+    text-align: center;
+    width: 8em;
+    padding: 1em 1.5em;
+  }
+
+  &__AnswerArea {
+    background: hsl(25, 100%, 68%);
+    margin: 0;
+    font-size: 1.2rem;
+    padding: 10px 10px;
+    text-align: center;
+  }
 }
