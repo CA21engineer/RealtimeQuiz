@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import './quizPanel.scss';
 
 export enum PlusMinus {
-  'Plus',
-  'Minus',
-  'None',
+  'Plus' = 'Plus',
+  'Minus' = 'Minus',
+  'None' = 'None',
 }
 
 type Props = {
