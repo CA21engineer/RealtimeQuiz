@@ -23,6 +23,7 @@ object WebSocketMessage {
         if (value == GoToNextQuestion.typeName) GoToNextQuestion
         else if (value == CloseApplications.typeName) CloseApplications
         else if (value == OpenAnswers.typeName) OpenAnswers
+        else if (value == GoToResult.typeName) GoToResult
         else {
           json.hcursor.downField("data").as[Messages] match {
             case Right(v) =>
@@ -66,7 +67,31 @@ case class PlayerList(
     currentCorrectAnswer: Option[String],
     currentTimeLimit: Option[Int],
     players: Seq[Account]
-) extends WebSocketMessage
+) extends WebSocketMessage {
+
+  def fetch(isParent: Boolean): PlayerList = {
+    if (isParent) {
+      this
+    } else {
+      currentStatus match {
+        case CurrentStatus.WaitingQuestion =>
+          copy(currentCorrectAnswer = None,
+               players = players.map(_.hideAnswer.hideAlterStars))
+        case CurrentStatus.WaitingAnswer =>
+          copy(currentCorrectAnswer = None,
+               players = players.map(_.hideAnswer.hideAlterStars))
+        case CurrentStatus.CloseAnswer =>
+          copy(currentCorrectAnswer = None,
+               players = players.map(_.hideAnswer.hideAlterStars))
+        case CurrentStatus.OpenAnswer =>
+          copy(currentCorrectAnswer = None,
+               players = players.map(_.hideAlterStars))
+        case CurrentStatus.OpenAggregate => this
+      }
+    }
+  }
+
+}
 case class ForceSendAnswer() extends WebSocketMessage
 
 // Send Only

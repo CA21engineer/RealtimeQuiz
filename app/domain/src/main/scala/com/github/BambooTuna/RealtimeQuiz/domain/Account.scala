@@ -31,7 +31,10 @@ case class Account(
   }
   def checkAnswer(f: String => Int): Account = {
     val alterStars = this.answer.map(f).getOrElse(0)
-    copy(stars = this.stars + alterStars, alterStars = alterStars)
+    copy(alterStars = alterStars)
+  }
+  def reflectTheStars: Account = {
+    copy(stars = this.stars + this.alterStars)
   }
   def changeRole(role: AccountRole): Account = role match {
     case Admin              => copy(role = role)
@@ -40,6 +43,7 @@ case class Account(
   }
 
   def hideAnswer: Account = copy(answer = None)
+  def hideAlterStars: Account = copy(alterStars = 0)
 
   def activate: Account = copy(connectionStatus = Online)
   def leave: Account = copy(connectionStatus = Offline)

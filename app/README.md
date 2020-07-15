@@ -23,7 +23,8 @@ $ wscat --wait 600 -c localhost:18080/ws/room/DebugRoom/accountId/admin
 5 > {"type":"CloseApplications"}
 6 > {"type":"OpenAnswers"}
 7 > {"type":"SetAlterStars", "data":{"alterStars":[{"accountId":"child1", "alterStars":10}]}}
-8 > {"type":"GoToNextQuestion"}
+8 > {"type":"GoToResult"}
+9 > {"type":"GoToNextQuestion"}
 
 $ wscat --wait 600 -c localhost:18080/ws/room/DebugRoom/accountId/child1
 2 > {"type":"ChangeName", "data":{"accountName":"Child1_name"}}
