@@ -1,8 +1,8 @@
 import { createContext, Reducer, Dispatch } from 'react';
 import produce from 'immer';
+import { setAccountId, getAccountId } from 'libraries/AccountId';
 import { generateContextWrapper } from 'utils/store/contextHelper';
 import { GameRoomStatusData, PlayerStatus } from 'interfaces/Status';
-import { getAccountId } from 'libraries/AccountId';
 import { Emitter } from 'controllers/Emitter';
 import { Receiver } from 'controllers/Receiver';
 
@@ -54,6 +54,7 @@ export type GameStatusAction = {
     personalStatus?: { [P in keyof PersonalStatus]?: PersonalStatus[P] };
     status?: GameRoomStatusData;
     controllers?: Controller;
+    accountId?: string;
   };
 };
 
@@ -95,6 +96,13 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
       if (!controllers) {
         console.error('controllers has undefined.');
         return state;
+      }
+
+      const accountId = action.payload?.accountId;
+      if (accountId) {
+        setAccountId(accountId);
+      } else {
+        console.error('accountId has undefined.');
       }
 
       return produce(state, (draft) => {
