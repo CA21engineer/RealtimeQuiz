@@ -12,4 +12,12 @@
     opacity: 0.3;
     cursor: auto;
   }
+
+  &:hover {
+    border: #FFFFFF 3px solid;
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.18);
+  }
 }
