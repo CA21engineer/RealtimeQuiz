@@ -47,6 +47,6 @@ export class Emitter {
 
   // リザルトへ移動する
   public GotoResult(): void {
-    this.emitter('GotoResult');
+    this.emitter('GoToResult');
   }
 }
