@@ -11,4 +11,4 @@ scrape_configs:
   - job_name: 'apiServer-metrics'
     static_configs:
       - targets:
-        - 'api-server:2112'
+        - 'api-server:18080'

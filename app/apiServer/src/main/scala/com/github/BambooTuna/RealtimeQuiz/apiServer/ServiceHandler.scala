@@ -14,13 +14,15 @@ import akka.stream.Materializer
 import org.slf4j.{Logger, LoggerFactory}
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
 import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
+import com.evolutiongaming.metrics.MetricCollectors
 import com.github.BambooTuna.RealtimeQuiz.application.RoomHandler
 import com.github.BambooTuna.RealtimeQuiz.domain.QuizRoomAggregates
 
 import scala.util.control.NonFatal
 
 class ServiceHandler(implicit actorSystem: ActorSystem,
-                     materializer: Materializer) {
+                     materializer: Materializer,
+                     collectors: MetricCollectors) {
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
   def exceptionHandler(logger: Logger): ExceptionHandler = ExceptionHandler {
@@ -54,7 +56,8 @@ class ServiceHandler(implicit actorSystem: ActorSystem,
   }
 
   val roomAggregate =
-    actorSystem.actorOf(Props[QuizRoomAggregates], QuizRoomAggregates.name)
+    actorSystem.actorOf(Props(classOf[QuizRoomAggregates], collectors),
+                        QuizRoomAggregates.name)
   val roomHandler = new RoomHandler(roomAggregate)
 
   def restApiRoute(implicit materializer: Materializer): Route = {
