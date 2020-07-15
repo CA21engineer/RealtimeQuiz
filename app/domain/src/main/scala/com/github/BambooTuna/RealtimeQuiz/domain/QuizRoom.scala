@@ -32,7 +32,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
 
   var parent: Account
   protected var children: Set[Account] = Set.empty
-  def participants: Int = children.map(_.role == Player).size
+  def participants: Int = children.count(_.role == Player)
   var currentStatus: CurrentStatus = WaitingQuestion
   var currentQuestion: Option[Question] = None
 
@@ -82,12 +82,10 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       )
   }
 
-  protected def noticeEveryone(
-      hidePlayersAnswer: Boolean = true,
-      hideCorrectAnswer: Boolean = true): Future[Unit] = {
+  protected def noticeEveryone(): Future[Unit] = {
     Future {
       Thread.sleep(500)
-      noticePlayersState(actorRef ! _)(hidePlayersAnswer, hideCorrectAnswer)
+      noticePlayersState(actorRef ! _)
     }
   }
 
@@ -105,37 +103,24 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       }
   }
 
-  protected def noticePlayersState(f: WebSocketMessageWithDestination => Unit)(
-      hidePlayersAnswer: Boolean,
-      hideCorrectAnswer: Boolean): Unit = {
+  protected def noticePlayersState(
+      f: WebSocketMessageWithDestination => Unit): Unit = {
     val everyone = this.children + parent
-    f(
-      WebSocketMessageWithDestination(
-        PlayerList(
-          currentStatus = currentStatus,
-          currentQuestion = currentQuestion.map(_.problemStatement),
-          currentCorrectAnswer = currentQuestion.flatMap(_.correctAnswer),
-          currentTimeLimit = None,
-          players = everyone.toSeq
-        ),
-        User(this.parent.id)
+    val playerList =
+      PlayerList(
+        currentStatus = currentStatus,
+        currentQuestion = currentQuestion.map(_.problemStatement),
+        currentCorrectAnswer = currentQuestion.flatMap(_.correctAnswer),
+        currentTimeLimit = None,
+        players = everyone.toSeq
       )
-    )
 
     f(
-      WebSocketMessageWithDestination(
-        PlayerList(
-          currentStatus = currentStatus,
-          currentQuestion = currentQuestion.map(_.problemStatement),
-          currentCorrectAnswer = currentQuestion.flatMap(a =>
-            (if (hideCorrectAnswer) a.hideCorrectAnswer else a).correctAnswer),
-          currentTimeLimit = None,
-          players = (if (hidePlayersAnswer) everyone.map(_.hideAnswer)
-                     else everyone).toSeq
-        ),
-        Users(this.children.map(_.id).toSeq)
-      )
-    )
+      WebSocketMessageWithDestination(playerList.fetch(isParent = true),
+                                      User(this.parent.id)))
+    f(
+      WebSocketMessageWithDestination(playerList.fetch(isParent = false),
+                                      Users(this.children.map(_.id).toSeq)))
   }
 
   protected def destinationFilterFlow(accountId: String)
@@ -186,16 +171,22 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       case OpenAnswers =>
         if (this.currentStatus == CloseAnswer) {
           this.currentStatus = this.currentStatus.next
-          noticeEveryone(hidePlayersAnswer = false)
+          noticeEveryone()
         }
       case v: SetAlterStars =>
-        if (isParent(accountId) && this.currentStatus == OpenAnswer) {
-          this.currentStatus = this.currentStatus.next
+        if (isParent(accountId) && (this.currentStatus == WaitingAnswer || this.currentStatus == CloseAnswer || this.currentStatus == OpenAnswer)) {
           v.alterStars.foreach(
             alterStar =>
               changeAccountStatus(alterStar.accountId,
                                   _.checkAnswer(_ => alterStar.alterStars)))
-          noticeEveryone(hidePlayersAnswer = false, hideCorrectAnswer = false)
+          noticeEveryone()
+        }
+      case GoToResult =>
+        if (isParent(accountId) && this.currentStatus == OpenAnswer) {
+          this.currentStatus = this.currentStatus.next
+          this.children.foreach(account =>
+            changeAccountStatus(account.id, _.reflectTheStars))
+          noticeEveryone()
         }
       case GoToNextQuestion =>
         if (isParent(accountId) && this.currentStatus == OpenAggregate) {
