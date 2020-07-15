@@ -3,6 +3,7 @@ import { getAnswerWithAdmin } from 'utils/getAnswer';
 import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
 import { QuizAdminPanel } from 'components/QuizAdminPanel';
+import { QuestionContent } from 'components/QuestionContent';
 
 import './admin_room.scss';
 
@@ -87,9 +88,7 @@ export const AdminRoom: React.FC = () => {
     <div className="AdminRoom__view">
       <div className="AdminRoom__controller">
         <h1>問題を出題しています</h1>
-        {currentQuestion && (
-          <p className="AdminRoom__QuestionBox">{currentQuestion}</p>
-        )}
+        {currentQuestion && <QuestionContent content={currentQuestion} />}
         <div className="AdminRoom__Buttons">
           <FoundationButton
             label="解答を締め切る"
@@ -99,9 +98,7 @@ export const AdminRoom: React.FC = () => {
           <FoundationButton label="結果発表" onClick={emitAlterStars} />
         </div>
       </div>
-      <div className="AdminRoom__Panels">
-        {renderQuizAdminPanels()}
-      </div>
+      <div className="AdminRoom__Panels">{renderQuizAdminPanels()}</div>
     </div>
   );
 };

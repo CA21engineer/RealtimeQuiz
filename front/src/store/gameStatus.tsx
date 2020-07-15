@@ -75,11 +75,17 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
 
         const accountId = getAccountId();
         const selfStatus = status.players.filter(
-          (player) => player.id === accountId
-        )[0];
+          ({ id, connectionStatus }) =>
+            id === accountId && connectionStatus === 'online'
+        );
 
-        if (selfStatus) {
-          draft.personalStatus.currentStatus = selfStatus;
+        if (selfStatus.length > 1) {
+          console.error('同じIDのPlayerが存在しています');
+        }
+
+        if (selfStatus.length) {
+          const self = selfStatus[0];
+          draft.personalStatus.currentStatus = self;
         }
       });
     }
