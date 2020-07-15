@@ -12,12 +12,12 @@
 
     &--Plus {
       @extend %__Container;
-      background: #cc0100;
+      background: hsl(5, 100%, 58%);
     }
 
     &--Minus {
       @extend %__Container;
-      background: #4a86e8;
+      background: hsl(210, 100%, 58%);
     }
   }
 

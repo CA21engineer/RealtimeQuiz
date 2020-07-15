@@ -4,6 +4,7 @@ import { getPlusMinus } from 'utils/getPlusMinus';
 import { QuizPanel } from '../QuizPanel';
 
 import './quizAdminPanel.scss';
+import {GameRoomStatusData} from "../../interfaces/Status";
 
 type Props = {
   name: string;
@@ -11,6 +12,7 @@ type Props = {
   alterStarsNumber: number;
   answerText: string;
   isOnline: boolean;
+  changeColor: boolean;
   emitAlterStar: (star: number) => void;
 };
 
@@ -20,11 +22,12 @@ export const QuizAdminPanel: React.FC<Props> = ({
   alterStarsNumber,
   answerText,
   isOnline,
+  changeColor,
   emitAlterStar,
 }) => {
   const INIT_STAR_NUMBER = 1;
   const [givinStars, setGivinStars] = useState(INIT_STAR_NUMBER);
-  const plusMinus = getPlusMinus(alterStarsNumber);
+  const plusMinus = changeColor && getPlusMinus(alterStarsNumber) ;
   const emitAlterStarWithNumber = useCallback(
     (num: number) => {
       emitAlterStar(alterStarsNumber + num);

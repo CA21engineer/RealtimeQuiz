@@ -13,39 +13,39 @@
 
     &--Plus {
       @extend %__Container;
-      background: #e06666;
+      background: hsl(5, 100%, 68%);
 
       .QuizPanel {
         &__Header {
-          background: #cc0100;
+          background: hsl(5, 100%, 58%);
         }
 
         &__StarArea {
-          background: #990000;
+          background: hsl(5, 100%, 58%);
         }
 
         &__AnswerArea {
-          background: #e06666;
+          background: hsl(5, 100%, 68%);
         }
       }
     }
 
     &--Minus {
       @extend %__Container;
-      background: #6d9eeb;
+      background: hsl(210, 100%, 68%);
 
       .QuizPanel {
 
         &__Header {
-          background: #4a86e8;
+          background: hsl(210, 100%, 58%);
         }
 
         &__StarArea {
-          background: #3c78d8;
+          background: hsl(210, 100%, 58%);
         }
 
         &__AnswerArea {
-          background: #6d9eeb;
+          background: hsl(210, 100%, 68%);
         }
       }
     }
@@ -69,8 +69,9 @@
     background: hsl(25, 100%, 58%);
     height: 100%;
     text-align: center;
+    font-size: 1.2rem;
     width: 8em;
-    padding: 1em 1.5em;
+    padding: 0.8em 0.3em;
   }
 
   &__AnswerArea {
