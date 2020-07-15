@@ -6,7 +6,8 @@ storiesOf('QuizAdminPanel', module).add('default', () => {
   return (
     <QuizAdminPanel
       name="赤木しげる"
-      starNumber={5}
+      starsNumber={5}
+      alterStarsNumber={5}
       answerText="未回答"
       isOnline
       emitAlterStar={(star) => console.log(star)}

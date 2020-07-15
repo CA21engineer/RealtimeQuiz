@@ -27,7 +27,7 @@ export const AdminSubmitQuestion: React.FC = () => {
         <input className="Room__QuestionBox" type="text" ref={questionRef} />
         <FoundationButton label="出題する" onClick={submitQuestion} />
       </div>
-      <QuizPanelContainer roleType="admin" />
+      <QuizPanelContainer roleType="admin" highlight />
     </div>
   );
 };

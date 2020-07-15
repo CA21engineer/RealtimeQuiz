@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import './quizPanel.scss';
-import { logger } from '../../utils/log';
 
 export enum PlusMinus {
   'Plus',
@@ -13,7 +12,7 @@ type Props = {
   name: string;
   starNumber: number;
   answerText: string;
-  plusMinus?: PlusMinus;
+  plusMinus?: keyof typeof PlusMinus;
   isOnline: boolean;
 };
 
