@@ -1,0 +1,21 @@
+.AdminResult__View {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.AdminResult__Question {
+  color: #FFFFFF;
+  background-color: hsl(25, 100%, 58%);
+  border-radius: 7px;
+  max-width: 480px;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 25px;
+}

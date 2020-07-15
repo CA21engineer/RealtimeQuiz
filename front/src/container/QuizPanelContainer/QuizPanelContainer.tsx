@@ -43,8 +43,8 @@ export const QuizPanelContainer: React.FC<QuizPanelContainerType> = ({
     });
 
   return (
-    <>
+    <div className="quizPanelContainer">
       {renderUser}
-    </>
+    </div>
   );
 };

@@ -69,10 +69,14 @@ export const Player: React.FC = () => {
 
   return (
     <div className="Player__Wrapper">
-      <p className="Player__Question">
+      <p className="Player__Status">
         {expressPlayerStatus(roomStatus.currentStatus)}
       </p>
-      {currentQuestion && <QuestionContent content={currentQuestion} />}
+      {currentQuestion && (
+      <div className="Player__Question">
+        <QuestionContent content={currentQuestion} />
+      </div>
+    )}
       {renderQuestionModal()}
       <div className="Player__List">
         <QuizPanelContainer roleType="player" />

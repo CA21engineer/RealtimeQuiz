@@ -19,12 +19,14 @@ export const AdminResult: React.FC = () => {
   }, [controllers]);
 
   return (
-    <div className="SubmitQuestion__view">
-      <p>結果発表</p>
-      {currentQuestion && (
-        <input className="AdminRoom__QuestionBox" value={currentQuestion} />
-      )}
-      <FoundationButton label="次の問題へ" onClick={emitGoToNextQuestion} />
+    <div className="AdminResult__View">
+      <p className="Admin__Status">結果発表</p>
+      <div className="AdminResult__Question">
+        {currentQuestion && (
+          <p className="AdminRoom__QuestionBox">{currentQuestion}</p>
+        )}
+        <FoundationButton label="次の問題へ" onClick={emitGoToNextQuestion} />
+      </div>
       <QuizPanelContainer roleType="admin" />
     </div>
   );
