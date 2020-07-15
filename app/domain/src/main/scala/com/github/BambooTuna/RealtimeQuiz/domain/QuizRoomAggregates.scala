@@ -4,12 +4,13 @@ import akka.NotUsed
 import akka.actor.Actor
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Flow
+import com.evolutiongaming.metrics.MetricCollectors
 import com.github.BambooTuna.RealtimeQuiz.domain.QuizRoomAggregates.Protocol._
 import com.github.BambooTuna.RealtimeQuiz.domain.ws.WebSocketMessage
 
 import scala.util.{Failure, Success, Try}
 
-class QuizRoomAggregates extends Actor {
+class QuizRoomAggregates(implicit collectors: MetricCollectors) extends Actor {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   val debugRoom =
