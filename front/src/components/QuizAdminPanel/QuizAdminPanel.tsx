@@ -4,7 +4,6 @@ import { getPlusMinus } from 'utils/getPlusMinus';
 import { QuizPanel } from '../QuizPanel';
 
 import './quizAdminPanel.scss';
-import {GameRoomStatusData} from "../../interfaces/Status";
 
 type Props = {
   name: string;
@@ -12,6 +11,7 @@ type Props = {
   alterStarsNumber: number;
   answerText: string;
   isOnline: boolean;
+  isAnswered: boolean;
   changeColor: boolean;
   emitAlterStar: (star: number) => void;
 };
@@ -22,6 +22,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
   alterStarsNumber,
   answerText,
   isOnline,
+  isAnswered,
   changeColor,
   emitAlterStar,
 }) => {
@@ -40,6 +41,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
       className={cx('QuizAdminPanel__Container', {
         'QuizAdminPanel__Container--Plus': plusMinus === 'Plus',
         'QuizAdminPanel__Container--Minus': plusMinus === 'Minus',
+        disabled: !isAnswered,
       })}
     >
       <QuizPanel
@@ -58,11 +60,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
           >
             {`⭐️ - ${givinStars}`}
           </button>
-          <p
-            className="QuizAdminPanel__InputStar"
-          >
-            {alterStarsNumber}
-          </p>
+          <p className="QuizAdminPanel__InputStar">{alterStarsNumber}</p>
           <button
             className="QuizAdminPanel__StarButton"
             onClick={() => emitAlterStarWithNumber(1)}
