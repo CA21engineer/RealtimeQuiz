@@ -1,7 +1,8 @@
 import React from 'react';
 import Modal from 'react-modal';
-import { logger } from '../../utils/log';
-import { FoundationInputArea } from '../FoundationInputArea';
+import { logger } from 'utils/log';
+import { FoundationInputArea } from 'components/FoundationInputArea';
+import { QuestionContent } from 'components/QuestionContent';
 
 import './questionModal.scss';
 
@@ -35,7 +36,10 @@ export const QuestionModal: React.FC<Props> = ({
     <Modal isOpen={isOpen} className="QuestionModal__Wrapper">
       <div className="QuestionModal__Container">
         <h2 className="QuestionModal__Title">問題</h2>
-        <h3 className="QuestionModal__QuestionBody">{questionBody}</h3>
+        <QuestionContent
+          className="QuestionModal__QuestionBody"
+          content={questionBody}
+        />
         <span className="QuestionModal__RemainTime">{`残り時間 ${remainTime}秒`}</span>
         <FoundationInputArea
           inputBody={answerBody}

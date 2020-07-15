@@ -2,6 +2,7 @@ import React, { useCallback, useContext } from 'react';
 import { GameStatusContext } from 'store/gameStatus';
 import { QuizPanelContainer } from 'container/QuizPanelContainer';
 import { QuestionModal } from 'components/QuestionModal';
+import { QuestionContent } from 'components/QuestionContent';
 import { usePlayer } from './PlayerHooks';
 
 import './player.scss';
@@ -10,6 +11,7 @@ export const Player: React.FC = () => {
   const { expressPlayerStatus } = usePlayer();
   const { state, dispatch } = useContext(GameStatusContext);
   const { roomStatus, personalStatus } = state;
+  const { currentQuestion } = roomStatus;
 
   const onSubmitAnswer: React.MouseEventHandler = useCallback(() => {
     const { emitter } = state.controllers;
@@ -64,21 +66,13 @@ export const Player: React.FC = () => {
       </div>
     );
   };
-  const renderQuestionBody = () => {
-    const { currentQuestion } = roomStatus;
-    if (currentQuestion === '') {
-      return null;
-    }
-
-    return <p className="Player__QuestionBox">{currentQuestion}</p>;
-  };
 
   return (
     <div className="Player__Wrapper">
       <p className="Player__Question">
         {expressPlayerStatus(roomStatus.currentStatus)}
       </p>
-      {renderQuestionBody()}
+      {currentQuestion && <QuestionContent content={currentQuestion} />}
       {renderQuestionModal()}
       <div className="Player__List">
         <QuizPanelContainer roleType="player" />
