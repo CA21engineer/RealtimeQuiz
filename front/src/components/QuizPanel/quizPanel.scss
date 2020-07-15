@@ -2,7 +2,7 @@
   color: #FFFFFF;
   background: hsl(25, 100%, 68%);
   width: 380px;
-  height: 130px;
+  height: 190px;
   border-radius: 7px;
   margin: 0;
 }
@@ -10,6 +10,8 @@
 .QuizPanel {
   &__Container {
     @extend %__Container;
+
+    overflow: hidden;
 
     &--Plus {
       @extend %__Container;
