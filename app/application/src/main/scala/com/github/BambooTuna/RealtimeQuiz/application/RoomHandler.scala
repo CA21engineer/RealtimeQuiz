@@ -11,6 +11,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
 import akka.stream.scaladsl.Flow
 import akka.util.Timeout
+import com.evolutiongaming.metrics.MetricCollectors
 import com.github.BambooTuna.RealtimeQuiz.application.json.{
   CreateRoomJson,
   RoomJson
@@ -25,8 +26,8 @@ import io.circe.generic.auto._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import org.slf4j.{Logger, LoggerFactory}
 
-class RoomHandler(roomAggregate: ActorRef)(
-    implicit materializer: Materializer) {
+class RoomHandler(roomAggregate: ActorRef)(implicit materializer: Materializer,
+                                           collectors: MetricCollectors) {
   type QueryP[Q] = Directive[Q] => Route
 
   val logger: Logger = LoggerFactory.getLogger(getClass)

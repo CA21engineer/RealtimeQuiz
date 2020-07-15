@@ -92,3 +92,11 @@ object `doobie-quill` {
     ) ++
       ("-hikari" :: "-quill" :: Nil).map(a => "org.tpolecat" %% s"doobie$a" % "0.8.6")
 }
+
+object `prometheus-exporter` {
+  val resolver = Resolver.bintrayRepo("evolutiongaming", "maven")
+
+  private val version = "0.1.0+2-0d5a6a56"
+  val core = "com.evolutiongaming" %% "prometheus-exporter" % version
+
+}

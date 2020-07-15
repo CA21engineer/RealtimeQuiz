@@ -16,6 +16,7 @@ object Settings {
   )
 
   lazy val commonDependenciesSettings = Seq(
+    resolvers += `prometheus-exporter`.resolver,
     libraryDependencies ++= Seq(
       Circe.core,
       Circe.generic,
@@ -36,7 +37,8 @@ object Settings {
       LogstashLogbackEncoder.encoder,
       Config.core,
       Monix.version,
-      Enumeratum.version
+      Enumeratum.version,
+      `prometheus-exporter`.core
     ),
     scalafmtOnCompile in Compile := true,
     scalafmtTestOnCompile in Compile := true
