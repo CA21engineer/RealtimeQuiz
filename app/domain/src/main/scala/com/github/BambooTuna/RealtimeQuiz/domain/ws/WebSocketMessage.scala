@@ -70,7 +70,7 @@ case class PlayerList(
 ) extends WebSocketMessage {
 
   def fetch(isParent: Boolean): PlayerList = {
-    if (isParent) {
+    (if (isParent) {
       this
     } else {
       currentStatus match {
@@ -88,7 +88,7 @@ case class PlayerList(
                players = players.map(_.hideAlterStars))
         case CurrentStatus.OpenAggregate => this
       }
-    }
+    }).copy(players = players.sortBy(_.hashCode()))
   }
 
 }
