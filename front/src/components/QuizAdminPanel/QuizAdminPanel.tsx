@@ -12,7 +12,6 @@ type Props = {
   answerText: string;
   isOnline: boolean;
   isAnswered: boolean;
-  changeColor: boolean;
   emitAlterStar: (star: number) => void;
 };
 
@@ -23,7 +22,6 @@ export const QuizAdminPanel: React.FC<Props> = ({
   answerText,
   isOnline,
   isAnswered,
-  changeColor,
   emitAlterStar,
 }) => {
   const INIT_STAR_NUMBER = 1;
@@ -39,8 +37,8 @@ export const QuizAdminPanel: React.FC<Props> = ({
   return (
     <div
       className={cx('QuizAdminPanel__Container', {
-        'QuizAdminPanel__Container--Plus': changeColor && plusMinus === 'Plus',
-        'QuizAdminPanel__Container--Minus': changeColor && plusMinus === 'Minus',
+        'QuizAdminPanel__Container--Plus': plusMinus === 'Plus',
+        'QuizAdminPanel__Container--Minus': plusMinus === 'Minus',
         disabled: !isAnswered,
       })}
     >
