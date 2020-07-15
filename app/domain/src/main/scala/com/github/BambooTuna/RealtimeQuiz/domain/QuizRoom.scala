@@ -33,7 +33,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
   protected var children: Set[Account] = Set.empty
   def participants: Int = children.map(_.role == Player).size
   var currentStatus: CurrentStatus = WaitingQuestion
-  var currentQuestion: Option[String] = None
+  var currentQuestion: Option[Question] = None
 
   protected val killSwitch: SharedKillSwitch = KillSwitches.shared(roomId)
   protected val (actorRef, source) = StreamSupport
@@ -81,10 +81,12 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       )
   }
 
-  protected def noticeEveryone(hide: Boolean = true): Future[Unit] = {
+  protected def noticeEveryone(
+      hidePlayersAnswer: Boolean = true,
+      hideCorrectAnswer: Boolean = true): Future[Unit] = {
     Future {
       Thread.sleep(500)
-      noticePlayersState(actorRef ! _)(hide)
+      noticePlayersState(actorRef ! _)(hidePlayersAnswer, hideCorrectAnswer)
     }
   }
 
@@ -98,18 +100,22 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       .find(_.id == accountId)
       .map(f)
       .foreach { account =>
+        println(
+          s"children => ${(this.children - account).exists(_.id == account.id)}")
         this.children = this.children - account + account
       }
   }
 
   protected def noticePlayersState(f: WebSocketMessageWithDestination => Unit)(
-      hide: Boolean): Unit = {
+      hidePlayersAnswer: Boolean,
+      hideCorrectAnswer: Boolean): Unit = {
     val everyone = this.children + parent
     f(
       WebSocketMessageWithDestination(
         PlayerList(
           currentStatus = currentStatus,
-          currentQuestion = currentQuestion,
+          currentQuestion = currentQuestion.map(_.problemStatement),
+          currentCorrectAnswer = currentQuestion.flatMap(_.correctAnswer),
           currentTimeLimit = None,
           players = everyone.toSeq
         ),
@@ -121,9 +127,12 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       WebSocketMessageWithDestination(
         PlayerList(
           currentStatus = currentStatus,
-          currentQuestion = currentQuestion,
+          currentQuestion = currentQuestion.map(_.problemStatement),
+          currentCorrectAnswer = currentQuestion.flatMap(a =>
+            (if (hideCorrectAnswer) a.hideCorrectAnswer else a).correctAnswer),
           currentTimeLimit = None,
-          players = (if (hide) everyone.map(_.hideAnswer) else everyone).toSeq
+          players = (if (hidePlayersAnswer) everyone.map(_.hideAnswer)
+                     else everyone).toSeq
         ),
         Users(this.children.map(_.id).toSeq)
       )
@@ -152,7 +161,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
         if (isParent(accountId) && v.question.nonEmpty && this.currentStatus == WaitingQuestion) {
           changeQuizRoomStatus(_ => {
             this.currentStatus = this.currentStatus.next
-            this.currentQuestion = Some(v.question)
+            this.currentQuestion = Some(Question(v.question, v.correctAnswer))
             //TODO タイマーをセットし一定時間後にforceSendAnswerを全員に送信
 //            Future {
 //              Thread.sleep(10 * 1000)
@@ -168,14 +177,17 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
         }
       case CloseApplications =>
         if (this.currentStatus == WaitingAnswer) {
+          //TODO send children ForceSendAnswer
+          actorRef ! WebSocketMessageWithDestination(
+            ForceSendAnswer(),
+            Users(this.children.map(_.id).toSeq))
           this.currentStatus = this.currentStatus.next
           noticeEveryone()
-          //TODO send children ForceSendAnswer
         }
       case OpenAnswers =>
         if (this.currentStatus == CloseAnswer) {
           this.currentStatus = this.currentStatus.next
-          noticeEveryone(hide = false)
+          noticeEveryone(hidePlayersAnswer = false)
         }
       case v: SetAlterStars =>
         if (isParent(accountId) && this.currentStatus == OpenAnswer) {
@@ -184,7 +196,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
             alterStar =>
               changeAccountStatus(alterStar.accountId,
                                   _.checkAnswer(_ => alterStar.alterStars)))
-          noticeEveryone(hide = false)
+          noticeEveryone(hidePlayersAnswer = false, hideCorrectAnswer = false)
         }
       case GoToNextQuestion =>
         if (isParent(accountId) && this.currentStatus == OpenAggregate) {
