@@ -13,7 +13,7 @@ export const AdminRoom: React.FC = () => {
   >();
   const { state } = useContext(GameStatusContext);
   const { roomStatus, controllers } = state;
-  const { players, currentQuestion } = roomStatus;
+  const { players, currentQuestion, currentStatus } = roomStatus;
 
   const EmitCloseApplications = useCallback(() => {
     if (!controllers.emitter) {
@@ -93,9 +93,18 @@ export const AdminRoom: React.FC = () => {
           <FoundationButton
             label="解答を締め切る"
             onClick={EmitCloseApplications}
+            disabled={currentStatus !== 'WAITING_ANSWER'}
           />
-          <FoundationButton label="一斉にオープン" onClick={emitOpenAnswers} />
-          <FoundationButton label="結果発表" onClick={emitAlterStars} />
+          <FoundationButton
+            label="一斉にオープン"
+            onClick={emitOpenAnswers}
+            disabled={currentStatus !== 'CLOSE_ANSWER'}
+          />
+          <FoundationButton
+            label="結果発表"
+            onClick={emitAlterStars}
+            disabled={currentStatus !== 'OPEN_ANSWER'}
+          />
         </div>
       </div>
       <div className="AdminRoom__Panels">{renderQuizAdminPanels()}</div>

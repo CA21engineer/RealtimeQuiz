@@ -7,4 +7,9 @@
   border: #FFFFFF 2px solid;
   color: #FFFFFF;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: auto;
+  }
 }
