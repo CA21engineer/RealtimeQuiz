@@ -27,7 +27,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
   const plusMinus = getPlusMinus(alterStarsNumber);
   const emitAlterStarWithNumber = useCallback(
     (num: number) => {
-      emitAlterStar(givinStars * num);
+      emitAlterStar(alterStarsNumber + num);
     },
     [emitAlterStar, givinStars, setGivinStars]
   );
@@ -41,7 +41,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
     >
       <QuizPanel
         name={name}
-        starNumber={starsNumber + alterStarsNumber}
+        starNumber={starsNumber}
         answerText={answerText}
         plusMinus={plusMinus}
         isOnline={isOnline}
@@ -55,12 +55,11 @@ export const QuizAdminPanel: React.FC<Props> = ({
           >
             {`⭐️ - ${givinStars}`}
           </button>
-          <input
+          <p
             className="QuizAdminPanel__InputStar"
-            type="number"
-            defaultValue={INIT_STAR_NUMBER}
-            onChange={(e) => setGivinStars(Number(e.target.value))}
-          />
+          >
+            {alterStarsNumber}
+          </p>
           <button
             className="QuizAdminPanel__StarButton"
             onClick={() => emitAlterStarWithNumber(1)}
