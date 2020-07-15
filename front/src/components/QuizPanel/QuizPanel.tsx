@@ -3,9 +3,6 @@ import classNames from 'classnames';
 import './quizPanel.scss';
 import { logger } from '../../utils/log';
 
-const STAR_NUMBER_MAX = 5;
-const STAR_NUMBER_MIN = 0;
-
 export enum PlusMinus {
   'Plus',
   'Minus',
@@ -27,17 +24,9 @@ export const QuizPanel: React.FC<Props> = ({
   plusMinus = PlusMinus.None,
   isOnline,
 }) => {
-  if (
-    Number.isNaN(starNumber) ||
-    starNumber < STAR_NUMBER_MIN ||
-    starNumber > STAR_NUMBER_MAX
-  ) {
-    logger(`Fatal: Start number is unexpected. Given ${starNumber}.`);
-  }
-  // HELP ME: 急募，なんかいい書き方
   const getStarText = (star: number) => {
     const STAR_LIMIT = 5;
-    if (star === 0) {
+    if (star === 0 || Number.isNaN(star)) {
       return '⭐️ * 0';
     }
 
@@ -57,7 +46,7 @@ export const QuizPanel: React.FC<Props> = ({
   const starText = getStarText(starNumber);
   if (!isOnline) {
     // eslint-disable-next-line no-param-reassign
-    name += '(オフライン)'
+    name += '(オフライン)';
   }
 
   return (

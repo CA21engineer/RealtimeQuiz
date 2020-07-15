@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { getAnswerWithAdmin } from 'utils/getAnswer';
 import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
@@ -8,9 +8,6 @@ import { QuestionContent } from 'components/QuestionContent';
 import './admin_room.scss';
 
 export const AdminRoom: React.FC = () => {
-  const [alterStarsRef, setAlterStarsRef] = useState<
-    React.RefObject<HTMLInputElement>[]
-  >();
   const { state } = useContext(GameStatusContext);
   const { roomStatus, controllers } = state;
   const { players, currentQuestion, currentStatus } = roomStatus;
@@ -31,40 +28,32 @@ export const AdminRoom: React.FC = () => {
     controllers.emitter.openAnswers();
   }, [controllers]);
 
-  const emitAlterStars = useCallback(() => {
-    if (!controllers.emitter || !alterStarsRef) {
+  const emitGotoResult = useCallback(() => {
+    if (!controllers.emitter) {
       return;
     }
 
-    const data = alterStarsRef.map((ref, index) => {
-      return {
-        accountId: players[index].id,
-        alterStars: Number(ref.current?.value) || 0,
-      };
-    });
+    controllers.emitter.GotoResult();
+  }, [controllers]);
 
-    controllers.emitter.setAlterStars({
-      alterStars: data,
-    });
-  }, [controllers, alterStarsRef]);
+  const emitAlterStars = useCallback(
+    (id: string, alterStars: number) => {
+      if (!controllers.emitter) {
+        return;
+      }
 
-  useEffect(() => {
-    const refs = [...Array(roomStatus.players.length)].map(() =>
-      React.createRef<HTMLInputElement>()
-    );
-
-    setAlterStarsRef(refs);
-  }, [roomStatus]);
+      controllers.emitter.setAlterStars({
+        alterStars: [{ accountId: id, alterStars }],
+      });
+    },
+    [controllers]
+  );
 
   const renderQuizAdminPanels = () => {
-    if (!alterStarsRef || !alterStarsRef.length) {
-      return null;
-    }
-
     return players
       .filter(({ role }) => role === 'player')
       .sort((a, b) => b.stars - a.stars)
-      .map((player, index) => {
+      .map((player) => {
         const answer = getAnswerWithAdmin(
           roomStatus.currentStatus,
           player.isAnswered,
@@ -75,10 +64,11 @@ export const AdminRoom: React.FC = () => {
           <QuizAdminPanel
             key={player.id}
             name={player.name}
-            starNumber={player.stars}
+            starsNumber={player.stars}
+            alterStarsNumber={player.alterStars}
             answerText={answer}
-            starsRef={alterStarsRef[index]}
             isOnline={player.connectionStatus === 'online'}
+            emitAlterStar={(star) => emitAlterStars(player.id, star)}
           />
         );
       });
@@ -102,7 +92,7 @@ export const AdminRoom: React.FC = () => {
           />
           <FoundationButton
             label="結果発表"
-            onClick={emitAlterStars}
+            onClick={emitGotoResult}
             disabled={currentStatus !== 'OPEN_ANSWER'}
           />
         </div>

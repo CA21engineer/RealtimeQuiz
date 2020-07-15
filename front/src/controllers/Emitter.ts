@@ -44,4 +44,9 @@ export class Emitter {
   public closeApplications(): void {
     this.emitter('CloseApplications');
   }
+
+  // リザルトへ移動する
+  public GotoResult(): void {
+    this.emitter('GotoResult');
+  }
 }

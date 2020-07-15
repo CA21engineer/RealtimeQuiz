@@ -4,25 +4,26 @@ import { QuizPanel } from '../QuizPanel';
 
 type Props = {
   name: string;
-  starNumber: number;
+  starsNumber: number;
+  alterStarsNumber: number;
   answerText: string;
-  starsRef?: React.Ref<HTMLInputElement>;
   isOnline: boolean;
+  emitAlterStar: (star: number) => void;
 };
 
 export const QuizAdminPanel: React.FC<Props> = ({
   name,
-  starNumber,
+  starsNumber,
+  alterStarsNumber,
   answerText,
-  starsRef,
   isOnline,
+  emitAlterStar,
 }) => {
-  const [givenStar, setGivenStar] = React.useState(0);
   return (
     <div className="QuizAdminPanel__Container">
       <QuizPanel
         name={name}
-        starNumber={starNumber}
+        starNumber={starsNumber + alterStarsNumber}
         answerText={answerText}
         isOnline={isOnline}
       />
@@ -30,26 +31,18 @@ export const QuizAdminPanel: React.FC<Props> = ({
         <div className="QuizAdminPanel__StarController">
           <button
             className="QuizAdminPanel__StarButton"
-            onClick={() => setGivenStar((s) => s - 1)}
+            onClick={() => emitAlterStar(-1)}
             type="button"
           >
-            {`⭐️-${1}`}
+            {`⭐️ - ${1}`}
           </button>
-          <input
-            className="QuizAdminPanel__InputStar"
-            type="number"
-            value={givenStar}
-            onChange={(e) => {
-              setGivenStar(e.target.valueAsNumber);
-            }}
-            ref={starsRef}
-          />
+          <span className="QuizAdminPanel__AlterStars">{alterStarsNumber}</span>
           <button
             className="QuizAdminPanel__StarButton"
-            onClick={() => setGivenStar((s) => s + 1)}
+            onClick={() => emitAlterStar(1)}
             type="button"
           >
-            {`⭐️+${1}`}
+            {`⭐️ + ${1}`}
           </button>
         </div>
       </div>
