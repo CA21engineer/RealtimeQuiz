@@ -1,31 +1,33 @@
 .QuestionModal__Wrapper {
   position: absolute;
-  top: 40px;
-  left: 40px;
-  right: 40px;
-  bottom: 40px;
-  outline: none;
-  padding: 20px;
-
+  height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
 
 .QuestionModal__Container {
-  background: darkorange;
+  color: #FFFFFF;
+  background-color: hsl(25, 100%, 58%);
+  border-radius: 7px;
   max-width: 480px;
   width: 100%;
   box-sizing: border-box;
   padding: 1em;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .QuestionModal__Title {
   text-align: center;
+  font-weight: normal;
   margin: 0;
+  padding-bottom: 10px;
 }
 
 .QuestionModal__RemainTime {
-  display: block;
   text-align: right;
 }
