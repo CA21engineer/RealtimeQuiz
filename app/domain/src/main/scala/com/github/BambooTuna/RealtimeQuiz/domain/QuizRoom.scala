@@ -189,12 +189,16 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
           noticeEveryone(hidePlayersAnswer = false)
         }
       case v: SetAlterStars =>
-        if (isParent(accountId) && this.currentStatus == OpenAnswer) {
-          this.currentStatus = this.currentStatus.next
+        if (isParent(accountId) && (this.currentStatus == WaitingAnswer || this.currentStatus == CloseAnswer || this.currentStatus == OpenAnswer)) {
           v.alterStars.foreach(
             alterStar =>
               changeAccountStatus(alterStar.accountId,
                                   _.checkAnswer(_ => alterStar.alterStars)))
+          noticeEveryone(hidePlayersAnswer = false)
+        }
+      case GoToResult =>
+        if (isParent(accountId) && this.currentStatus == OpenAnswer) {
+          this.currentStatus = this.currentStatus.next
           noticeEveryone(hidePlayersAnswer = false, hideCorrectAnswer = false)
         }
       case GoToNextQuestion =>

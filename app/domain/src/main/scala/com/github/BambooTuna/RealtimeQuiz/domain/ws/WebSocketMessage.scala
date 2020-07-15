@@ -81,6 +81,9 @@ case object OpenAnswers extends WebSocketMessage {
   override val typeName: String = "OpenAnswers"
 }
 case class SetAlterStars(alterStars: Seq[AlterStar]) extends WebSocketMessage
+case object GoToResult extends WebSocketMessage {
+  override val typeName: String = "GoToResult"
+}
 case object GoToNextQuestion extends WebSocketMessage {
   override val typeName: String = "GoToNextQuestion"
 }
