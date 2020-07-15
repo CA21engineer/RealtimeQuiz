@@ -11,6 +11,7 @@ type Props = {
   alterStarsNumber: number;
   answerText: string;
   isOnline: boolean;
+  isAnswered: boolean;
   emitAlterStar: (star: number) => void;
 };
 
@@ -20,6 +21,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
   alterStarsNumber,
   answerText,
   isOnline,
+  isAnswered,
   emitAlterStar,
 }) => {
   const INIT_STAR_NUMBER = 1;
@@ -37,6 +39,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
       className={cx('QuizAdminPanel__Container', {
         'QuizAdminPanel__Container--Plus': plusMinus === 'Plus',
         'QuizAdminPanel__Container--Minus': plusMinus === 'Minus',
+        disabled: !isAnswered,
       })}
     >
       <QuizPanel
@@ -55,11 +58,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
           >
             {`⭐️ - ${givinStars}`}
           </button>
-          <p
-            className="QuizAdminPanel__InputStar"
-          >
-            {alterStarsNumber}
-          </p>
+          <p className="QuizAdminPanel__InputStar">{alterStarsNumber}</p>
           <button
             className="QuizAdminPanel__StarButton"
             onClick={() => emitAlterStarWithNumber(1)}

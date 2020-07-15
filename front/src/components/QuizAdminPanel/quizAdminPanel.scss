@@ -19,12 +19,21 @@
       @extend %__Container;
       background: #4a86e8;
     }
+
+    &.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
   }
 
   &__StarButton {
     width: 7em;
     margin: 0;
     padding: 0;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   &__StarPanel {
