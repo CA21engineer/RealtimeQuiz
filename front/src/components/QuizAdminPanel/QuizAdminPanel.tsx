@@ -28,7 +28,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
 }) => {
   const INIT_STAR_NUMBER = 1;
   const [givinStars, setGivinStars] = useState(INIT_STAR_NUMBER);
-  const plusMinus = getPlusMinus(alterStarsNumber) ;
+  const plusMinus = getPlusMinus(alterStarsNumber);
   const emitAlterStarWithNumber = useCallback(
     (num: number) => {
       emitAlterStar(alterStarsNumber + num);
