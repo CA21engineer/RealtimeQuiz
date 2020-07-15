@@ -7,9 +7,9 @@ export function expressPlayerStatus(
     case 'WAITING_QUESTION':
       return '出題を待っています…';
     case 'WAITING_ANSWER':
-      return '解答オープンを待っています…';
+      return '解答を受け付けています…';
     case 'CLOSE_ANSWER':
-      return '結果発表を待っています…';
+      return '解答オープンを待っています…';
     case 'OPEN_ANSWER':
       return '結果発表を待っています…';
     case 'OPEN_AGGREGATE':
