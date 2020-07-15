@@ -4,8 +4,18 @@ import akka.{Done, NotUsed}
 import akka.stream.{KillSwitches, Materializer, SharedKillSwitch}
 import akka.stream.scaladsl.{Flow, Sink}
 import com.evolutiongaming.metrics.MetricCollectors
-import com.github.BambooTuna.RealtimeQuiz.domain.AccountRole.{Admin, Player, Spectator}
-import com.github.BambooTuna.RealtimeQuiz.domain.CurrentStatus.{CloseAnswer, OpenAggregate, OpenAnswer, WaitingAnswer, WaitingQuestion}
+import com.github.BambooTuna.RealtimeQuiz.domain.AccountRole.{
+  Admin,
+  Player,
+  Spectator
+}
+import com.github.BambooTuna.RealtimeQuiz.domain.CurrentStatus.{
+  CloseAnswer,
+  OpenAggregate,
+  OpenAnswer,
+  WaitingAnswer,
+  WaitingQuestion
+}
 import com.github.BambooTuna.RealtimeQuiz.domain.lib.StreamSupport
 import com.github.BambooTuna.RealtimeQuiz.domain.ws._
 import org.slf4j.{Logger, LoggerFactory}
@@ -205,7 +215,8 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
 object QuizRoom {
 
   def apply(accountId: String, roomName: String)(
-      implicit materializer: Materializer, collectors: MetricCollectors): QuizRoom = {
+      implicit materializer: Materializer,
+      collectors: MetricCollectors): QuizRoom = {
     val roomId = java.util.UUID.randomUUID.toString.replaceAll("-", "")
     new QuizRoom(roomId, roomName)(materializer) {
       override var parent: Account = Account.apply(accountId, Admin)
@@ -213,7 +224,8 @@ object QuizRoom {
   }
 
   def apply(accountId: String, roomId: String, roomName: String)(
-      implicit materializer: Materializer, collectors: MetricCollectors): QuizRoom = {
+      implicit materializer: Materializer,
+      collectors: MetricCollectors): QuizRoom = {
     new QuizRoom(roomId, roomName)(materializer) {
       override var parent: Account = Account.apply(accountId, Admin)
     }

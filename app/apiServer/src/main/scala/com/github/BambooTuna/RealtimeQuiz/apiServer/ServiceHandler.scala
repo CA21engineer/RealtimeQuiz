@@ -4,7 +4,12 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{Directive, ExceptionHandler, RejectionHandler, Route}
+import akka.http.scaladsl.server.{
+  Directive,
+  ExceptionHandler,
+  RejectionHandler,
+  Route
+}
 import akka.stream.Materializer
 import org.slf4j.{Logger, LoggerFactory}
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
@@ -16,7 +21,8 @@ import com.github.BambooTuna.RealtimeQuiz.domain.QuizRoomAggregates
 import scala.util.control.NonFatal
 
 class ServiceHandler(implicit actorSystem: ActorSystem,
-                     materializer: Materializer, collectors: MetricCollectors) {
+                     materializer: Materializer,
+                     collectors: MetricCollectors) {
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
   def exceptionHandler(logger: Logger): ExceptionHandler = ExceptionHandler {
@@ -50,7 +56,8 @@ class ServiceHandler(implicit actorSystem: ActorSystem,
   }
 
   val roomAggregate =
-    actorSystem.actorOf(Props(classOf[QuizRoomAggregates], collectors), QuizRoomAggregates.name)
+    actorSystem.actorOf(Props(classOf[QuizRoomAggregates], collectors),
+                        QuizRoomAggregates.name)
   val roomHandler = new RoomHandler(roomAggregate)
 
   def restApiRoute(implicit materializer: Materializer): Route = {
