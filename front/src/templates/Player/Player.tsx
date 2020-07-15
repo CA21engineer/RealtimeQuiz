@@ -15,7 +15,7 @@ export const Player: React.FC = () => {
 
   const onSubmitAnswer: React.MouseEventHandler = useCallback(() => {
     const { emitter } = state.controllers;
-    if (!emitter) {
+    if (!emitter || personalStatus.answer === '') {
       console.error('解答が送信できませんでした。');
       return;
     }

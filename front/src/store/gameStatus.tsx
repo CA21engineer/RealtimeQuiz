@@ -76,6 +76,7 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
         draft.roomStatus = status;
 
         if (state.roomStatus.currentStatus === 'WAITING_QUESTION') {
+          draft.personalStatus.answer = '';
           draft.personalStatus.isAnswered = false;
         }
 
