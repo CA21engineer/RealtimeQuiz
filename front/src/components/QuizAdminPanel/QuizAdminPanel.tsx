@@ -28,7 +28,7 @@ export const QuizAdminPanel: React.FC<Props> = ({
 }) => {
   const INIT_STAR_NUMBER = 1;
   const [givinStars, setGivinStars] = useState(INIT_STAR_NUMBER);
-  const plusMinus = changeColor && getPlusMinus(alterStarsNumber) ;
+  const plusMinus = getPlusMinus(alterStarsNumber) ;
   const emitAlterStarWithNumber = useCallback(
     (num: number) => {
       emitAlterStar(alterStarsNumber + num);
@@ -39,8 +39,8 @@ export const QuizAdminPanel: React.FC<Props> = ({
   return (
     <div
       className={cx('QuizAdminPanel__Container', {
-        'QuizAdminPanel__Container--Plus': plusMinus === 'Plus',
-        'QuizAdminPanel__Container--Minus': plusMinus === 'Minus',
+        'QuizAdminPanel__Container--Plus': changeColor && plusMinus === 'Plus',
+        'QuizAdminPanel__Container--Minus': changeColor && plusMinus === 'Minus',
         disabled: !isAnswered,
       })}
     >
