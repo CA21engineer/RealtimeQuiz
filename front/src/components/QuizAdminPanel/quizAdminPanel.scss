@@ -1,59 +1,75 @@
-.QuizAdminPanel__Container {
-  display: flex;
-  flex-direction: column;
-  background-color: hsl(25, 100%, 58%);
-  border-radius: 7px;
-  margin: 10px;
+%__Container {
+    display: flex;
+    flex-direction: column;
+    background-color: hsl(25, 100%, 58%);
+    border-radius: 7px;
+    margin: 10px;
 }
 
-.QuizAdminPanel__StarButton {
-  width: 7em;
-  margin: 0;
-  padding: 0;
-}
+.QuizAdminPanel {
+  &__Container {
+    @extend %__Container;
 
-.QuizAdminPanel__StarPanel {
-  display: flex;
-  justify-content: space-between;
-  height: 60px;
+    &--Plus {
+      @extend %__Container;
+      background: #cc0100;
+    }
 
-  button {
-    height: 40px;
-    border-radius: 3.5px;
-    border: #FFFFFF 2px solid;
-    background-color: rgba(0,0,0,0);
-    font-size: 1.2rem;
-    color: #FFFFFF;
+    &--Minus {
+      @extend %__Container;
+      background: #4a86e8;
+    }
   }
 
-  input {
-    height: 40px;
-    border-radius: 3.5px;
-    border: #FFFFFF 2px solid;
-    background-color: rgba(0,0,0,0);
-    font-size: 1.2rem;
-    color: #FFFFFF;
-    text-align: center;
-  }
-
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+  &__StarButton {
+    width: 7em;
     margin: 0;
+    padding: 0;
   }
 
-  input[type="number"] {
-    -moz-appearance:textfield;
+  &__StarPanel {
+    display: flex;
+    justify-content: space-between;
+    height: 60px;
+
+    button {
+      height: 40px;
+      border-radius: 3.5px;
+      border: #FFFFFF 2px solid;
+      background-color: rgba(0,0,0,0);
+      font-size: 1.2rem;
+      color: #FFFFFF;
+    }
+
+    input {
+      height: 40px;
+      border-radius: 3.5px;
+      border: #FFFFFF 2px solid;
+      background-color: rgba(0,0,0,0);
+      font-size: 1.2rem;
+      color: #FFFFFF;
+      text-align: center;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"] {
+      -moz-appearance:textfield;
+    }
   }
-}
 
-.QuizAdminPanel__StarController {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
+  &__StarController {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
 
-.QuizAdminPanel__InputStar {
-  width: 4em;
+  &__InputStar {
+    width: 4em;
+  }
 }

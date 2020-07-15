@@ -1,6 +1,9 @@
-import React from 'react';
-import './quizAdminPanel.scss';
+import React, { useState, useCallback } from 'react';
+import cx from 'classnames';
+import { getPlusMinus } from 'utils/getPlusMinus';
 import { QuizPanel } from '../QuizPanel';
+
+import './quizAdminPanel.scss';
 
 type Props = {
   name: string;
@@ -19,30 +22,51 @@ export const QuizAdminPanel: React.FC<Props> = ({
   isOnline,
   emitAlterStar,
 }) => {
+  const INIT_STAR_NUMBER = 1;
+  const [givinStars, setGivinStars] = useState(INIT_STAR_NUMBER);
+  const plusMinus = getPlusMinus(alterStarsNumber);
+  const emitAlterStarWithNumber = useCallback(
+    (num: number) => {
+      emitAlterStar(givinStars * num);
+    },
+    [emitAlterStar, givinStars, setGivinStars]
+  );
+
   return (
-    <div className="QuizAdminPanel__Container">
+    <div
+      className={cx('QuizAdminPanel__Container', {
+        'QuizAdminPanel__Container--Plus': plusMinus === 'Plus',
+        'QuizAdminPanel__Container--Minus': plusMinus === 'Minus',
+      })}
+    >
       <QuizPanel
         name={name}
         starNumber={starsNumber + alterStarsNumber}
         answerText={answerText}
+        plusMinus={plusMinus}
         isOnline={isOnline}
       />
       <div className="QuizAdminPanel__StarPanel">
         <div className="QuizAdminPanel__StarController">
           <button
             className="QuizAdminPanel__StarButton"
-            onClick={() => emitAlterStar(-1)}
+            onClick={() => emitAlterStarWithNumber(-1)}
             type="button"
           >
-            {`⭐️ - ${1}`}
+            {`⭐️ - ${givinStars}`}
           </button>
-          <span className="QuizAdminPanel__AlterStars">{alterStarsNumber}</span>
+          <input
+            className="QuizAdminPanel__InputStar"
+            type="number"
+            defaultValue={INIT_STAR_NUMBER}
+            onChange={(e) => setGivinStars(Number(e.target.value))}
+          />
           <button
             className="QuizAdminPanel__StarButton"
-            onClick={() => emitAlterStar(1)}
+            onClick={() => emitAlterStarWithNumber(1)}
             type="button"
           >
-            {`⭐️ + ${1}`}
+            {`⭐️ + ${givinStars}`}
           </button>
         </div>
       </div>
