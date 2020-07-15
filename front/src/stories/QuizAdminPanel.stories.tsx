@@ -10,6 +10,7 @@ storiesOf('QuizAdminPanel', module).add('default', () => {
       alterStarsNumber={5}
       answerText="未回答"
       isOnline
+      isAnswered
       emitAlterStar={(star) => console.log(star)}
     />
   );
