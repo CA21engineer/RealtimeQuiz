@@ -48,7 +48,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
     this.children.exists(a => a.id == id && a.role == Player && !a.isAnswered)
 
   def join(accountId: String, isSpectator: Boolean): Try[Unit] = Try {
-    require(children.size < 10, "満員です >= 10")
+    require(children.size < 1000, "満員です >= 1000")
     val role = if (isSpectator) Spectator else Player
     if (!isParent(accountId) && !isChild(accountId)) {
       this.children = this.children + Account.apply(accountId, role)
