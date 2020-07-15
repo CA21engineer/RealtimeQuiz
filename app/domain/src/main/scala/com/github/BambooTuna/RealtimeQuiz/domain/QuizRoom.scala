@@ -101,9 +101,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       .find(_.id == accountId)
       .map(f)
       .foreach { account =>
-        println(
-          s"children => ${(this.children - account).exists(_.id == account.id)}")
-        this.children = this.children - account + account
+        this.children = this.children.filterNot(_.id == account.id) + account
       }
   }
 
