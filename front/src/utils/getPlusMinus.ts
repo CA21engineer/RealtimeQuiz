@@ -3,8 +3,5 @@ export const getPlusMinus = (alterStars: number) => {
     return 'Plus';
   }
 
-  if (alterStars < 0) {
-    return 'Minus';
-  }
-  return 'None';
+  return 'Minus';
 };
