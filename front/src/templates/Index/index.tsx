@@ -20,9 +20,9 @@ export const Index: React.FC = () => {
     return () => clearInterval(setTimeoutId);
   }, []);
 
-  const onEnterRoom = useCallback(async (roomName: string) => {
+  const onEnterRoom = useCallback(async (roomName: string, asSpectator = false) => {
     const accountId = getAccountId();
-    router.push(`/roomId/${roomName}/accountId/${accountId}`);
+    router.push(`/roomId/${roomName}/accountId/${accountId}${asSpectator ? '?isSpectator=true' : ''}`);
   }, []);
 
   const onEnterNewRoom = useCallback(async () => {
@@ -42,6 +42,7 @@ export const Index: React.FC = () => {
         title={room.roomName}
         roomInfo={`${room.participants}人が参加中`}
         onEnterRoom={() => onEnterRoom(room.roomId)}
+        onEnterRoomAsSpectator={() => onEnterRoom(room.roomId, true)}
       />
     );
   });

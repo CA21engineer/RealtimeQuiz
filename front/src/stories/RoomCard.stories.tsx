@@ -8,6 +8,7 @@ storiesOf('RoomCard', module).add('with text', () => {
       title="鷲巣麻雀"
       roomInfo="2人参加中"
       onEnterRoom={() => console.log('Hello')}
+      onEnterRoomAsSpectator={() => console.log('Hello')}
     />
   );
 });

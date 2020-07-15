@@ -1,5 +1,5 @@
 .Room__container {
-  width: 460px;
+  width: 480px;
   max-width: 480px;
   border-radius: 7px;
   background-color: hsl(25, 100%, 65%);
@@ -11,6 +11,10 @@
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 0;
+  }
+
+  button {
+    margin: 5px;
   }
 
   padding-bottom: 25px;
