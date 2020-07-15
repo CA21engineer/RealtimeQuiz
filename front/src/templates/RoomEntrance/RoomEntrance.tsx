@@ -22,15 +22,17 @@ export const RoomEntrance: React.FC = () => {
     controllers.emitter.changeName(name);
   }, [controllers, nameRef]);
   return (
-    <div className="Room__view">
-      <p className="Room__label">ニックネームを入力してください．</p>
-      <FoundationInputArea
-        inputBody=""
-        onClickSubmitButton={emitChangeName}
-        inputPlaceholder="ニックネーム"
-        submitLabel="入室"
-        inputRef={nameRef}
-      />
+    <div className="Room__viewWrapper">
+      <div className="Room__view">
+        <p className="Room__label">ニックネームを入力してください</p>
+        <FoundationInputArea
+          inputBody=""
+          onClickSubmitButton={emitChangeName}
+          inputPlaceholder="ニックネーム"
+          submitLabel="入室"
+          inputRef={nameRef}
+        />
+      </div>
     </div>
   );
 };
