@@ -57,6 +57,7 @@ export const Player: React.FC = () => {
       <div className="Player__QuestionModal">
         <QuestionModal
           questionBody={roomStatus.currentQuestion || ''}
+          closeTimeoutMS={500}
           remainTime={0}
           answerBody=""
           onInputAnswer={dispatchAnswer}
