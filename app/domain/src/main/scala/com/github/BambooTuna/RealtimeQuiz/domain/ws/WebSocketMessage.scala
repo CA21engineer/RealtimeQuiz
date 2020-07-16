@@ -1,10 +1,7 @@
 package com.github.BambooTuna.RealtimeQuiz.domain.ws
 
-import com.github.BambooTuna.RealtimeQuiz.domain.{
-  Account,
-  AlterStar,
-  CurrentStatus
-}
+import com.github.BambooTuna.RealtimeQuiz.domain.AccountRole.Spectator
+import com.github.BambooTuna.RealtimeQuiz.domain.{Account, AlterStar, CurrentStatus}
 import shapeless._
 import io.circe._
 import io.circe.syntax._
@@ -88,7 +85,7 @@ case class PlayerList(
                 players = players.map(_.hideAlterStars))
          case CurrentStatus.OpenAggregate => this
        }
-     }).copy(players = players.sortBy(_.id))
+     }).copy(players = players.filterNot(_.role == Spectator).sortBy(_.id))
   }
 
 }
