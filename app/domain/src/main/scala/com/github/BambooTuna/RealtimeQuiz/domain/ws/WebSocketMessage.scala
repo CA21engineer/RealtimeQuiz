@@ -71,24 +71,24 @@ case class PlayerList(
 
   def fetch(isParent: Boolean): PlayerList = {
     (if (isParent) {
-      this
-    } else {
-      currentStatus match {
-        case CurrentStatus.WaitingQuestion =>
-          copy(currentCorrectAnswer = None,
-               players = players.map(_.hideAnswer.hideAlterStars))
-        case CurrentStatus.WaitingAnswer =>
-          copy(currentCorrectAnswer = None,
-               players = players.map(_.hideAnswer.hideAlterStars))
-        case CurrentStatus.CloseAnswer =>
-          copy(currentCorrectAnswer = None,
-               players = players.map(_.hideAnswer.hideAlterStars))
-        case CurrentStatus.OpenAnswer =>
-          copy(currentCorrectAnswer = None,
-               players = players.map(_.hideAlterStars))
-        case CurrentStatus.OpenAggregate => this
-      }
-    }).copy(players = players.sortBy(_.hashCode()))
+       this
+     } else {
+       currentStatus match {
+         case CurrentStatus.WaitingQuestion =>
+           copy(currentCorrectAnswer = None,
+                players = players.map(_.hideAnswer.hideAlterStars))
+         case CurrentStatus.WaitingAnswer =>
+           copy(currentCorrectAnswer = None,
+                players = players.map(_.hideAnswer.hideAlterStars))
+         case CurrentStatus.CloseAnswer =>
+           copy(currentCorrectAnswer = None,
+                players = players.map(_.hideAnswer.hideAlterStars))
+         case CurrentStatus.OpenAnswer =>
+           copy(currentCorrectAnswer = None,
+                players = players.map(_.hideAlterStars))
+         case CurrentStatus.OpenAggregate => this
+       }
+     }).copy(players = players.sortBy(_.id))
   }
 
 }
