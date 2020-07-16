@@ -53,7 +53,7 @@ export const AdminRoom: React.FC = () => {
   const renderQuizAdminPanels = () => {
     return players
       .filter(
-        ({ role, name }) => role === 'player' && name !== INIT_PLAYER_NAME
+        ({ role, name, connectionStatus }) => role === 'player' && name !== INIT_PLAYER_NAME && connectionStatus === 'online'
       )
       .sort((a, b) => b.stars - a.stars)
       .map((player) => {
