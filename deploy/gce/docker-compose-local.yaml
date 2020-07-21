@@ -1,9 +1,0 @@
-version: "3.4"
-services:
-  api-server:
-    restart: always
-    build: ../../app/apiServer/target/docker/stage
-    ports:
-      - 18080:18080
-    volumes:
-      - ../../front/dist:/dist
