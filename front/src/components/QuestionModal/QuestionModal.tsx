@@ -13,6 +13,7 @@ type Props = {
   onInputAnswer: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmitAnswer: React.MouseEventHandler;
   isOpen: boolean;
+  closeTimeoutMS?: number;
 };
 
 export const QuestionModal: React.FC<Props> = ({
@@ -22,6 +23,7 @@ export const QuestionModal: React.FC<Props> = ({
   onInputAnswer,
   onSubmitAnswer,
   isOpen,
+  closeTimeoutMS,
 }) => {
   if (questionBody === '') {
     logger('Fatal: Question body is not given.');
@@ -33,7 +35,11 @@ export const QuestionModal: React.FC<Props> = ({
   }
 
   return (
-    <Modal isOpen={isOpen} className="QuestionModal__Wrapper">
+    <Modal
+      isOpen={isOpen}
+      closeTimeoutMS={closeTimeoutMS}
+      className="QuestionModal__Wrapper"
+    >
       <div className="QuestionModal__Container">
         <h2 className="QuestionModal__Title">問題</h2>
         <QuestionContent
