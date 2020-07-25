@@ -1,8 +1,8 @@
 import React from 'react';
 import { INIT_PLAYER_NAME } from 'constants/room';
-import { getAccountId } from 'libraries/AccountId';
+import { getAccountId } from 'websocket/libraries/AccountId';
 import { getAnswerWithPlayer, getAnswerWithAdmin } from 'utils/getAnswer';
-import { PlayerStatus } from 'interfaces/Status';
+import { PlayerStatus } from 'websocket/interfaces/Status';
 import { QuizPanel } from 'components/QuizPanel';
 import { useQuizPanelContainer } from './QuizPanelContainerHooks';
 import './quizPanelContainer.scss';
@@ -24,7 +24,12 @@ export const QuizPanelContainer: React.FC<QuizPanelContainerType> = ({
     roleType === 'admin' ? getAnswerWithAdmin : getAnswerWithPlayer;
 
   const renderUser = roomStatus.players
-    .filter(({ role, name, connectionStatus }) => role === 'player' && name !== INIT_PLAYER_NAME && connectionStatus === 'online')
+    .filter(
+      ({ role, name, connectionStatus }) =>
+        role === 'player' &&
+        name !== INIT_PLAYER_NAME &&
+        connectionStatus === 'online'
+    )
     .sort((a, b) => b.stars - a.stars)
     .sort((a) => (a.id === accountId ? -1 : 1))
     .map((player) => {

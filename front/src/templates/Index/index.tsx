@@ -4,9 +4,12 @@ import './index.scss';
 
 import { FoundationInputArea } from 'components/FoundationInputArea';
 import { RoomCard } from 'components/RoomCard';
-import { getRoomList, createNewRoomThenGetInfo } from 'libraries/RoomAPI';
-import { getAccountId } from 'libraries/AccountId';
-import { RoomInformation } from 'interfaces/RoomList';
+import {
+  getRoomList,
+  createNewRoomThenGetInfo,
+} from 'websocket/libraries/RoomAPI';
+import { getAccountId } from 'websocket/libraries/AccountId';
+import { RoomInformation } from 'websocket/interfaces/RoomList';
 
 export const Index: React.FC = () => {
   const roomInputRef = useRef<HTMLInputElement>(null);
@@ -20,10 +23,17 @@ export const Index: React.FC = () => {
     return () => clearInterval(setTimeoutId);
   }, []);
 
-  const onEnterRoom = useCallback(async (roomName: string, asSpectator = false) => {
-    const accountId = getAccountId();
-    router.push(`/roomId/${roomName}/accountId/${accountId}${asSpectator ? '?isSpectator=true' : ''}`);
-  }, []);
+  const onEnterRoom = useCallback(
+    async (roomName: string, asSpectator = false) => {
+      const accountId = getAccountId();
+      router.push(
+        `/roomId/${roomName}/accountId/${accountId}${
+          asSpectator ? '?isSpectator=true' : ''
+        }`
+      );
+    },
+    []
+  );
 
   const onEnterNewRoom = useCallback(async () => {
     const roomName = roomInputRef.current?.value;
