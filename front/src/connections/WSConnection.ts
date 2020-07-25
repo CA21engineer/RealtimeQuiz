@@ -1,6 +1,5 @@
 import { Connection } from './Connection';
 import { ConnectionInfo } from '../interfaces/ConnectionInfo';
-import { WS_BASE_URL } from '../configurations/Config';
 
 /*
  * WebSocket利用時の差分を吸収する
@@ -15,7 +14,11 @@ export class WSConnection extends Connection {
   constructor(connectionInfo: ConnectionInfo) {
     super();
 
-    this.url = `${WS_BASE_URL()}room/${connectionInfo.roomId}/accountId/${connectionInfo.accountId}`;
+    const { WS_BASE_URL } = process.env;
+    if (!WS_BASE_URL) {
+      throw new Error('WS_BASE_URL環境変数が定義されていません');
+    }
+    this.url = `${WS_BASE_URL}room/${connectionInfo.roomId}/accountId/${connectionInfo.accountId}`;
     this.socket = new WebSocket(this.url);
 
     this.setEventHandlers();
@@ -23,7 +26,7 @@ export class WSConnection extends Connection {
 
   // 再接続
   private connect() {
-    this.socket = new WebSocket(this.url)
+    this.socket = new WebSocket(this.url);
     this.setEventHandlers();
   }
 
@@ -46,7 +49,7 @@ export class WSConnection extends Connection {
     this.socket.addEventListener('close', () => {
       console.log('コネクションが切断されたため再度接続を試みます...');
       this.connect();
-    })
+    });
 
     this.socket.addEventListener('message', (event) => {
       const json = JSON.parse(event.data);
