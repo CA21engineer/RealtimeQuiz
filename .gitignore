@@ -20,7 +20,7 @@ native
 *.deb
 *.tgz
 *.log
-*.env
+.env
 .terraform/
 .vscode/
 node_modules/

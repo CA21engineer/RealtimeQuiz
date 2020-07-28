@@ -6,8 +6,8 @@ require('dotenv').config();
 
 const config = {
   env: {
-    // Reference a variable that was defined in the .env file and make it available at Build Time
-    TEST_VAR: process.env.TEST_VAR,
+    API_BASE_URL: process.env.API_BASE_URL,
+    WS_BASE_URL: process.env.WS_BASE_URL,
   },
 };
 

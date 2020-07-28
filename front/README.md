@@ -3,6 +3,7 @@
 ## Launching
 ```sh
 $ npm install
+$ ln -s envs/develop.env .env
 $ npm run dev
 ```
 
