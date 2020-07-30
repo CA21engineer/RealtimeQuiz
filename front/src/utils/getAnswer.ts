@@ -1,4 +1,4 @@
-import { GameRoomStatusData } from 'interfaces/Status';
+import { GameRoomStatusData } from 'websocket/interfaces/Status';
 
 export const getAnswerWithPlayer = (
   status: GameRoomStatusData['currentStatus'],

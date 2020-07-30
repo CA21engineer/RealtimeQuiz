@@ -1,10 +1,10 @@
 import { createContext, Reducer, Dispatch } from 'react';
 import produce from 'immer';
-import { setAccountId, getAccountId } from 'libraries/AccountId';
+import { setAccountId, getAccountId } from 'websocket/libraries/AccountId';
 import { generateContextWrapper } from 'utils/store/contextHelper';
-import { GameRoomStatusData, PlayerStatus } from 'interfaces/Status';
-import { Emitter } from 'controllers/Emitter';
-import { Receiver } from 'controllers/Receiver';
+import { GameRoomStatusData, PlayerStatus } from 'websocket/interfaces/Status';
+import { Emitter } from 'websocket/controllers/Emitter';
+import { Receiver } from 'websocket/controllers/Receiver';
 
 export type PersonalStatus = {
   answer: string;
