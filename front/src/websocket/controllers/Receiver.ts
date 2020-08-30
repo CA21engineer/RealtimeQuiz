@@ -2,6 +2,7 @@ import { Dispatch } from 'react';
 import { GameStatusAction } from 'store/gameStatus';
 import { ReceiverBase } from './ReceiverBase';
 import { GameRoomStatusData } from '../interfaces/Status';
+import {TimeLimit} from "../../timer/TimeLimit";
 
 export class Receiver extends ReceiverBase {
   private gameStatusDispatch: Dispatch<GameStatusAction>;
@@ -34,6 +35,15 @@ export class Receiver extends ReceiverBase {
    * => 誰かが退出した etc...
    */
   onStatusChanged(data: GameRoomStatusData): void {
+    const timer = data.currentTime ? new TimeLimit(data.currentTime) : null;
+
+    if (timer) {
+      timer.onTimeChanged((currentTime) => {
+        console.log(currentTime);
+        // TODO this.gameStatusDispatch({  });
+      });
+    }
+
     this.gameStatusDispatch({
       type: 'UPDATE_STATUS',
       payload: {

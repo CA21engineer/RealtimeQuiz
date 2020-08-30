@@ -10,6 +10,8 @@ export interface GameRoomStatusData {
   // 今の問題
   currentQuestion: string | null;
 
+  currentTime: number | null;
+
   players: PlayerStatus[];
 }
 
