@@ -10,6 +10,7 @@ export interface GameRoomStatusData {
   // 今の問題
   currentQuestion: string | null;
 
+  // 今の制限時間 nullの時は制限時間なし
   currentTime: number | null;
 
   players: PlayerStatus[];
