@@ -16,7 +16,7 @@ export class Emitter {
   }
 
   // 問題を送信する
-  public setQuestion(question: string, timeLimit?: number): void {
+  public setQuestion(question: string, timeLimit: number | null): void {
     this.emitter('SetQuestion', { question, timeLimit });
   }
 

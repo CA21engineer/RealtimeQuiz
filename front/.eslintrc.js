@@ -59,6 +59,13 @@ module.exports = {
         extensions: ['.jsx', '.tsx'],
       },
     ],
+
+    'jsx-a11y/label-has-associated-control': [
+      'error',
+      {
+        assert: 'either'
+      }
+    ]
   },
   settings: {
     'import/resolver': {

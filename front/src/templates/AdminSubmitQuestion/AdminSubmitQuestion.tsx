@@ -15,11 +15,14 @@ export const AdminSubmitQuestion: React.FC = () => {
 
   const submitQuestion = useCallback(() => {
     const question = questionRef.current?.value;
+    const setTimeLimit = setTimeLimitRef.current?.checked;
+    const timeLimit = setTimeLimit ? Number(timeLimitRef.current?.value) : null;
+
     if (!question || !controllers.emitter) {
       return;
     }
 
-    controllers.emitter.setQuestion(question);
+    controllers.emitter.setQuestion(question, timeLimit);
   }, [state, questionRef]);
 
   return (
@@ -29,16 +32,20 @@ export const AdminSubmitQuestion: React.FC = () => {
         <h1>問題を出題してください</h1>
 
         <div className="Room__timeLimit">
-          <input
-            className="Room__setTimeLimit"
-            type="checkbox"
-            ref={setTimeLimitRef}
-          />
+          <label className="Room__setTimeLimitLabel">
+            <input
+              className="Room__setTimeLimit"
+              type="checkbox"
+              ref={setTimeLimitRef}
+            />
+            時間制限をする
+          </label>
           <input
             className="Room__timeLimitInput"
             type="number"
             ref={timeLimitRef}
           />
+          秒
         </div>
         <input className="Room__QuestionBox" type="text" ref={questionRef} />
         <FoundationButton label="出題する" onClick={submitQuestion} />
