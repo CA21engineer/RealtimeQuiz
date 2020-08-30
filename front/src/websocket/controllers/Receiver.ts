@@ -2,7 +2,7 @@ import { Dispatch } from 'react';
 import { GameStatusAction } from 'store/gameStatus';
 import { ReceiverBase } from './ReceiverBase';
 import { GameRoomStatusData } from '../interfaces/Status';
-import {TimeLimit} from "../../timer/TimeLimit";
+import { TimeLimit } from "../../timer/TimeLimit";
 
 export class Receiver extends ReceiverBase {
   private gameStatusDispatch: Dispatch<GameStatusAction>;
