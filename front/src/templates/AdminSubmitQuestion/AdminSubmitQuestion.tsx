@@ -7,6 +7,9 @@ import './adminSubmitQuestion.scss';
 
 export const AdminSubmitQuestion: React.FC = () => {
   const questionRef = useRef<HTMLInputElement>(null);
+  const setTimeLimitRef = useRef<HTMLInputElement>(null);
+  const timeLimitRef = useRef<HTMLInputElement>(null);
+
   const { state } = useContext(GameStatusContext);
   const { controllers } = state;
 
@@ -24,6 +27,19 @@ export const AdminSubmitQuestion: React.FC = () => {
       <p>出題を待っています…</p>
       <div className="SubmitQuestion__InputQuestion">
         <h1>問題を出題してください</h1>
+
+        <div className="Room__timeLimit">
+          <input
+            className="Room__setTimeLimit"
+            type="checkbox"
+            ref={setTimeLimitRef}
+          />
+          <input
+            className="Room__timeLimitInput"
+            type="number"
+            ref={timeLimitRef}
+          />
+        </div>
         <input className="Room__QuestionBox" type="text" ref={questionRef} />
         <FoundationButton label="出題する" onClick={submitQuestion} />
       </div>
