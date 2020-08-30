@@ -148,7 +148,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
         changeAccountStatus(accountId, _.rename(v.accountName))
         noticeEveryone()
       case v: SetQuestion =>
-        if (isParent(accountId) && v.question.nonEmpty && this.currentStatus == WaitingQuestion) {
+        if (isParent(accountId) && v.question.nonEmpty && (this.currentStatus == WaitingQuestion || this.currentStatus == CloseAnswer)) {
           changeQuizRoomStatus(_ => {
             this.currentStatus = this.currentStatus.next
             this.currentQuestion =
