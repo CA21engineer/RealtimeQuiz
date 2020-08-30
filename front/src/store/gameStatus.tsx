@@ -34,6 +34,7 @@ const initialState: GameStatus = {
   roomStatus: {
     currentStatus: 'WAITING_QUESTION',
     currentQuestion: null,
+    currentTime: 0,
     players: [],
   },
   controllers: {
