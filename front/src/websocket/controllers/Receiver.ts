@@ -39,8 +39,12 @@ export class Receiver extends ReceiverBase {
 
     if (timer) {
       timer.onTimeChanged((currentTime) => {
-        console.log(currentTime);
-        // TODO this.gameStatusDispatch({  });
+        this.gameStatusDispatch({
+          type: "UPDATE_STATUS",
+          payload: {
+            status: { ...data, currentTime }
+          }
+        });
       });
     }
 

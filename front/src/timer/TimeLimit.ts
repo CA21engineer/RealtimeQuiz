@@ -10,9 +10,12 @@ export class TimeLimit {
       throw new Error('タイムリミットが不正です');
     }
 
-    setInterval(() => {
+    const interval = setInterval(() => {
       this.currentTime -= 1;
       this.callback(this.currentTime);
+      if (this.currentTime <= 0) {
+        clearInterval(interval);
+      }
     }, 1000);
   }
 
