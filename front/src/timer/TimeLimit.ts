@@ -20,7 +20,7 @@ export class TimeLimit {
   }
 
   // カウントダウン毎に呼ばれるコールバックを設定する
-  public onTimeChanged(func: (currentTime: number) => void): void {
+  public onTimeDecreased(func: (currentTime: number) => void): void {
     this.callback = func;
   }
 }

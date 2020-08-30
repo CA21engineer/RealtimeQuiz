@@ -38,7 +38,7 @@ export class Receiver extends ReceiverBase {
     const timer = data.currentTime ? new TimeLimit(data.currentTime) : null;
 
     if (timer) {
-      timer.onTimeChanged((currentTime) => {
+      timer.onTimeDecreased((currentTime) => {
         this.gameStatusDispatch({
           type: "UPDATE_STATUS",
           payload: {
