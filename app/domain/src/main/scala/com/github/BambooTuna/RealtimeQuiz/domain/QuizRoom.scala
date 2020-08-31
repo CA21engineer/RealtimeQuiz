@@ -161,6 +161,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
                 actorRef ! WebSocketMessageWithDestination(
                   ForceSendAnswer(),
                   Users(this.children.map(_.id).toSeq))
+                if (this.currentStatus == WaitingAnswer) this.currentStatus = this.currentStatus.next
               }
             }
           })
