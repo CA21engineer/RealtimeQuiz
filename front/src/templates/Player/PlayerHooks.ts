@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { clearReduceTimer } from 'acitons/gameStatus/clearReduceCountDownTimer';
 import { GameStatusContext } from 'store/gameStatus';
 import { GameRoomStatusData } from 'websocket/interfaces/Status';
 
@@ -24,19 +25,6 @@ function expressPlayerStatus(
 export const usePlayer = () => {
   const [reduceTimerid, setReduceTimerId] = useState<NodeJS.Timeout>();
   const { state, dispatch } = useContext(GameStatusContext);
-
-  const clearReduceTimer = (id: NodeJS.Timeout) => {
-    clearInterval(id);
-    setReduceTimerId(undefined);
-    dispatch({
-      type: 'SWITCH_COUNT_DOWN_TIMER',
-      payload: {
-        personalStatus: {
-          isStartCountdownTimer: false,
-        },
-      },
-    });
-  };
 
   return {
     state,

@@ -1,17 +1,70 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { getAnswerWithAdmin } from 'utils/getAnswer';
 import { INIT_PLAYER_NAME } from 'constants/room';
-import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
 import { QuizAdminPanel } from 'components/QuizAdminPanel';
 import { QuestionContent } from 'components/QuestionContent';
+import { useAdminRoom } from './AdminRoomHooks';
 
 import './admin_room.scss';
 
 export const AdminRoom: React.FC = () => {
-  const { state } = useContext(GameStatusContext);
-  const { roomStatus, controllers } = state;
-  const { players, currentQuestion, currentStatus } = roomStatus;
+  const {
+    state,
+    dispatch,
+    clearReduceTimer,
+    reduceTimerid,
+    setReduceTimerId,
+  } = useAdminRoom();
+  const { roomStatus, controllers, personalStatus } = state;
+  const { currentQuestion, currentTime, currentStatus, players } = roomStatus;
+  const { isStartCountdownTimer } = personalStatus;
+
+  useEffect(() => {
+    if (
+      currentStatus !== 'WAITING_ANSWER' ||
+      isStartCountdownTimer ||
+      !currentTime
+    ) {
+      return;
+    }
+
+    // カウントダウンを開始
+    dispatch({
+      type: 'SWITCH_COUNT_DOWN_TIMER',
+      payload: {
+        personalStatus: {
+          isStartCountdownTimer: true,
+        },
+      },
+    });
+
+    const id = setInterval(() => {
+      dispatch({ type: 'REDUCE_COUNT_DOWN_TIMER' });
+    }, 1000);
+
+    setReduceTimerId(id);
+  }, [isStartCountdownTimer, currentTime, reduceTimerid, setReduceTimerId]);
+
+  // 解答締め切り時にclearIntervalする
+  useEffect(() => {
+    if (currentStatus === 'WAITING_ANSWER' || !reduceTimerid) {
+      return;
+    }
+
+    clearReduceTimer(reduceTimerid, setReduceTimerId, dispatch);
+  }, [reduceTimerid, setReduceTimerId, currentStatus, clearReduceTimer]);
+
+  // ページ遷移時ににclearIntervalする
+  useEffect(() => {
+    return () => {
+      if (!reduceTimerid) {
+        return;
+      }
+
+      clearReduceTimer(reduceTimerid, setReduceTimerId, dispatch);
+    };
+  }, []);
 
   const EmitCloseApplications = useCallback(() => {
     if (!controllers.emitter) {
@@ -53,7 +106,10 @@ export const AdminRoom: React.FC = () => {
   const renderQuizAdminPanels = () => {
     return players
       .filter(
-        ({ role, name, connectionStatus }) => role === 'player' && name !== INIT_PLAYER_NAME && connectionStatus === 'online'
+        ({ role, name, connectionStatus }) =>
+          role === 'player' &&
+          name !== INIT_PLAYER_NAME &&
+          connectionStatus === 'online'
       )
       .sort((a, b) => b.stars - a.stars)
       .map((player) => {
@@ -78,10 +134,14 @@ export const AdminRoom: React.FC = () => {
       });
   };
 
+  const timeMessage =
+    currentTime === null ? '時間無制限' : `残り時間 ${currentTime}秒`;
+
   return (
     <div className="AdminRoom__view">
       <div className="AdminRoom__controller">
         <h1>問題を出題しています</h1>
+        {currentStatus === 'WAITING_ANSWER' && <p>{timeMessage}</p>}
         {currentQuestion && <QuestionContent content={currentQuestion} />}
         <div className="AdminRoom__Buttons">
           <FoundationButton

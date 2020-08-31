@@ -52,7 +52,7 @@ export const Player: React.FC = () => {
       return;
     }
 
-    clearReduceTimer(reduceTimerid);
+    clearReduceTimer(reduceTimerid, setReduceTimerId, dispatch);
   }, [reduceTimerid, setReduceTimerId, currentStatus, clearReduceTimer]);
 
   // ページ遷移時ににclearIntervalする
@@ -62,7 +62,7 @@ export const Player: React.FC = () => {
         return;
       }
 
-      clearReduceTimer(reduceTimerid);
+      clearReduceTimer(reduceTimerid, setReduceTimerId, dispatch);
     };
   }, []);
 

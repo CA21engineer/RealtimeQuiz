@@ -199,7 +199,8 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
   }
 };
 
-type ContextType = { state: GameStatus; dispatch: Dispatch<GameStatusAction> };
+export type GameStatusDispatch = Dispatch<GameStatusAction>;
+type ContextType = { state: GameStatus; dispatch: GameStatusDispatch };
 
 export const GameStatusContext = createContext<ContextType>({} as ContextType);
 
