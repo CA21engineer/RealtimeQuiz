@@ -29,6 +29,7 @@ module.exports = {
     'no-console': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/explicit-module-boundary-types': 0,
+    '@typescript-eslint/no-empty-function': 0,
     'no-param-reassign': [
       'error',
       { props: true, ignorePropertyModificationsFor: ['draft'] },
@@ -63,9 +64,9 @@ module.exports = {
     'jsx-a11y/label-has-associated-control': [
       'error',
       {
-        assert: 'either'
-      }
-    ]
+        assert: 'either',
+      },
+    ],
   },
   settings: {
     'import/resolver': {
