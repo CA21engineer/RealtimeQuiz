@@ -4,7 +4,7 @@ services:
     ports:
       - 3200:80
   front:
-    environment:
-      - ENVIRONMENT=STG
-      - WS_BASE_URL=wss://stg.quiz.anyfrog.net/ws/
-      - API_BASE_URL=https://stg.quiz.anyfrog.net/api/
+    build:
+      args:
+        WS_BASE_URL: wss://stg.quiz.anyfrog.net/ws/
+        API_BASE_URL: https://stg.quiz.anyfrog.net/api/
