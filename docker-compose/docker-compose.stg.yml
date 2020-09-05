@@ -2,8 +2,9 @@ version: "3.4"
 services:
   nginx:
     ports:
-    - 3200:80
+      - 3200:80
   front:
     environment:
-    - WS_BASE_URL=wss://stg.quiz.anyfrog.net/ws/
-    - API_BASE_URL=https://stg.quiz.anyfrog.net/api/
+      - ENVIRONMENT=STG
+      - WS_BASE_URL=wss://stg.quiz.anyfrog.net/ws/
+      - API_BASE_URL=https://stg.quiz.anyfrog.net/api/
