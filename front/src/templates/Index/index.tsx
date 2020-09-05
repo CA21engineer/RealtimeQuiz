@@ -61,7 +61,7 @@ export const Index: React.FC = () => {
     <div className="Index__view">
       <h1 className="Index__Title">RealTime Quiz!</h1>
       <div className="Index__CreateNewRoom">
-        <p className="Index__Description">新しく部屋を作る</p>
+        <p className="Index__Description">新しく部屋を作る!</p>
         <FoundationInputArea
           inputBody=""
           onClickSubmitButton={onEnterNewRoom}
