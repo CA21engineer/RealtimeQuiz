@@ -1,0 +1,5 @@
+version: "3.4"
+services:
+  nginx:
+    ports:
+    - 3100:80
