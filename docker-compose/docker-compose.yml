@@ -20,8 +20,6 @@ services:
   nginx:
     restart: always
     image: nginx:latest
-    ports:
-      - 3100:80
     volumes:
       - ./nginx/root/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
     networks:
