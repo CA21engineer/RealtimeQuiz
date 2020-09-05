@@ -7,6 +7,7 @@ import { ConnectionInfo } from '../interfaces/ConnectionInfo';
  */
 export const getRoomList = async (): Promise<RoomInformation[]> => {
   const { API_BASE_URL } = process.env;
+  console.log(process.env);
   if (!API_BASE_URL) {
     throw new Error('API_BASE_URL環境変数が定義されていません');
   }
