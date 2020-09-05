@@ -2,7 +2,7 @@ name: Deploy to stg.quiz.anyfrog.net
 
 on:
   push:
-    branches: [ stg ]
+    branches: [ staging ]
 
 jobs:
   build:
