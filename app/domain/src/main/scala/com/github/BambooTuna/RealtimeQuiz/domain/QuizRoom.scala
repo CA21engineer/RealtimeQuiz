@@ -162,7 +162,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
                   ForceSendAnswer(),
                   Users(this.children.map(_.id).toSeq))
                 if (this.currentStatus == WaitingAnswer) this.currentStatus = this.currentStatus.next
-              }
+              }.flatMap(_ => noticeEveryone())
             }
           })
           noticeEveryone()
