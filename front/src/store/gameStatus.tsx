@@ -12,6 +12,8 @@ export type PersonalStatus = {
   currentStatus: PlayerStatus | null;
   isSpectator: boolean;
   isStartCountdownTimer: boolean;
+  isTimelimitChecked: boolean;
+  timelimit: number;
 };
 
 export type Controller = {
@@ -32,6 +34,8 @@ const initialState: GameStatus = {
     currentStatus: null,
     isSpectator: false,
     isStartCountdownTimer: false,
+    isTimelimitChecked: false,
+    timelimit: 0,
   },
   roomStatus: {
     currentStatus: 'WAITING_QUESTION',
@@ -53,6 +57,7 @@ enum Action {
   'UPDATE_PERSONAL_ANSWER' = 'UPDATE_PERSONAL_ANSWER',
   'SWITCH_COUNT_DOWN_TIMER' = 'SWITCH_COUNT_DOWN_TIMER',
   'REDUCE_COUNT_DOWN_TIMER' = 'REDUCE_COUNT_DOWN_TIMER',
+  'SET_TIMELIMIT' = 'SET_TIMELIMIT',
 }
 
 export type GameStatusAction = {
@@ -180,7 +185,6 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
         draft.personalStatus.isStartCountdownTimer = isStartCountdownTimer;
       });
     }
-
     case 'REDUCE_COUNT_DOWN_TIMER': {
       return produce(state, (draft) => {
         const { currentTime } = state.roomStatus;
@@ -190,6 +194,21 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
         }
 
         draft.roomStatus.currentTime -= 1;
+      });
+    }
+
+    case 'SET_TIMELIMIT': {
+      return produce(state, (draft) => {
+        const { timelimit, isTimelimitChecked } =
+          action.payload?.personalStatus ?? {};
+
+        if (timelimit !== undefined) {
+          draft.personalStatus.timelimit = timelimit;
+        }
+
+        if (isTimelimitChecked !== undefined) {
+          draft.personalStatus.isTimelimitChecked = isTimelimitChecked;
+        }
       });
     }
 
