@@ -23,17 +23,16 @@
     font-weight: normal;
     padding-bottom: 25px;
   }
-
-  input {
-    margin-bottom: 25px;
-    height: 40px;
-    border: #FFFFFF 2px solid;
-    border-radius: 3.5px;
-    width: 400px;
-  }
-
   padding-bottom: 25px;
   margin-bottom: 25px;
+}
+
+.Room__QuestionBox {
+  margin-bottom: 25px;
+  height: 40px;
+  border: #FFFFFF 2px solid;
+  border-radius: 3.5px;
+  width: 400px;
 }
 
 .SubmitQuestion__PlayerList {
@@ -47,4 +46,46 @@
   .QuizPanel__Container {
     margin: 10px;
   }
+}
+
+.Room__timeLimit {
+  width: 400px;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.Room__setTimeLimitLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Room__setTimeLimit {
+  margin: 0;
+  width: 30px;
+  height: 30px;
+}
+
+.Room__timeLimitInput {
+  width: 80px;
+  height: 30px;
+  color: #555555;
+  margin-left: 10px;
+  -moz-appearance:textfield;
+  border: #FFFFFF 2px solid;
+  border-radius: 3.5px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.Room__timeLimitInput:disabled {
+  background-color: #e2e2e2;
+}
+
+.Room__timeLimitInput::-webkit-inner-spin-button,
+.Room__timeLimitInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

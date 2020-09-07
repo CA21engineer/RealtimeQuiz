@@ -8,7 +8,7 @@ import './questionModal.scss';
 
 type Props = {
   questionBody: string;
-  remainTime: number;
+  remainTime: number | null;
   answerBody: string;
   onInputAnswer: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmitAnswer: React.MouseEventHandler;
@@ -28,11 +28,15 @@ export const QuestionModal: React.FC<Props> = ({
   if (questionBody === '') {
     logger('Fatal: Question body is not given.');
   }
+
   if (Number.isNaN(remainTime)) {
     logger(
       'Fatal: Question modal is given NaN. Please check code. For there is mistake.'
     );
   }
+
+  const timeMessage =
+    remainTime === null ? '時間無制限' : `残り時間 ${remainTime}秒`;
 
   return (
     <Modal
@@ -46,7 +50,7 @@ export const QuestionModal: React.FC<Props> = ({
           className="QuestionModal__QuestionBody"
           content={questionBody}
         />
-        <span className="QuestionModal__RemainTime">{`残り時間 ${remainTime}秒`}</span>
+        <span className="QuestionModal__RemainTime">{timeMessage}</span>
         <FoundationInputArea
           inputBody={answerBody}
           onInputAnswer={onInputAnswer}
