@@ -2,7 +2,7 @@ package com.github.BambooTuna.RealtimeQuiz.domain
 
 import akka.{Done, NotUsed}
 import akka.stream.{KillSwitches, Materializer, SharedKillSwitch}
-import akka.stream.scaladsl.{Flow, Sink, Source}
+import akka.stream.scaladsl.{Flow, Sink}
 import com.evolutiongaming.metrics.MetricCollectors
 import com.github.BambooTuna.RealtimeQuiz.domain.AccountRole.{
   Admin,
@@ -20,7 +20,6 @@ import com.github.BambooTuna.RealtimeQuiz.domain.lib.StreamSupport
 import com.github.BambooTuna.RealtimeQuiz.domain.ws._
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.Try
 
@@ -36,8 +35,6 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
   def participants: Int = children.count(_.role == Player)
   var currentStatus: CurrentStatus = WaitingQuestion
   var currentQuestion: Option[Question] = None
-  var elapsedTime: Int = 0
-  Source.repeat(1).throttle(1, 1.seconds).runForeach(_ => elapsedTime += 1)
 
   protected val killSwitch: SharedKillSwitch = KillSwitches.shared(roomId)
   protected val (actorRef, source) = StreamSupport
@@ -114,10 +111,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
         currentStatus = currentStatus,
         currentQuestion = currentQuestion.map(_.problemStatement),
         currentCorrectAnswer = currentQuestion.flatMap(_.correctAnswer),
-        currentTime = currentQuestion.flatMap(_.timeLimit.map { t =>
-          val r = t - elapsedTime
-          if (r < 0) 0 else r
-        }),
+        currentTimeLimit = None,
         players = everyone.toSeq
       )
 
@@ -151,24 +145,17 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
         if (isParent(accountId) && v.question.nonEmpty && this.currentStatus == WaitingQuestion) {
           changeQuizRoomStatus(_ => {
             this.currentStatus = this.currentStatus.next
-            this.currentQuestion =
-              Some(Question(v.question, v.correctAnswer, v.timeLimit))
+            this.currentQuestion = Some(Question(v.question, v.correctAnswer))
             //TODO タイマーをセットし一定時間後にforceSendAnswerを全員に送信
-            v.timeLimit.foreach { t =>
-              Future {
-                this.elapsedTime = 0
-                Thread.sleep(t * 1000)
-                actorRef ! WebSocketMessageWithDestination(
-                  ForceSendAnswer(),
-                  Users(this.children.map(_.id).toSeq))
-                if (this.currentStatus == WaitingAnswer) this.currentStatus = this.currentStatus.next
-              }.flatMap(_ => noticeEveryone())
-            }
+//            Future {
+//              Thread.sleep(10 * 1000)
+//              actorRef ! WebSocketMessageWithDestination(ForceSendAnswer(), Users(this.children.map(_.id).toSeq))
+//            }
           })
           noticeEveryone()
         }
       case v: SetAnswer =>
-        if (canAnswer(accountId) && (this.currentStatus == WaitingAnswer || this.currentStatus == CloseAnswer)) {
+        if (canAnswer(accountId) && this.currentStatus == WaitingAnswer) {
           changeAccountStatus(accountId, _.setAnswer(v.answer))
           noticeEveryone()
         }

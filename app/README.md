@@ -19,7 +19,7 @@ $ curl -X GET localhost:18080/api/room
 ```bash
 $ wscat --wait 600 -c localhost:18080/ws/room/DebugRoom/accountId/admin
 1 > {"type":"ChangeName", "data":{"accountName":"Parent_name"}}
-3 > {"type":"SetQuestion", "data":{"question":"問題です！", "correctAnswer":"name", "timeLimit":10}}
+3 > {"type":"SetQuestion", "data":{"question":"問題です！"}}
 5 > {"type":"CloseApplications"}
 6 > {"type":"OpenAnswers"}
 7 > {"type":"SetAlterStars", "data":{"alterStars":[{"accountId":"child1", "alterStars":10}]}}

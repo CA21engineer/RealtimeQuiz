@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useContext } from 'react';
+import { GameStatusContext } from 'store/gameStatus';
 import { QuizPanelContainer } from 'container/QuizPanelContainer';
 import { QuestionModal } from 'components/QuestionModal';
 import { QuestionContent } from 'components/QuestionContent';
@@ -7,64 +8,10 @@ import { usePlayer } from './PlayerHooks';
 import './player.scss';
 
 export const Player: React.FC = () => {
-  const {
-    state,
-    dispatch,
-    clearReduceTimer,
-    reduceTimerid,
-    setReduceTimerId,
-    expressPlayerStatus,
-  } = usePlayer();
-
+  const { expressPlayerStatus } = usePlayer();
+  const { state, dispatch } = useContext(GameStatusContext);
   const { roomStatus, personalStatus } = state;
-  const { currentQuestion, currentTime, currentStatus } = roomStatus;
-  const { isStartCountdownTimer } = personalStatus;
-
-  useEffect(() => {
-    if (
-      currentStatus !== 'WAITING_ANSWER' ||
-      isStartCountdownTimer ||
-      !currentTime
-    ) {
-      return;
-    }
-
-    // カウントダウンを開始
-    dispatch({
-      type: 'SWITCH_COUNT_DOWN_TIMER',
-      payload: {
-        personalStatus: {
-          isStartCountdownTimer: true,
-        },
-      },
-    });
-
-    const id = setInterval(() => {
-      dispatch({ type: 'REDUCE_COUNT_DOWN_TIMER' });
-    }, 1000);
-
-    setReduceTimerId(id);
-  }, [isStartCountdownTimer, currentTime, reduceTimerid, setReduceTimerId]);
-
-  // 解答締め切り時にclearIntervalする
-  useEffect(() => {
-    if (currentStatus === 'WAITING_ANSWER' || !reduceTimerid) {
-      return;
-    }
-
-    clearReduceTimer(reduceTimerid, setReduceTimerId, dispatch);
-  }, [reduceTimerid, setReduceTimerId, currentStatus, clearReduceTimer]);
-
-  // ページ遷移時ににclearIntervalする
-  useEffect(() => {
-    return () => {
-      if (!reduceTimerid) {
-        return;
-      }
-
-      clearReduceTimer(reduceTimerid, setReduceTimerId, dispatch);
-    };
-  }, []);
+  const { currentQuestion } = roomStatus;
 
   const onSubmitAnswer: React.MouseEventHandler = useCallback(() => {
     const { emitter } = state.controllers;
@@ -111,7 +58,7 @@ export const Player: React.FC = () => {
         <QuestionModal
           questionBody={roomStatus.currentQuestion || ''}
           closeTimeoutMS={500}
-          remainTime={currentTime}
+          remainTime={0}
           answerBody=""
           onInputAnswer={dispatchAnswer}
           onSubmitAnswer={onSubmitAnswer}
