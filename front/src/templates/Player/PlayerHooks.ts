@@ -1,6 +1,9 @@
+import { useContext, useState } from 'react';
+import { clearReduceTimer } from 'acitons/gameStatus/clearReduceCountDownTimer';
+import { GameStatusContext } from 'store/gameStatus';
 import { GameRoomStatusData } from 'websocket/interfaces/Status';
 
-export function expressPlayerStatus(
+function expressPlayerStatus(
   status: GameRoomStatusData['currentStatus']
 ): string {
   switch (status) {
@@ -19,10 +22,16 @@ export function expressPlayerStatus(
   }
 }
 
-/* eslint @typescript-eslint/explicit-module-boundary-types: 0 */
 export const usePlayer = () => {
+  const [reduceTimerid, setReduceTimerId] = useState<NodeJS.Timeout>();
+  const { state, dispatch } = useContext(GameStatusContext);
+
   return {
+    state,
+    dispatch,
+    clearReduceTimer,
+    reduceTimerid,
+    setReduceTimerId,
     expressPlayerStatus,
   };
 };
-
