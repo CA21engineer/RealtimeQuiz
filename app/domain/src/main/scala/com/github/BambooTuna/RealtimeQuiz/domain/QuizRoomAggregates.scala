@@ -8,17 +8,27 @@ import com.evolutiongaming.metrics.MetricCollectors
 import com.github.BambooTuna.RealtimeQuiz.domain.QuizRoomAggregates.Protocol._
 import com.github.BambooTuna.RealtimeQuiz.domain.ws.WebSocketMessage
 
+import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 
 class QuizRoomAggregates(implicit collectors: MetricCollectors) extends Actor {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   val debugRoom =
     QuizRoom.apply("admin", "DebugRoom", "DebugRoom")
   val rooms: scala.collection.mutable.Map[String, QuizRoom] =
     scala.collection.mutable.Map(debugRoom.roomId -> debugRoom)
 
+  val timer = context.system.scheduler.schedule(1.minutes, 1.minutes, self, RefreshRooms)
+
   override def receive: Receive = {
+    case RefreshRooms =>
+      rooms.filter(_._2.isClosed).foreach { room =>
+        room._2.close()
+        this.rooms.remove(room._1)
+      }
     case GetRoomsRequest =>
       sender() ! GetRoomsSuccess(rooms.values.toSeq)
     case r: CreateRoomRequest =>
@@ -74,12 +84,19 @@ class QuizRoomAggregates(implicit collectors: MetricCollectors) extends Actor {
         this.rooms.remove(request.roomId)
       })
   }
+
+  override def postStop(): Unit = {
+    super.postStop()
+    timer.cancel()
+  }
 }
 
 object QuizRoomAggregates {
   val name = "RoomAggregate"
 
   object Protocol {
+    case object RefreshRooms
+
     case object GetRoomsRequest
     case class GetRoomsSuccess(rooms: Seq[QuizRoom])
 
