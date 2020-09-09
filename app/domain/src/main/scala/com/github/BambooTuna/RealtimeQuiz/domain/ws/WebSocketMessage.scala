@@ -62,7 +62,7 @@ case class PlayerList(
     currentStatus: CurrentStatus,
     currentQuestion: Option[String],
     currentCorrectAnswer: Option[String],
-    currentTimeLimit: Option[Int],
+    currentTime: Option[Int],
     players: Seq[Account]
 ) extends WebSocketMessage {
 
@@ -93,7 +93,10 @@ case class ForceSendAnswer() extends WebSocketMessage
 
 // Send Only
 case class ChangeName(accountName: String) extends WebSocketMessage
-case class SetQuestion(question: String, correctAnswer: Option[String])
+// timeLimit: 秒
+case class SetQuestion(question: String,
+                       correctAnswer: Option[String],
+                       timeLimit: Option[Int])
     extends WebSocketMessage
 case class SetAnswer(answer: String) extends WebSocketMessage
 case object CloseApplications extends WebSocketMessage {

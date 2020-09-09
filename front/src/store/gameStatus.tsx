@@ -11,6 +11,9 @@ export type PersonalStatus = {
   isAnswered: boolean;
   currentStatus: PlayerStatus | null;
   isSpectator: boolean;
+  isStartCountdownTimer: boolean;
+  isTimelimitChecked: boolean;
+  timelimit: number;
 };
 
 export type Controller = {
@@ -30,10 +33,14 @@ const initialState: GameStatus = {
     isAnswered: false,
     currentStatus: null,
     isSpectator: false,
+    isStartCountdownTimer: false,
+    isTimelimitChecked: false,
+    timelimit: 0,
   },
   roomStatus: {
     currentStatus: 'WAITING_QUESTION',
     currentQuestion: null,
+    currentTime: 0,
     players: [],
   },
   controllers: {
@@ -48,6 +55,9 @@ enum Action {
   'ANSWER' = 'ANSWER',
   'EMIT_FORCE_ANSWER' = 'EMIT_FORCE_ANSWER',
   'UPDATE_PERSONAL_ANSWER' = 'UPDATE_PERSONAL_ANSWER',
+  'SWITCH_COUNT_DOWN_TIMER' = 'SWITCH_COUNT_DOWN_TIMER',
+  'REDUCE_COUNT_DOWN_TIMER' = 'REDUCE_COUNT_DOWN_TIMER',
+  'SET_TIMELIMIT' = 'SET_TIMELIMIT',
 }
 
 export type GameStatusAction = {
@@ -72,12 +82,24 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
         return state;
       }
 
-      return produce(state, (draft) => {
-        draft.roomStatus = status;
+      const { currentStatus, currentTime, players, currentQuestion } = status;
 
-        if (state.roomStatus.currentStatus === 'WAITING_QUESTION') {
+      return produce(state, (draft) => {
+        draft.roomStatus.currentStatus = currentStatus;
+        draft.roomStatus.currentQuestion = currentQuestion;
+        draft.roomStatus.players = players;
+
+        if (currentStatus === 'WAITING_QUESTION') {
           draft.personalStatus.answer = '';
           draft.personalStatus.isAnswered = false;
+          draft.roomStatus.currentTime = null;
+        }
+
+        if (
+          currentStatus === 'WAITING_ANSWER' &&
+          !state.personalStatus.isStartCountdownTimer
+        ) {
+          draft.roomStatus.currentTime = currentTime;
         }
 
         const accountId = getAccountId();
@@ -151,13 +173,53 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
       });
     }
 
+    case 'SWITCH_COUNT_DOWN_TIMER': {
+      const isStartCountdownTimer =
+        action.payload?.personalStatus?.isStartCountdownTimer;
+      if (isStartCountdownTimer === undefined) {
+        console.error('isStartCountdownTimer payload has undefined.');
+        return state;
+      }
+
+      return produce(state, (draft) => {
+        draft.personalStatus.isStartCountdownTimer = isStartCountdownTimer;
+      });
+    }
+    case 'REDUCE_COUNT_DOWN_TIMER': {
+      return produce(state, (draft) => {
+        const { currentTime } = state.roomStatus;
+        if (currentTime === null || draft.roomStatus.currentTime === null) {
+          console.error('制限時間の指定されていない問題です');
+          return;
+        }
+
+        draft.roomStatus.currentTime -= 1;
+      });
+    }
+
+    case 'SET_TIMELIMIT': {
+      return produce(state, (draft) => {
+        const { timelimit, isTimelimitChecked } =
+          action.payload?.personalStatus ?? {};
+
+        if (timelimit !== undefined) {
+          draft.personalStatus.timelimit = timelimit;
+        }
+
+        if (isTimelimitChecked !== undefined) {
+          draft.personalStatus.isTimelimitChecked = isTimelimitChecked;
+        }
+      });
+    }
+
     default: {
       return state;
     }
   }
 };
 
-type ContextType = { state: GameStatus; dispatch: Dispatch<GameStatusAction> };
+export type GameStatusDispatch = Dispatch<GameStatusAction>;
+type ContextType = { state: GameStatus; dispatch: GameStatusDispatch };
 
 export const GameStatusContext = createContext<ContextType>({} as ContextType);
 
