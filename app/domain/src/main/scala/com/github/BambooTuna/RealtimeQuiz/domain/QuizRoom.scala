@@ -4,9 +4,18 @@ import akka.{Done, NotUsed}
 import akka.stream.{KillSwitches, Materializer, SharedKillSwitch}
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import com.evolutiongaming.metrics.MetricCollectors
-import com.github.BambooTuna.RealtimeQuiz.domain.AccountRole.{Admin, Player, Spectator}
-import com.github.BambooTuna.RealtimeQuiz.domain.ConnectionStatus.Online
-import com.github.BambooTuna.RealtimeQuiz.domain.CurrentStatus.{CloseAnswer, OpenAggregate, OpenAnswer, WaitingAnswer, WaitingQuestion}
+import com.github.BambooTuna.RealtimeQuiz.domain.AccountRole.{
+  Admin,
+  Player,
+  Spectator
+}
+import com.github.BambooTuna.RealtimeQuiz.domain.CurrentStatus.{
+  CloseAnswer,
+  OpenAggregate,
+  OpenAnswer,
+  WaitingAnswer,
+  WaitingQuestion
+}
 import com.github.BambooTuna.RealtimeQuiz.domain.lib.StreamSupport
 import com.github.BambooTuna.RealtimeQuiz.domain.ws._
 import org.slf4j.{Logger, LoggerFactory}
@@ -41,13 +50,6 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
   protected def canAnswer(id: String): Boolean =
     this.children.exists(a => a.id == id && a.role == Player && !a.isAnswered)
 
-  var isClosed: Boolean = false
-  val timer = materializer.schedulePeriodically(1.minutes, 1.minutes, () => { if (online == 0) isClosed = true })
-  def online: Int = {
-    val everyone = this.children + parent
-    everyone.count(_.connectionStatus == Online)
-  }
-
   def join(accountId: String, isSpectator: Boolean): Try[Unit] = Try {
     require(children.size < 1000, "満員です >= 1000")
     val role = if (isSpectator) Spectator else Player
@@ -66,12 +68,6 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
     val r = isParent(accountId)
     if (r) killSwitch.shutdown()
     r
-  }
-
-  def close(): Unit = {
-    logger.info(s"Room($roomId) closed")
-    killSwitch.shutdown()
-    timer.cancel()
   }
 
   def getConnection(accountId: String)
