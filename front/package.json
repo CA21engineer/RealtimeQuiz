@@ -10,7 +10,7 @@
     "start:server": "next start -p 3100",
     "start:ci": "npm-run-all -s clean:next build:production",
     "dev": "next dev",
-    "dev:mutagen": "npm install && node ./node_modules/next/dist/bin/next dev -p 3100",
+    "dev:mutagen": "node ./node_modules/next/dist/bin/next dev -p 3100",
     "build": "npm-run-all -s clean build:production",
     "build:production": "next build && next export -o dist/",
     "clean": "rimraf ./dist",
