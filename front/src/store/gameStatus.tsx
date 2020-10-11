@@ -40,6 +40,7 @@ const initialState: GameStatus = {
   roomStatus: {
     currentStatus: 'WAITING_QUESTION',
     currentQuestion: null,
+    currentCorrectAnswer: null,
     currentTime: 0,
     players: [],
   },
@@ -82,11 +83,12 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
         return state;
       }
 
-      const { currentStatus, currentTime, players, currentQuestion } = status;
+      const { currentStatus, currentTime, players, currentQuestion, currentCorrectAnswer } = status;
 
       return produce(state, (draft) => {
         draft.roomStatus.currentStatus = currentStatus;
         draft.roomStatus.currentQuestion = currentQuestion;
+        draft.roomStatus.currentCorrectAnswer = currentCorrectAnswer;
         draft.roomStatus.players = players;
 
         if (currentStatus === 'WAITING_QUESTION') {
