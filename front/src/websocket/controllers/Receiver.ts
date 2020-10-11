@@ -1,12 +1,16 @@
 import { Dispatch } from 'react';
-import { GameStatusAction } from 'store/gameStatus';
+import {
+  updateGameRoomStatus,
+  emitForceAnswer,
+  Actions,
+} from 'acitons/gameStatus';
 import { ReceiverBase } from './ReceiverBase';
 import { GameRoomStatusData } from '../interfaces/Status';
 
 export class Receiver extends ReceiverBase {
-  private gameStatusDispatch: Dispatch<GameStatusAction>;
+  private gameStatusDispatch: Dispatch<Actions>;
 
-  constructor(dispatch: Dispatch<GameStatusAction>) {
+  constructor(dispatch: Dispatch<Actions>) {
     super();
     this.gameStatusDispatch = dispatch;
   }
@@ -34,12 +38,7 @@ export class Receiver extends ReceiverBase {
    * => 誰かが退出した etc...
    */
   onStatusChanged(data: GameRoomStatusData): void {
-    this.gameStatusDispatch({
-      type: 'UPDATE_STATUS',
-      payload: {
-        status: data,
-      },
-    });
+    this.gameStatusDispatch(updateGameRoomStatus(data));
   }
 
   /**
@@ -47,8 +46,6 @@ export class Receiver extends ReceiverBase {
    * 管理者が解答締め切りボタンを押した時
    */
   forceSendAnswer(): void {
-    this.gameStatusDispatch({
-      type: 'EMIT_FORCE_ANSWER',
-    });
+    this.gameStatusDispatch(emitForceAnswer());
   }
 }

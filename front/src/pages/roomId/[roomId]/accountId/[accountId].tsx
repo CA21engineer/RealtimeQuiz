@@ -2,6 +2,8 @@ import React, { useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { INIT_PLAYER_NAME } from 'constants/room';
 import { GameStatusContext } from 'store/gameStatus';
+import { initController, setIsSpectator } from 'acitons/gameStatus';
+import { setAccountId } from 'websocket/libraries/AccountId';
 import { Receiver } from 'websocket/controllers/Receiver';
 import { WSConnection } from 'websocket/connections/WSConnection';
 import { RoomEntrance } from 'templates/RoomEntrance';
@@ -32,17 +34,14 @@ const RoomPage: React.FC = () => {
     connection.setReceivers(receiver);
     const emitter = connection.createEmitter();
 
-    dispatch({
-      type: 'INIT_CONTROLLERS',
-      payload: {
-        controllers: {
-          emitter,
-          receiver,
-        },
-        accountId,
-        isSpectator: isSpectator === 'true',
-      },
-    });
+    dispatch(
+      initController({
+        emitter,
+        receiver,
+      })
+    );
+    dispatch(setIsSpectator(isSpectator === 'true'));
+    setAccountId(accountId);
   }, [query]);
 
   if (!currentStatus) {
