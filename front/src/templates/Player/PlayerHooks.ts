@@ -1,6 +1,9 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
+import useSound from 'use-sound';
+import { getSoundSource } from 'utils/sound';
 import { clearReduceTimer } from 'utils/timer';
-import { GameStatusContext } from 'store/gameStatus';
+import { GameStatusContext, RoomStatus } from 'store/gameStatus';
+import { UserContext } from 'store/user';
 import { GameRoomStatusData } from 'websocket/interfaces/Status';
 
 function expressPlayerStatus(
@@ -24,11 +27,53 @@ function expressPlayerStatus(
 
 export const usePlayer = () => {
   const [reduceTimerid, setReduceTimerId] = useState<NodeJS.Timeout>();
-  const { state, dispatch } = useContext(GameStatusContext);
+  const gameStatus = useContext(GameStatusContext);
+  const alterStars =
+    gameStatus.state.personalStatus.currentStatus?.alterStars ?? 0;
+  const { currentStatus } = gameStatus.state.roomStatus;
+
+  const user = useContext(UserContext);
+  const { isPlaySound } = user.state.setting;
+
+  const prevRoomStatus = useRef<RoomStatus['currentStatus']>(currentStatus);
+
+  const [playQuestionSound] = useSound(getSoundSource('QUESTION'));
+  const [playCorrectSound] = useSound(getSoundSource('CORRECT'));
+  const [playIncorrectSound] = useSound(getSoundSource('INCORRECT'));
+
+  useEffect(() => {
+    if (!isPlaySound) {
+      return;
+    }
+
+    if (
+      prevRoomStatus.current === 'WAITING_QUESTION' &&
+      currentStatus === 'WAITING_ANSWER'
+    ) {
+      playQuestionSound();
+      return;
+    }
+
+    if (
+      prevRoomStatus.current === 'OPEN_ANSWER' &&
+      currentStatus === 'OPEN_AGGREGATE'
+    ) {
+      if (alterStars <= 0) {
+        playIncorrectSound();
+        return;
+      }
+
+      playCorrectSound();
+    }
+  });
+
+  useEffect(() => {
+    prevRoomStatus.current = currentStatus;
+  });
 
   return {
-    state,
-    dispatch,
+    gameStatus,
+    user,
     clearReduceTimer,
     reduceTimerid,
     setReduceTimerId,
