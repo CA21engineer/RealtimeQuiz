@@ -20,7 +20,7 @@ export const AdminSubmitQuestion: React.FC = () => {
     const question = questionRef.current?.value;
     const setTimeLimit = setTimeLimitRef.current?.checked;
     const timeLimit = setTimeLimit ? Number(timeLimitRef.current?.value) : null;
-    const correctAnswer = answerRef.current?.value;
+    const correctAnswer = answerRef.current?.value ?? null;
 
     if (!question || !controllers.emitter) {
       return;
@@ -75,8 +75,18 @@ export const AdminSubmitQuestion: React.FC = () => {
           />
           秒
         </div>
-        <input className="Room__QuestionBox" type="text" ref={questionRef} placeholder="問題" />
-        <input className="Room__QuestionBox" type="text" ref={answerRef} placeholder="答え(任意)" />
+        <input
+          className="Room__QuestionBox"
+          type="text"
+          ref={questionRef}
+          placeholder="問題"
+        />
+        <input
+          className="Room__QuestionBox"
+          type="text"
+          ref={answerRef}
+          placeholder="答え(任意)"
+        />
         <FoundationButton label="出題する" onClick={submitQuestion} />
       </div>
       <QuizPanelContainer roleType="admin" />
