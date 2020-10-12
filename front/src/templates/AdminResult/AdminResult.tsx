@@ -4,7 +4,7 @@ import { FoundationButton } from 'components/FoundationButton';
 import { QuizPanelContainer } from 'container/QuizPanelContainer';
 
 import './adminResult.scss';
-import { QuestionContent } from "../../components/QuestionContent";
+import { QuestionContent } from "components/QuestionContent";
 
 export const AdminResult: React.FC = () => {
   const { state } = useContext(GameStatusContext);
