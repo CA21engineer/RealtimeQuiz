@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { getAnswerWithAdmin } from 'utils/getAnswer';
+import { setCountDownTimer, reduceCountDownTimer } from 'acitons/gameStatus';
 import { INIT_PLAYER_NAME } from 'constants/room';
 import { FoundationButton } from 'components/FoundationButton';
 import { QuizAdminPanel } from 'components/QuizAdminPanel';
@@ -30,17 +31,10 @@ export const AdminRoom: React.FC = () => {
     }
 
     // カウントダウンを開始
-    dispatch({
-      type: 'SWITCH_COUNT_DOWN_TIMER',
-      payload: {
-        personalStatus: {
-          isStartCountdownTimer: true,
-        },
-      },
-    });
+    dispatch(setCountDownTimer(true));
 
     const id = setInterval(() => {
-      dispatch({ type: 'REDUCE_COUNT_DOWN_TIMER' });
+      dispatch(reduceCountDownTimer());
     }, 1000);
 
     setReduceTimerId(id);
