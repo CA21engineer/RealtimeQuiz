@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useRef } from 'react';
+import { setTimeLimitNumber, setEnableTimeLimit } from 'acitons/gameStatus';
 import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
 import { QuizPanelContainer } from 'container/QuizPanelContainer';
@@ -31,14 +32,7 @@ export const AdminSubmitQuestion: React.FC = () => {
   const handleChangeIsTimelimitChecked = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { checked } = e.target;
-      dispatch({
-        type: 'SET_TIMELIMIT',
-        payload: {
-          personalStatus: {
-            isTimelimitChecked: checked,
-          },
-        },
-      });
+      dispatch(setEnableTimeLimit(checked));
     },
     [dispatch]
   );
@@ -50,14 +44,7 @@ export const AdminSubmitQuestion: React.FC = () => {
         return;
       }
 
-      dispatch({
-        type: 'SET_TIMELIMIT',
-        payload: {
-          personalStatus: {
-            timelimit: value,
-          },
-        },
-      });
+      dispatch(setTimeLimitNumber(value));
     },
     [dispatch]
   );

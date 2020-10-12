@@ -2,6 +2,11 @@ import React, { useCallback, useEffect } from 'react';
 import { QuizPanelContainer } from 'container/QuizPanelContainer';
 import { QuestionModal } from 'components/QuestionModal';
 import { QuestionContent } from 'components/QuestionContent';
+import {
+  setIsAnswered,
+  updatePersonalAnswer,
+  setCountDownTimer,
+} from 'acitons/gameStatus';
 import { usePlayer } from './PlayerHooks';
 
 import './player.scss';
@@ -30,17 +35,10 @@ export const Player: React.FC = () => {
     }
 
     // カウントダウンを開始
-    dispatch({
-      type: 'SWITCH_COUNT_DOWN_TIMER',
-      payload: {
-        personalStatus: {
-          isStartCountdownTimer: true,
-        },
-      },
-    });
+    dispatch(setCountDownTimer(true));
 
     const id = setInterval(() => {
-      dispatch({ type: 'REDUCE_COUNT_DOWN_TIMER' });
+      dispatch(setIsAnswered());
     }, 1000);
 
     setReduceTimerId(id);
@@ -74,9 +72,7 @@ export const Player: React.FC = () => {
     }
 
     emitter.setAnswer(state.personalStatus.answer);
-    dispatch({
-      type: 'ANSWER',
-    });
+    dispatch(setIsAnswered());
   }, [state, dispatch]);
 
   const renderQuestionModal = () => {
@@ -86,14 +82,7 @@ export const Player: React.FC = () => {
         return;
       }
 
-      dispatch({
-        type: 'UPDATE_PERSONAL_ANSWER',
-        payload: {
-          personalStatus: {
-            answer,
-          },
-        },
-      });
+      dispatch(updatePersonalAnswer(answer));
     };
 
     const role = personalStatus?.currentStatus?.role;

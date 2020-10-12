@@ -1,10 +1,11 @@
 import { createContext, Reducer, Dispatch } from 'react';
 import produce from 'immer';
-import { setAccountId, getAccountId } from 'websocket/libraries/AccountId';
+import { getAccountId } from 'websocket/libraries/AccountId';
 import { generateContextWrapper } from 'utils/store/contextHelper';
 import { GameRoomStatusData, PlayerStatus } from 'websocket/interfaces/Status';
 import { Emitter } from 'websocket/controllers/Emitter';
 import { Receiver } from 'websocket/controllers/Receiver';
+import { Actions } from 'acitons/gameStatus';
 
 export type PersonalStatus = {
   answer: string;
@@ -21,9 +22,11 @@ export type Controller = {
   receiver: Receiver | null;
 };
 
+export type RoomStatus = GameRoomStatusData;
+
 export type GameStatus = {
   personalStatus: PersonalStatus;
-  roomStatus: GameRoomStatusData;
+  roomStatus: RoomStatus;
   controllers: Controller;
 };
 
@@ -50,39 +53,10 @@ const initialState: GameStatus = {
   },
 };
 
-enum Action {
-  'UPDATE_STATUS' = 'UPDATE_STATUS',
-  'INIT_CONTROLLERS' = 'INIT_CONTROLLERS',
-  'ANSWER' = 'ANSWER',
-  'EMIT_FORCE_ANSWER' = 'EMIT_FORCE_ANSWER',
-  'UPDATE_PERSONAL_ANSWER' = 'UPDATE_PERSONAL_ANSWER',
-  'SWITCH_COUNT_DOWN_TIMER' = 'SWITCH_COUNT_DOWN_TIMER',
-  'REDUCE_COUNT_DOWN_TIMER' = 'REDUCE_COUNT_DOWN_TIMER',
-  'SET_TIMELIMIT' = 'SET_TIMELIMIT',
-}
-
-export type GameStatusAction = {
-  type: keyof typeof Action;
-  payload?: {
-    personalStatus?: { [P in keyof PersonalStatus]?: PersonalStatus[P] };
-    status?: GameRoomStatusData;
-    controllers?: Controller;
-
-    // custom
-    accountId?: string;
-    isSpectator?: boolean;
-  };
-};
-
-const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
+const reducer: Reducer<GameStatus, Actions> = (state, action) => {
   switch (action.type) {
     case 'UPDATE_STATUS': {
-      const status = action.payload?.status;
-      if (!status) {
-        console.error('status has undefined.');
-        return state;
-      }
-
+      const { status } = action.payload;
       const { currentStatus, currentTime, players, currentQuestion, currentCorrectAnswer } = status;
 
       return produce(state, (draft) => {
@@ -122,28 +96,20 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
     }
 
     case 'INIT_CONTROLLERS': {
-      const controllers = action.payload?.controllers;
-      if (!controllers) {
-        console.error('controllers has undefined.');
-        return state;
-      }
-
-      const accountId = action.payload?.accountId;
-      if (accountId) {
-        setAccountId(accountId);
-      } else {
-        console.error('accountId has undefined.');
-      }
-
+      const controllers = action.payload.controller;
       return produce(state, (draft) => {
         draft.controllers = controllers;
+      });
+    }
 
-        const isSpectator = action.payload?.isSpectator;
+    case 'SET_IS_SPECTATOR': {
+      const { isSpectator } = action.payload;
+      return produce(state, (draft) => {
         draft.personalStatus.isSpectator = !!isSpectator;
       });
     }
 
-    case 'ANSWER': {
+    case 'SET_IS_ANSWERED': {
       return produce(state, (draft) => {
         draft.personalStatus.isAnswered = true;
       });
@@ -164,29 +130,20 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
     }
 
     case 'UPDATE_PERSONAL_ANSWER': {
-      const answer = action.payload?.personalStatus?.answer;
-      if (!answer) {
-        console.error('answer payload has undefined.');
-        return state;
-      }
+      const { answer } = action.payload;
 
       return produce(state, (draft) => {
         draft.personalStatus.answer = answer;
       });
     }
 
-    case 'SWITCH_COUNT_DOWN_TIMER': {
-      const isStartCountdownTimer =
-        action.payload?.personalStatus?.isStartCountdownTimer;
-      if (isStartCountdownTimer === undefined) {
-        console.error('isStartCountdownTimer payload has undefined.');
-        return state;
-      }
-
+    case 'SET_COUNT_DOWN_TIMER': {
+      const { isStartCountdownTimer } = action.payload;
       return produce(state, (draft) => {
         draft.personalStatus.isStartCountdownTimer = isStartCountdownTimer;
       });
     }
+
     case 'REDUCE_COUNT_DOWN_TIMER': {
       return produce(state, (draft) => {
         const { currentTime } = state.roomStatus;
@@ -199,18 +156,17 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
       });
     }
 
-    case 'SET_TIMELIMIT': {
+    case 'SET_TIME_LIMIT_NUMBER': {
+      const { timelimit } = action.payload;
       return produce(state, (draft) => {
-        const { timelimit, isTimelimitChecked } =
-          action.payload?.personalStatus ?? {};
+        draft.personalStatus.timelimit = timelimit;
+      });
+    }
 
-        if (timelimit !== undefined) {
-          draft.personalStatus.timelimit = timelimit;
-        }
-
-        if (isTimelimitChecked !== undefined) {
-          draft.personalStatus.isTimelimitChecked = isTimelimitChecked;
-        }
+    case 'SET_ENABLE_TIME_LIMIT': {
+      const { isTimelimitChecked } = action.payload;
+      return produce(state, (draft) => {
+        draft.personalStatus.isTimelimitChecked = isTimelimitChecked;
       });
     }
 
@@ -220,7 +176,7 @@ const reducer: Reducer<GameStatus, GameStatusAction> = (state, action) => {
   }
 };
 
-export type GameStatusDispatch = Dispatch<GameStatusAction>;
+export type GameStatusDispatch = Dispatch<Actions>;
 type ContextType = { state: GameStatus; dispatch: GameStatusDispatch };
 
 export const GameStatusContext = createContext<ContextType>({} as ContextType);

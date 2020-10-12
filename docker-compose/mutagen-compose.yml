@@ -12,7 +12,7 @@ version: "3.7"
 
 volumes:
   front:
-    driver: local
+  node_modules:
 
 services:
   api-server:
@@ -29,6 +29,7 @@ services:
         API_BASE_URL: http://localhost:3200/api/
     volumes:
     - front:/usr/src/app
+    - node_modules:/usr/src/app/node_modules
     networks:
     - default
     stdin_open: true
@@ -54,3 +55,10 @@ x-mutagen:
       alpha: "../front"
       beta: "volume://front"
       mode: "two-way-resolved"
+      ignore:
+        paths:
+          - "../front/node_modules"
+    nodeModules:
+      alpha : "volume://node_modules"
+      beta: "../front/node_modules"
+      mode: "one-way-replica"
