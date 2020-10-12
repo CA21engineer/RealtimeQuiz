@@ -18,7 +18,7 @@ export const AdminRoom: React.FC = () => {
     setReduceTimerId,
   } = useAdminRoom();
   const { roomStatus, controllers, personalStatus } = state;
-  const { currentQuestion, currentTime, currentStatus, players } = roomStatus;
+  const { currentQuestion, currentCorrectAnswer, currentTime, currentStatus, players } = roomStatus;
   const { isStartCountdownTimer } = personalStatus;
 
   useEffect(() => {
@@ -136,7 +136,18 @@ export const AdminRoom: React.FC = () => {
       <div className="AdminRoom__controller">
         <h1>問題を出題しています</h1>
         {currentStatus === 'WAITING_ANSWER' && <p>{timeMessage}</p>}
+        <div className="AdminRoom__TextLabel">
+          問題
+        </div>
         {currentQuestion && <QuestionContent content={currentQuestion} />}
+        {currentCorrectAnswer && (
+          <>
+            <div className="AdminRoom__TextLabel">
+              答え
+            </div>
+            <QuestionContent content={currentCorrectAnswer} />
+          </>
+        )}
         <div className="AdminRoom__Buttons">
           <FoundationButton
             label="解答を締め切る"

@@ -10,6 +10,7 @@ export const AdminSubmitQuestion: React.FC = () => {
   const questionRef = useRef<HTMLInputElement>(null);
   const setTimeLimitRef = useRef<HTMLInputElement>(null);
   const timeLimitRef = useRef<HTMLInputElement>(null);
+  const answerRef = useRef<HTMLInputElement>(null);
 
   const { state, dispatch } = useContext(GameStatusContext);
   const { controllers, personalStatus } = state;
@@ -19,13 +20,14 @@ export const AdminSubmitQuestion: React.FC = () => {
     const question = questionRef.current?.value;
     const setTimeLimit = setTimeLimitRef.current?.checked;
     const timeLimit = setTimeLimit ? Number(timeLimitRef.current?.value) : null;
+    const correctAnswer = answerRef.current?.value;
 
     if (!question || !controllers.emitter) {
       return;
     }
 
-    controllers.emitter.setQuestion(question, timeLimit);
-  }, [state, questionRef]);
+    controllers.emitter.setQuestion(question, timeLimit, correctAnswer);
+  }, [state, questionRef, answerRef]);
 
   const handleChangeIsTimelimitChecked = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +75,8 @@ export const AdminSubmitQuestion: React.FC = () => {
           />
           秒
         </div>
-        <input className="Room__QuestionBox" type="text" ref={questionRef} />
+        <input className="Room__QuestionBox" type="text" ref={questionRef} placeholder="問題" />
+        <input className="Room__QuestionBox" type="text" ref={answerRef} placeholder="答え(任意)" />
         <FoundationButton label="出題する" onClick={submitQuestion} />
       </div>
       <QuizPanelContainer roleType="admin" />

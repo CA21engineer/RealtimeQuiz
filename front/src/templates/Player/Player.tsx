@@ -22,7 +22,7 @@ export const Player: React.FC = () => {
   } = usePlayer();
 
   const { roomStatus, personalStatus } = state;
-  const { currentQuestion, currentTime, currentStatus } = roomStatus;
+  const { currentQuestion, currentCorrectAnswer, currentTime, currentStatus } = roomStatus;
   const { isStartCountdownTimer } = personalStatus;
 
   useEffect(() => {
@@ -117,7 +117,18 @@ export const Player: React.FC = () => {
       </p>
       {currentQuestion && (
         <div className="Player__Question">
+          <div className="Player__TextLabel">
+            問題
+          </div>
           <QuestionContent content={currentQuestion} />
+          {currentCorrectAnswer && (
+            <>
+              <div className="Player__TextLabel">
+                答え
+              </div>
+              <QuestionContent content={currentCorrectAnswer} />
+            </>
+          )}
         </div>
       )}
       {renderQuestionModal()}
