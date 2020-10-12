@@ -11,18 +11,20 @@
     "start:ci": "npm-run-all -s clean:next build:production",
     "dev": "next dev",
     "build": "npm-run-all -s clean build:production",
+    "build:dev": "next build",
     "build:production": "next build && next export -o dist/",
     "clean": "rimraf ./dist",
     "clean:next": "rimraf .next",
     "format": "npm-run-all -s format:*",
     "format:fix": "prettier --write './src/**/*.{ts, tsx, js, jsx, json}'",
     "lint": "eslint ./src --ext .ts,.tsx,.js.jsx,.json",
+    "type": "tsc --noEmit",
     "storybook": "start-storybook -p 6006 -c .storybook"
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npm run build"
+      "pre-push": "npm run type && npm run build"
     }
   },
   "lint-staged": {
