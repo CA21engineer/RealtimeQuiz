@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
 import { QuizPanelContainer } from 'container/QuizPanelContainer';
+import { VolumeSlider } from 'container/VolumeSlider';
 import { QuestionModal } from 'components/QuestionModal';
 import { QuestionContent } from 'components/QuestionContent';
-import { VolumeSlider } from 'container/VolumeSlider';
+import { BackButton } from 'components/BackButton';
 import {
   setIsAnswered,
   updatePersonalAnswer,
@@ -117,6 +118,9 @@ export const Player: React.FC = () => {
 
   return (
     <div className="Player__Wrapper">
+      <div className="Player__Return-Index">
+        <BackButton />
+      </div>
       <div className="Player__Volume">
         <VolumeSlider />
       </div>

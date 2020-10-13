@@ -1,0 +1,19 @@
+.BackButton{
+  &__Button {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    padding: 16px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &__Icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    appearance: none;
+  }
+}
