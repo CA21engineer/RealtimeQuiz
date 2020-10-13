@@ -1,5 +1,7 @@
-import { ReceiverBase } from '../controllers/ReceiverBase';
-import { Emitter } from '../controllers/Emitter';
+import { Emitter } from 'websocket/controllers/Emitter';
+import { ReceiverBase } from 'websocket/controllers/ReceiverBase';
+
+import { devlog } from 'utils/log';
 
 export abstract class Connection {
   private receivers: ReceiverBase[] = [];
@@ -26,7 +28,7 @@ export abstract class Connection {
     });
 
     if (!result) {
-      console.warn(
+      devlog.warn(
         '着信したメッセージは正常に処理されませんでした。',
         type,
         data
