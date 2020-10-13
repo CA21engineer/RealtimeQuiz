@@ -33,16 +33,18 @@ export const usePlayer = () => {
   const { currentStatus } = gameStatus.state.roomStatus;
 
   const user = useContext(UserContext);
-  const { isPlaySound } = user.state.setting;
+  const { volume } = user.state.setting;
 
   const prevRoomStatus = useRef<RoomStatus['currentStatus']>(currentStatus);
 
-  const [playQuestionSound] = useSound(getSoundSource('QUESTION'));
-  const [playCorrectSound] = useSound(getSoundSource('CORRECT'));
-  const [playIncorrectSound] = useSound(getSoundSource('INCORRECT'));
+  const [playQuestionSound] = useSound(getSoundSource('QUESTION'), { volume });
+  const [playCorrectSound] = useSound(getSoundSource('CORRECT'), { volume });
+  const [playIncorrectSound] = useSound(getSoundSource('INCORRECT'), {
+    volume,
+  });
 
   useEffect(() => {
-    if (!isPlaySound) {
+    if (volume <= 0 || Number.isNaN(volume)) {
       return;
     }
 

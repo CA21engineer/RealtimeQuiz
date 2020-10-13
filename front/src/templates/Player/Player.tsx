@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { QuizPanelContainer } from 'container/QuizPanelContainer';
 import { QuestionModal } from 'components/QuestionModal';
 import { QuestionContent } from 'components/QuestionContent';
+import { VolumeSlider } from 'container/VolumeSlider';
 import {
   setIsAnswered,
   updatePersonalAnswer,
@@ -116,6 +117,9 @@ export const Player: React.FC = () => {
 
   return (
     <div className="Player__Wrapper">
+      <div className="Player__Volume">
+        <VolumeSlider />
+      </div>
       <p className="Player__Status">
         {expressPlayerStatus(roomStatus.currentStatus)}
       </p>
