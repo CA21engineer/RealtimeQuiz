@@ -5,7 +5,7 @@ function error(...message: any): void {
     return;
   }
 
-  console.error(message);
+  console.error(...message);
 }
 
 function warn(...message: any): void {
@@ -13,7 +13,7 @@ function warn(...message: any): void {
     return;
   }
 
-  console.warn(message);
+  console.warn(...message);
 }
 
 function log(...message: any): void {
@@ -21,7 +21,7 @@ function log(...message: any): void {
     return;
   }
 
-  console.log(message);
+  console.log(...message);
 }
 
 export const devlog = {

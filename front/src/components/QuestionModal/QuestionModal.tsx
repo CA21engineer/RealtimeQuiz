@@ -25,7 +25,7 @@ export const QuestionModal: React.FC<Props> = ({
   isOpen,
   closeTimeoutMS,
 }) => {
-  if (questionBody === '') {
+  if (questionBody === '' && isOpen) {
     devlog.warn('Fatal: Question body is not given.');
   }
 
