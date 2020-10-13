@@ -1,6 +1,7 @@
 import { createContext, Reducer, Dispatch } from 'react';
 import produce from 'immer';
 import { generateContextWrapper } from 'utils/store/contextHelper';
+import { devlog } from 'utils/log';
 import { Actions } from 'acitons/user';
 
 export type UserSetting = {
@@ -23,7 +24,7 @@ const reducer: Reducer<User, Actions> = (state, action) => {
       const { volume } = action.payload;
       return produce(state, (draft) => {
         if (volume < 0 || volume > 1) {
-          console.error('音量の規定値を超えています', volume);
+          devlog.error('音量の規定値を超えています', volume);
           return;
         }
 

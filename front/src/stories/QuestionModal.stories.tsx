@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
+import { devlog } from 'utils/log';
 import { QuestionModal } from '../components/QuestionModal';
-import { logger } from '../utils/log';
 
 storiesOf('QuestionModal', module).add('default', () => {
   return (
@@ -12,7 +12,7 @@ storiesOf('QuestionModal', module).add('default', () => {
       onInputAnswer={(e: React.ChangeEvent<HTMLInputElement>) =>
         console.log(e.target.value)}
       onSubmitAnswer={() => {
-        logger('None of arguments');
+        devlog.log('None of arguments');
       }}
       isOpen
     />
