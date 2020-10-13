@@ -5,7 +5,7 @@ import { GameStatusContext } from 'store/gameStatus';
 import { initController, setIsSpectator } from 'acitons/gameStatus';
 import { setAccountId } from 'websocket/libraries/AccountId';
 import { Receiver } from 'websocket/controllers/Receiver';
-import { WSConnection } from 'websocket/connections/WSConnection';
+import { createWSConnection } from 'websocket/connections/WSConnection';
 import { RoomEntrance } from 'templates/RoomEntrance';
 import { Player } from 'templates/Player';
 import { AdminResult } from 'templates/AdminResult';
@@ -26,7 +26,7 @@ const RoomPage: React.FC = () => {
       return;
     }
 
-    const connection = new WSConnection({
+    const connection = createWSConnection({
       roomId,
       accountId,
     });
