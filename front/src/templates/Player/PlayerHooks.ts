@@ -31,6 +31,8 @@ export const usePlayer = () => {
   const alterStars =
     gameStatus.state.personalStatus.currentStatus?.alterStars ?? 0;
   const { currentStatus } = gameStatus.state.roomStatus;
+  const { isSpectator } = gameStatus.state.personalStatus;
+
 
   const user = useContext(UserContext);
   const { volume } = user.state.setting;
@@ -58,7 +60,8 @@ export const usePlayer = () => {
 
     if (
       prevRoomStatus.current === 'OPEN_ANSWER' &&
-      currentStatus === 'OPEN_AGGREGATE'
+      currentStatus === 'OPEN_AGGREGATE' &&
+      !isSpectator
     ) {
       if (alterStars <= 0) {
         playIncorrectSound();
