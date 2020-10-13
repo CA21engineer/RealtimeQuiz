@@ -6,7 +6,17 @@ import { ConnectionInfo } from '../interfaces/ConnectionInfo';
  * (将来的にSocketIO, ロングポーリングなんかもあるかもしれないため)
  */
 
-export class WSConnection extends Connection {
+let currentWSConnection: WSConnection | null = null;
+export const createWSConnection = (connectionInfo: ConnectionInfo) => {
+  if (currentWSConnection) {
+    currentWSConnection.close();
+  }
+
+  currentWSConnection = new WSConnection(connectionInfo);
+  return currentWSConnection;
+}
+
+class WSConnection extends Connection {
   private socket: WebSocket;
 
   private url: string;
@@ -35,6 +45,11 @@ export class WSConnection extends Connection {
     this.socket.send(JSON.stringify({ type, data }));
   }
 
+  public close(): void {
+    this.socket.onclose = null;
+    this.socket.close();
+  }
+
   // ハンドラを設定し親クラスのcallFunctionを呼び出す
   private setEventHandlers(): void {
     this.socket.addEventListener('open', () => {
@@ -46,10 +61,10 @@ export class WSConnection extends Connection {
       throw new Error('接続できませんでした');
     });
 
-    this.socket.addEventListener('close', () => {
+    this.socket.onclose = () => {
       console.log('コネクションが切断されたため再度接続を試みます...');
       this.connect();
-    });
+    }
 
     this.socket.addEventListener('message', (event) => {
       const json = JSON.parse(event.data);
