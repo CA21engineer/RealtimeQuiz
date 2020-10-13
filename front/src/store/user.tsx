@@ -1,10 +1,11 @@
 import { createContext, Reducer, Dispatch } from 'react';
 import produce from 'immer';
 import { generateContextWrapper } from 'utils/store/contextHelper';
+import { devlog } from 'utils/log';
 import { Actions } from 'acitons/user';
 
 export type UserSetting = {
-  isPlaySound: boolean;
+  volume: number;
 };
 
 export type User = {
@@ -13,16 +14,21 @@ export type User = {
 
 const initialState: User = {
   setting: {
-    isPlaySound: true,
+    volume: 0.5,
   },
 };
 
 const reducer: Reducer<User, Actions> = (state, action) => {
   switch (action.type) {
     case 'SWTICH_IS_PLAY_SOUND': {
+      const { volume } = action.payload;
       return produce(state, (draft) => {
-        const { isPlaySound } = state.setting;
-        draft.setting.isPlaySound = !isPlaySound;
+        if (volume < 0 || volume > 1) {
+          devlog.error('音量の規定値を超えています', volume);
+          return;
+        }
+
+        draft.setting.volume = volume;
       });
     }
 

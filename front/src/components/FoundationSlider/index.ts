@@ -1,0 +1,1 @@
+export { FoundationSlider } from './FoundationSlider';

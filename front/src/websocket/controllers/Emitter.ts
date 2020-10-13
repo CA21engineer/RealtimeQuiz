@@ -16,7 +16,11 @@ export class Emitter {
   }
 
   // 問題を送信する
-  public setQuestion(question: string, timeLimit: number | null, correctAnswer: string | null): void {
+  public setQuestion(
+    question: string,
+    timeLimit: number | null,
+    correctAnswer: string | null
+  ): void {
     this.emitter('SetQuestion', { question, timeLimit, correctAnswer });
   }
 
