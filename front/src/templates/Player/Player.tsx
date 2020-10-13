@@ -7,6 +7,7 @@ import {
   setIsAnswered,
   updatePersonalAnswer,
   setCountDownTimer,
+  reduceCountDownTimer,
 } from 'acitons/gameStatus';
 import { usePlayer } from './PlayerHooks';
 
@@ -43,7 +44,7 @@ export const Player: React.FC = () => {
     gameStatus.dispatch(setCountDownTimer(true));
 
     const id = setInterval(() => {
-      gameStatus.dispatch(setIsAnswered());
+      gameStatus.dispatch(reduceCountDownTimer());
     }, 1000);
 
     setReduceTimerId(id);
