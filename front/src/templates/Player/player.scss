@@ -4,6 +4,12 @@
   align-items: center;
 }
 
+.Player__Volume {
+  position: fixed;
+  bottom: 0;
+}
+
+
 .Player__Status {
   font-size: 1.3rem;
 }
@@ -20,6 +26,7 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 25px;
+  padding-top: 10px;
 }
 
 .Player__Wrapper {
@@ -28,4 +35,8 @@
 
 .Player__List {
 
+}
+
+.Player__TextLabel {
+  font-weight: bold;
 }

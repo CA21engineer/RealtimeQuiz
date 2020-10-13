@@ -26,7 +26,7 @@ export const QuizPanel: React.FC<Props> = ({
   const getStarText = (star: number) => {
     const STAR_LIMIT = 5;
     if (star === 0 || Number.isNaN(star)) {
-      return '⭐️ * 0';
+      return '';
     }
 
     if (star < 0) {

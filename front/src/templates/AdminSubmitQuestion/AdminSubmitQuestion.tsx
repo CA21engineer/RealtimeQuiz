@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useRef } from 'react';
+import { setTimeLimitNumber, setEnableTimeLimit } from 'acitons/gameStatus';
 import { GameStatusContext } from 'store/gameStatus';
 import { FoundationButton } from 'components/FoundationButton';
 import { QuizPanelContainer } from 'container/QuizPanelContainer';
@@ -9,6 +10,7 @@ export const AdminSubmitQuestion: React.FC = () => {
   const questionRef = useRef<HTMLInputElement>(null);
   const setTimeLimitRef = useRef<HTMLInputElement>(null);
   const timeLimitRef = useRef<HTMLInputElement>(null);
+  const answerRef = useRef<HTMLInputElement>(null);
 
   const { state, dispatch } = useContext(GameStatusContext);
   const { controllers, personalStatus } = state;
@@ -18,25 +20,19 @@ export const AdminSubmitQuestion: React.FC = () => {
     const question = questionRef.current?.value;
     const setTimeLimit = setTimeLimitRef.current?.checked;
     const timeLimit = setTimeLimit ? Number(timeLimitRef.current?.value) : null;
+    const correctAnswer = answerRef.current?.value ?? null;
 
     if (!question || !controllers.emitter) {
       return;
     }
 
-    controllers.emitter.setQuestion(question, timeLimit);
-  }, [state, questionRef]);
+    controllers.emitter.setQuestion(question, timeLimit, correctAnswer);
+  }, [state, questionRef, answerRef]);
 
   const handleChangeIsTimelimitChecked = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { checked } = e.target;
-      dispatch({
-        type: 'SET_TIMELIMIT',
-        payload: {
-          personalStatus: {
-            isTimelimitChecked: checked,
-          },
-        },
-      });
+      dispatch(setEnableTimeLimit(checked));
     },
     [dispatch]
   );
@@ -48,14 +44,7 @@ export const AdminSubmitQuestion: React.FC = () => {
         return;
       }
 
-      dispatch({
-        type: 'SET_TIMELIMIT',
-        payload: {
-          personalStatus: {
-            timelimit: value,
-          },
-        },
-      });
+      dispatch(setTimeLimitNumber(value));
     },
     [dispatch]
   );
@@ -86,7 +75,18 @@ export const AdminSubmitQuestion: React.FC = () => {
           />
           秒
         </div>
-        <input className="Room__QuestionBox" type="text" ref={questionRef} />
+        <input
+          className="Room__QuestionBox"
+          type="text"
+          ref={questionRef}
+          placeholder="問題"
+        />
+        <input
+          className="Room__QuestionBox"
+          type="text"
+          ref={answerRef}
+          placeholder="答え(任意)"
+        />
         <FoundationButton label="出題する" onClick={submitQuestion} />
       </div>
       <QuizPanelContainer roleType="admin" />

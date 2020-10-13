@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { clearReduceTimer } from 'acitons/gameStatus/clearReduceCountDownTimer';
+import { clearReduceTimer } from 'utils/timer';
 import { GameStatusContext } from 'store/gameStatus';
 
 export const useAdminRoom = () => {

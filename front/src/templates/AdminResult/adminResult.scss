@@ -9,6 +9,7 @@
   color: #FFFFFF;
   background-color: hsl(25, 100%, 58%);
   border-radius: 7px;
+  padding-top: 25px;
   max-width: 480px;
   width: 100%;
   box-sizing: border-box;
@@ -18,4 +19,8 @@
   align-items: center;
   margin-bottom: 25px;
   padding-bottom: 25px;
+}
+
+.AdminResult__TextLabel {
+  font-weight: bold;
 }

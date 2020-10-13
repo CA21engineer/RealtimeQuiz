@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-import { logger } from 'utils/log';
+import { devlog } from 'utils/log';
 import { FoundationInputArea } from 'components/FoundationInputArea';
 import { QuestionContent } from 'components/QuestionContent';
 
@@ -25,12 +25,12 @@ export const QuestionModal: React.FC<Props> = ({
   isOpen,
   closeTimeoutMS,
 }) => {
-  if (questionBody === '') {
-    logger('Fatal: Question body is not given.');
+  if (questionBody === '' && isOpen) {
+    devlog.warn('Fatal: Question body is not given.');
   }
 
   if (Number.isNaN(remainTime)) {
-    logger(
+    devlog.warn(
       'Fatal: Question modal is given NaN. Please check code. For there is mistake.'
     );
   }

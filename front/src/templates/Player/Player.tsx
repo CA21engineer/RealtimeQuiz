@@ -2,22 +2,33 @@ import React, { useCallback, useEffect } from 'react';
 import { QuizPanelContainer } from 'container/QuizPanelContainer';
 import { QuestionModal } from 'components/QuestionModal';
 import { QuestionContent } from 'components/QuestionContent';
+import { VolumeSlider } from 'container/VolumeSlider';
+import {
+  setIsAnswered,
+  updatePersonalAnswer,
+  setCountDownTimer,
+  reduceCountDownTimer,
+} from 'acitons/gameStatus';
 import { usePlayer } from './PlayerHooks';
 
 import './player.scss';
 
 export const Player: React.FC = () => {
   const {
-    state,
-    dispatch,
+    gameStatus,
     clearReduceTimer,
     reduceTimerid,
     setReduceTimerId,
     expressPlayerStatus,
   } = usePlayer();
 
-  const { roomStatus, personalStatus } = state;
-  const { currentQuestion, currentTime, currentStatus } = roomStatus;
+  const { roomStatus, personalStatus } = gameStatus.state;
+  const {
+    currentQuestion,
+    currentCorrectAnswer,
+    currentTime,
+    currentStatus,
+  } = roomStatus;
   const { isStartCountdownTimer } = personalStatus;
 
   useEffect(() => {
@@ -30,17 +41,10 @@ export const Player: React.FC = () => {
     }
 
     // カウントダウンを開始
-    dispatch({
-      type: 'SWITCH_COUNT_DOWN_TIMER',
-      payload: {
-        personalStatus: {
-          isStartCountdownTimer: true,
-        },
-      },
-    });
+    gameStatus.dispatch(setCountDownTimer(true));
 
     const id = setInterval(() => {
-      dispatch({ type: 'REDUCE_COUNT_DOWN_TIMER' });
+      gameStatus.dispatch(reduceCountDownTimer());
     }, 1000);
 
     setReduceTimerId(id);
@@ -52,7 +56,7 @@ export const Player: React.FC = () => {
       return;
     }
 
-    clearReduceTimer(reduceTimerid, setReduceTimerId, dispatch);
+    clearReduceTimer(reduceTimerid, setReduceTimerId, gameStatus.dispatch);
   }, [reduceTimerid, setReduceTimerId, currentStatus, clearReduceTimer]);
 
   // ページ遷移時ににclearIntervalする
@@ -62,22 +66,20 @@ export const Player: React.FC = () => {
         return;
       }
 
-      clearReduceTimer(reduceTimerid, setReduceTimerId, dispatch);
+      clearReduceTimer(reduceTimerid, setReduceTimerId, gameStatus.dispatch);
     };
   }, []);
 
   const onSubmitAnswer: React.MouseEventHandler = useCallback(() => {
-    const { emitter } = state.controllers;
+    const { emitter } = gameStatus.state.controllers;
     if (!emitter || personalStatus.answer === '') {
       console.error('解答が送信できませんでした。');
       return;
     }
 
-    emitter.setAnswer(state.personalStatus.answer);
-    dispatch({
-      type: 'ANSWER',
-    });
-  }, [state, dispatch]);
+    emitter.setAnswer(gameStatus.state.personalStatus.answer);
+    gameStatus.dispatch(setIsAnswered());
+  }, [gameStatus]);
 
   const renderQuestionModal = () => {
     const dispatchAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,14 +88,7 @@ export const Player: React.FC = () => {
         return;
       }
 
-      dispatch({
-        type: 'UPDATE_PERSONAL_ANSWER',
-        payload: {
-          personalStatus: {
-            answer,
-          },
-        },
-      });
+      gameStatus.dispatch(updatePersonalAnswer(answer));
     };
 
     const role = personalStatus?.currentStatus?.role;
@@ -123,12 +118,22 @@ export const Player: React.FC = () => {
 
   return (
     <div className="Player__Wrapper">
+      <div className="Player__Volume">
+        <VolumeSlider />
+      </div>
       <p className="Player__Status">
         {expressPlayerStatus(roomStatus.currentStatus)}
       </p>
       {currentQuestion && (
         <div className="Player__Question">
+          <div className="Player__TextLabel">問題</div>
           <QuestionContent content={currentQuestion} />
+          {currentCorrectAnswer && (
+            <>
+              <div className="Player__TextLabel">答え</div>
+              <QuestionContent content={currentCorrectAnswer} />
+            </>
+          )}
         </div>
       )}
       {renderQuestionModal()}

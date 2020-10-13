@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { getAnswerWithAdmin } from 'utils/getAnswer';
+import { setCountDownTimer, reduceCountDownTimer } from 'acitons/gameStatus';
 import { INIT_PLAYER_NAME } from 'constants/room';
 import { FoundationButton } from 'components/FoundationButton';
 import { QuizAdminPanel } from 'components/QuizAdminPanel';
@@ -17,7 +18,7 @@ export const AdminRoom: React.FC = () => {
     setReduceTimerId,
   } = useAdminRoom();
   const { roomStatus, controllers, personalStatus } = state;
-  const { currentQuestion, currentTime, currentStatus, players } = roomStatus;
+  const { currentQuestion, currentCorrectAnswer, currentTime, currentStatus, players } = roomStatus;
   const { isStartCountdownTimer } = personalStatus;
 
   useEffect(() => {
@@ -30,17 +31,10 @@ export const AdminRoom: React.FC = () => {
     }
 
     // カウントダウンを開始
-    dispatch({
-      type: 'SWITCH_COUNT_DOWN_TIMER',
-      payload: {
-        personalStatus: {
-          isStartCountdownTimer: true,
-        },
-      },
-    });
+    dispatch(setCountDownTimer(true));
 
     const id = setInterval(() => {
-      dispatch({ type: 'REDUCE_COUNT_DOWN_TIMER' });
+      dispatch(reduceCountDownTimer());
     }, 1000);
 
     setReduceTimerId(id);
@@ -142,7 +136,18 @@ export const AdminRoom: React.FC = () => {
       <div className="AdminRoom__controller">
         <h1>問題を出題しています</h1>
         {currentStatus === 'WAITING_ANSWER' && <p>{timeMessage}</p>}
+        <div className="AdminRoom__TextLabel">
+          問題
+        </div>
         {currentQuestion && <QuestionContent content={currentQuestion} />}
+        {currentCorrectAnswer && (
+          <>
+            <div className="AdminRoom__TextLabel">
+              答え
+            </div>
+            <QuestionContent content={currentCorrectAnswer} />
+          </>
+        )}
         <div className="AdminRoom__Buttons">
           <FoundationButton
             label="解答を締め切る"
