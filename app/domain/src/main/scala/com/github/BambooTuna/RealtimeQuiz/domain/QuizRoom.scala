@@ -94,7 +94,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
 
   protected def noticeEveryone(): Future[Unit] = {
     Future {
-      Task.sleep(500.millisecond)
+      Thread.sleep(500)
       noticePlayersState(actorRef ! _)
     }
   }
@@ -218,19 +218,22 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
         logger.info(s"RoomId -> $roomId, $other")
     }
 
-  def setTimer(t: Int): Task[Unit] = Task.fromFuture(
-    Future {
-      this.elapsedTime = 0
-      Task.sleep(t * 1.second)
-      if (this.currentStatus == WaitingAnswer) {
-        // まだ回答受付時であるなら回答を強制送信
-        actorRef ! WebSocketMessageWithDestination(
-          ForceSendAnswer(),
-          Users(this.children.map(_.id).toSeq))
-        this.currentStatus = this.currentStatus.next
-      }
-    }.flatMap(_ => noticeEveryone())
-  )
+  def setTimer(t: Int): Task[Unit] = {
+    for {
+      _ <- Task.pure(this.elapsedTime = 0)
+      _ <- Task.sleep(t * 1.second)
+      _ <- Task.fromFuture(
+        Future {
+          if (this.currentStatus == WaitingAnswer) {
+            // まだ回答受付時であるなら回答を強制送信
+            actorRef ! WebSocketMessageWithDestination(
+              ForceSendAnswer(),
+              Users(this.children.map(_.id).toSeq))
+            this.currentStatus = this.currentStatus.next
+          }
+        }.flatMap(_ => noticeEveryone()))
+    } yield {}
+  }
 }
 
 object QuizRoom {
