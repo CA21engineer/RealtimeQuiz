@@ -9,6 +9,8 @@ import com.github.BambooTuna.RealtimeQuiz.domain.ConnectionStatus.Online
 import com.github.BambooTuna.RealtimeQuiz.domain.CurrentStatus.{CloseAnswer, OpenAggregate, OpenAnswer, WaitingAnswer, WaitingQuestion}
 import com.github.BambooTuna.RealtimeQuiz.domain.lib.StreamSupport
 import com.github.BambooTuna.RealtimeQuiz.domain.ws._
+import monix.eval.Task
+import monix.execution.CancelableFuture
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.duration._
@@ -43,6 +45,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
 
   var isClosed: Boolean = false
   val timer = materializer.schedulePeriodically(1.minutes, 1.minutes, () => { if (online == 0) isClosed = true })
+  var timerTask: Option[CancelableFuture[Unit]] = None
   def online: Int = {
     val everyone = this.children + parent
     everyone.count(_.connectionStatus == Online)
@@ -159,14 +162,8 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
               Some(Question(v.question, v.correctAnswer, v.timeLimit))
             //TODO タイマーをセットし一定時間後にforceSendAnswerを全員に送信
             v.timeLimit.foreach { t =>
-              Future {
-                this.elapsedTime = 0
-                Thread.sleep(t * 1000)
-                actorRef ! WebSocketMessageWithDestination(
-                  ForceSendAnswer(),
-                  Users(this.children.map(_.id).toSeq))
-                if (this.currentStatus == WaitingAnswer) this.currentStatus = this.currentStatus.next
-              }.flatMap(_ => noticeEveryone())
+              val cancelableFuture = setTimer(t).runToFuture(monix.execution.Scheduler.Implicits.global)
+              timerTask = Some(cancelableFuture)
             }
           })
           noticeEveryone()
@@ -178,6 +175,10 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
         }
       case CloseApplications =>
         if (this.currentStatus == WaitingAnswer) {
+          // Stop Timer
+          timerTask.foreach(_.cancel())
+          timerTask = None
+
           //TODO send children ForceSendAnswer
           actorRef ! WebSocketMessageWithDestination(
             ForceSendAnswer(),
@@ -216,6 +217,20 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
       case other =>
         logger.info(s"RoomId -> $roomId, $other")
     }
+
+  def setTimer(t: Int): Task[Unit] = Task.fromFuture(
+    Future {
+      this.elapsedTime = 0
+      Thread.sleep(t * 1000)
+      if (this.currentStatus == WaitingAnswer) {
+        // まだ回答受付時であるなら回答を強制送信
+        actorRef ! WebSocketMessageWithDestination(
+          ForceSendAnswer(),
+          Users(this.children.map(_.id).toSeq))
+        this.currentStatus = this.currentStatus.next
+      }
+    }.flatMap(_ => noticeEveryone())
+  )
 }
 
 object QuizRoom {
