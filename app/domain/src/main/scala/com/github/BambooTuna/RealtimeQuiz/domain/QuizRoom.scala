@@ -94,7 +94,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
 
   protected def noticeEveryone(): Future[Unit] = {
     Future {
-      Thread.sleep(500)
+      Task.sleep(500.millisecond)
       noticePlayersState(actorRef ! _)
     }
   }
@@ -221,7 +221,7 @@ abstract class QuizRoom(val roomId: String, val roomName: String)(
   def setTimer(t: Int): Task[Unit] = Task.fromFuture(
     Future {
       this.elapsedTime = 0
-      Thread.sleep(t * 1000)
+      Task.sleep(t * 1.second)
       if (this.currentStatus == WaitingAnswer) {
         // まだ回答受付時であるなら回答を強制送信
         actorRef ! WebSocketMessageWithDestination(
